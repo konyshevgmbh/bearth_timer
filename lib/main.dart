@@ -334,15 +334,15 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    final double contentWidth = _getContentWidth(screenSize);
     final bool useHorizontalLayout = _shouldUseHorizontalLayout(screenSize);
+    double contentWidth = (useHorizontalLayout ? 2 : 1) * _getContentWidth(screenSize);
 
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Container(
-              width: double.infinity,
+              width: contentWidth,
               padding: EdgeInsets.all(0),
               child: Card(
                 elevation: AppLayout.cardElevation,
