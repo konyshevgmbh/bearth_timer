@@ -485,10 +485,8 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
 
   Widget _buildPhaseInfoText() {
   final phases = [
-    'In: ${phaseDurations[1]}s',
-    'Hold: ${phaseDurations[2]}s',
-    'Out: ${phaseDurations[3]}s',
-    'Rest: ${phaseDurations[4]}s',
+    'In: ${phaseDurations[1]}s Hold: ${phaseDurations[2]}s',
+    'Out: ${phaseDurations[3]}s Rest: ${phaseDurations[4]}s',
   ];
 
   return Wrap(
