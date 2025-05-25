@@ -45,7 +45,7 @@ class AppLayout {
   static const double buttonSpacing = 36.0;
 
   // Progress circle
-  static const double progressCircleSize = 200.0;
+  static const double progressCircleSize = 300.0;
   static const double progressStrokeWidth = 12.0;
   static const double phaseTimerSpacing = 8.0;
   static const double cycleInfoSpacing = 12.0;
@@ -349,7 +349,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    final double screenPadding = _getScreenPadding(screenSize);
     final double contentWidth = _getContentWidth(screenSize);
     final bool useHorizontalLayout = _shouldUseHorizontalLayout(screenSize);
 
@@ -359,7 +358,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
           child: SingleChildScrollView(
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.all(screenPadding),
+              padding: EdgeInsets.all(0),
               child: Card(
                 elevation: AppLayout.cardElevation,
                 shape: RoundedRectangleBorder(
@@ -446,7 +445,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         borderRadius: BorderRadius.circular(AppLayout.headerBorderRadius),
       ),
       child: Text(
-        "BREATH-HOLD CLOCK",
+        "Timer",
         style: TextStyle(
           color: AppColors.textPrimary.withOpacity(AppColors.headerTextOpacity),
           fontWeight: FontWeight.bold,
@@ -510,12 +509,16 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   }
 
   Widget _buildTimerSection() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SizedBox(
-          width: AppLayout.progressCircleSize,
-          height: AppLayout.progressCircleSize,
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: AppLayout.progressCircleSize,
+          minHeight: AppLayout.progressCircleSize,
+        ),
+        child: AspectRatio(
+          aspectRatio: 1,  
           child: CircularProgressIndicator(
             value: currentCycleProgress,
             strokeWidth: AppLayout.progressStrokeWidth,
@@ -523,42 +526,44 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
             backgroundColor: AppColors.progressBackground,
           ),
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              phaseLabel,
-              style: TextStyle(
-                color: phaseColor,
-                fontWeight: FontWeight.bold,
-                fontSize: AppLayout.phaseLabelFontSize,
-              ),
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            phaseLabel,
+            style: TextStyle(
+              color: phaseColor,
+              fontWeight: FontWeight.bold,
+              fontSize: AppLayout.phaseLabelFontSize,
             ),
-            SizedBox(height: AppLayout.phaseTimerSpacing),
-            Text(
-              !isDone
-                  ? timerDisplay
-                  : "${cycleDuration.toString().padLeft(2, '0')}:00",
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: AppLayout.timerFontSize,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
-              ),
+          ),
+          SizedBox(height: AppLayout.phaseTimerSpacing),
+          Text(
+            !isDone
+                ? timerDisplay
+                : "${cycleDuration.toString().padLeft(2, '0')}:00",
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: AppLayout.timerFontSize,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
             ),
-            SizedBox(height: AppLayout.cycleInfoSpacing),
-            Text(
-              'Cycle $currentCycle / $totalCycles',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: AppLayout.cycleInfoFontSize,
-              ),
+          ),
+          SizedBox(height: AppLayout.cycleInfoSpacing),
+          Text(
+            'Cycle $currentCycle / $totalCycles',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: AppLayout.cycleInfoFontSize,
             ),
-          ],
-        ),
-      ],
-    );
-  }
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
 
   Widget _buildActionButtons() {
     return Row(
