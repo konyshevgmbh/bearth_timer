@@ -445,7 +445,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         borderRadius: BorderRadius.circular(AppLayout.headerBorderRadius),
       ),
       child: Text(
-        "Timer",
+        "TIMER",
         style: TextStyle(
           color: AppColors.textPrimary.withOpacity(AppColors.headerTextOpacity),
           fontWeight: FontWeight.bold,
