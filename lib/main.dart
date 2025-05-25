@@ -30,8 +30,8 @@ class AppColors {
 // Layout constants to avoid magic numbers
 class AppLayout {
   // Padding and margins
-  static const double minScreenPadding = 16.0;
-  static const double maxScreenPadding = 32.0;
+  static const double minScreenPadding = 0.0;
+  static const double maxScreenPadding = 16.0;
   static const double cardElevation = 16.0;
   static const double cardBorderRadius = 24.0;
   static const double headerBorderRadius = 8.0;
@@ -66,7 +66,7 @@ class AppLayout {
   static const double tallScreenThreshold = 600.0;
 
   // Container constraints
-  static const double maxContentWidth = 500.0;
+  static const double maxContentWidth = 600.0;
   static const double minContentWidth = 320.0;
 }
 
