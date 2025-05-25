@@ -42,10 +42,9 @@ class AppLayout {
   static const double sectionSpacingMedium = 20.0;
   static const double sectionSpacingLarge = 28.0;
   static const double controlSpacing = 24.0;
-  static const double buttonSpacing = 36.0;
 
   // Progress circle
-  static const double progressCircleSize = 200.0;
+  static const double progressCircleSize = 250.0;
   static const double progressStrokeWidth = 12.0;
   static const double phaseTimerSpacing = 8.0;
   static const double cycleInfoSpacing = 12.0;
@@ -60,8 +59,7 @@ class AppLayout {
   static const double stepperValueFontSize = 22.0;
 
   // Icon sizes (preserved as requested)
-  static const double playPauseIconSize = 48.0;
-  static const double resetIconSize = 42.0;
+  static const double startStopIconSize = 48.0;
 
   // Layout breakpoints
   static const double wideScreenThreshold = 600.0;
@@ -220,20 +218,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     });
   }
 
-  void _pause() {
-    setState(() => isRunning = false);
-    timer?.cancel();
-  }
-
-  void _resume() {
-    setState(() {
-      isRunning = true;
-      isDone = false;
-    });
-    timer = Timer.periodic(Duration(seconds: 1), (_) => _tick());
-  }
-
-  void _reset() {
+  void _stopSession() {
     setState(() {
       isRunning = false;
       timer?.cancel();
@@ -398,7 +383,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         SizedBox(height: AppLayout.sectionSpacingLarge),
         _buildTimerSection(),
         SizedBox(height: AppLayout.controlSpacing),
-        _buildActionButtons(),
+        _buildActionButton(),
         SizedBox(height: AppLayout.sectionSpacingSmall),
       ],
     );
@@ -422,7 +407,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
                   SizedBox(height: AppLayout.sectionSpacingMedium),
                   _buildPhaseInfoText(),
                   SizedBox(height: AppLayout.sectionSpacingMedium),
-                  _buildActionButtons(),
+                  _buildActionButton(),
                 ],
               ),
             ),
@@ -527,19 +512,14 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   return Stack(
     alignment: Alignment.center,
     children: [
-      ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: AppLayout.progressCircleSize,
-          minHeight: AppLayout.progressCircleSize,
-        ),
-        child: AspectRatio(
-          aspectRatio: 1,  
-          child: CircularProgressIndicator(
-            value: currentCycleProgress,
-            strokeWidth: AppLayout.progressStrokeWidth,
-            valueColor: AlwaysStoppedAnimation<Color>(phaseColor),
-            backgroundColor: AppColors.progressBackground,
-          ),
+      SizedBox(
+        width: AppLayout.progressCircleSize,
+        height: AppLayout.progressCircleSize,
+        child: CircularProgressIndicator(
+          value: currentCycleProgress,
+          strokeWidth: AppLayout.progressStrokeWidth,
+          valueColor: AlwaysStoppedAnimation<Color>(phaseColor),
+          backgroundColor: AppColors.progressBackground,
         ),
       ),
       Column(
@@ -579,37 +559,20 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   );
 }
 
-
-  Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Icon(
-            isRunning ? Icons.pause_circle_filled : Icons.play_circle_fill,
-            color: AppColors.textPrimary,
-            size: AppLayout.playPauseIconSize,
-          ),
-          onPressed: () {
-            if (isRunning) {
-              _pause();
-            } else if (secondsLeftInPhase == 0 || isDone) {
-              _startSession();
-            } else {
-              _resume();
-            }
-          },
-        ),
-        SizedBox(width: AppLayout.buttonSpacing),
-        IconButton(
-          icon: Icon(
-            Icons.replay,
-            color: AppColors.textPrimary,
-            size: AppLayout.resetIconSize,
-          ),
-          onPressed: _reset,
-        ),
-      ],
+  Widget _buildActionButton() {
+    return IconButton(
+      icon: Icon(
+        isRunning ? Icons.stop_circle : Icons.play_circle_fill,
+        color: AppColors.textPrimary,
+        size: AppLayout.startStopIconSize,
+      ),
+      onPressed: () {
+        if (isRunning) {
+          _stopSession();
+        } else {
+          _startSession();
+        }
+      },
     );
   }
 
