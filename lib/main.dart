@@ -45,7 +45,7 @@ class AppLayout {
   static const double buttonSpacing = 36.0;
 
   // Progress circle
-  static const double progressCircleSize = 300.0;
+  static const double progressCircleSize = 200.0;
   static const double progressStrokeWidth = 12.0;
   static const double phaseTimerSpacing = 8.0;
   static const double cycleInfoSpacing = 12.0;
@@ -477,7 +477,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
           },
         ),
         _buildStepper(
-          label: "DURATION",
+          label: "TIME",
           value: cycleDuration,
           onDec: () {
             if (cycleDuration > 30) {
@@ -499,14 +499,29 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   }
 
   Widget _buildPhaseInfoText() {
-    return Text(
-      'In: ${phaseDurations[1]}s • Hold: ${phaseDurations[2]}s • Out: ${phaseDurations[3]}s • Rest: ${phaseDurations[4]}s',
-      style: TextStyle(
-        fontSize: AppLayout.phaseInfoFontSize,
-        color: AppColors.textSecondary,
-      ),
-    );
-  }
+  final phases = [
+    'In: ${phaseDurations[1]}s',
+    'Hold: ${phaseDurations[2]}s',
+    'Out: ${phaseDurations[3]}s',
+    'Rest: ${phaseDurations[4]}s',
+  ];
+
+  return Wrap(
+    alignment: WrapAlignment.center,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    spacing: 8, 
+    runSpacing: 2,
+    children: phases
+        .map((text) => Text(
+              text,
+              style: TextStyle(
+                fontSize: AppLayout.phaseInfoFontSize,
+                color: AppColors.textSecondary,
+              ),
+            ))
+        .toList(),
+  );
+}
 
   Widget _buildTimerSection() {
   return Stack(
