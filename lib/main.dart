@@ -14,24 +14,26 @@ class TrainingConstants {
   // Default training settings
   static const int defaultTotalCycles = 5;
   static const int defaultCycleDuration = 30; // seconds
-  
+
   // Training limits and constraints
   static const int minCycles = 1;
   static const int maxCycles = 9;
   static const int minCycleDuration = 30; // seconds
-  static const int maxCycleDuration = 90; // seconds  
+  static const int maxCycleDuration = 90; // seconds
   static const int cycleDurationStep = 5; // seconds
-  
+
   // Phase timing constants
   static const int waitPhaseDuration = 3; // seconds
   static const int baseInhaleDuration = 5; // seconds
   static const int baseExhaleDuration = 5; // seconds
   static const int longExhaleDuration = 7; // seconds
-  static const int longExhaleThreshold = 60; // seconds - when to use longer exhale
-  
+  static const int longExhaleThreshold =
+      60; // seconds - when to use longer exhale
+
   // Phase calculation ratios
-  static const double holdInhaleRatio = 0.75; // 75% of remaining time for hold inhale
-  
+  static const double holdInhaleRatio =
+      0.75; // 75% of remaining time for hold inhale
+
   // Timer and session constants
   static const int timerTickInterval = 1; // seconds
 }
@@ -52,7 +54,7 @@ class ChartConstants {
   static const int scoreDisplayInterval = 100;
   static const double chartScaleMultiplier = 1.1; // 10% padding above max value
   static const double minChartScale = 100.0; // Minimum Y-axis scale
-  
+
   // Chart styling
   static const double lineWidth = 3.0;
   static const double dotRadius = 4.0;
@@ -60,7 +62,7 @@ class ChartConstants {
   static const double curveSmoothness = 0.3;
   static const double areaOpacity = 0.1;
   static const int gridStrokeWidth = 1;
-  
+
   // Touch interaction
   static const int tooltipFontSize = 12;
 }
@@ -140,15 +142,15 @@ class AppLayout {
   // Container constraints
   static const double maxContentWidth = 600.0;
   static const double minContentWidth = 320.0;
-  
+
   // Stepper control sizing
   static const double stepperValueWidth = 38.0;
-  
+
   // Navigation drawer
   static const double drawerIconSize = 48.0;
   static const double drawerHeaderSpacing = 8.0;
   static const double drawerTitleFontSize = 20.0;
-  
+
   // Statistics page
   static const double statsIconSize = 28.0;
   static const double statsHeaderSpacing = 12.0;
@@ -227,12 +229,12 @@ class ResultsManager {
     try {
       final prefs = await SharedPreferences.getInstance();
       final results = await getResults();
-      
+
       // Find if there's already a result for this date
       final dateKey = DateFormat('yyyy-MM-dd').format(result.date);
       TrainingResult? existingResult;
       int existingIndex = -1;
-      
+
       for (int i = 0; i < results.length; i++) {
         final resultDateKey = DateFormat('yyyy-MM-dd').format(results[i].date);
         if (resultDateKey == dateKey) {
@@ -241,7 +243,7 @@ class ResultsManager {
           break;
         }
       }
-      
+
       // Keep only the better result for the day
       if (existingResult == null || result.isBetterThan(existingResult)) {
         if (existingIndex >= 0) {
@@ -249,17 +251,22 @@ class ResultsManager {
         } else {
           results.add(result);
         }
-        
+
         // Clean up old results (keep only last 30 days)
-        final cutoffDate = DateTime.now().subtract(Duration(days: StorageConstants.maxDataRetentionDays));
+        final cutoffDate = DateTime.now().subtract(
+          Duration(days: StorageConstants.maxDataRetentionDays),
+        );
         results.removeWhere((r) => r.date.isBefore(cutoffDate));
-        
+
         // Sort by date (newest first)
         results.sort((a, b) => b.date.compareTo(a.date));
-        
+
         // Save to SharedPreferences
         final jsonList = results.map((r) => r.toJson()).toList();
-        await prefs.setString(StorageConstants.trainingResultsKey, jsonEncode(jsonList));
+        await prefs.setString(
+          StorageConstants.trainingResultsKey,
+          jsonEncode(jsonList),
+        );
       }
     } catch (e) {
       // Silently handle errors to avoid disrupting the user experience
@@ -272,9 +279,9 @@ class ResultsManager {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(StorageConstants.trainingResultsKey);
-      
+
       if (jsonString == null) return [];
-      
+
       final jsonList = jsonDecode(jsonString) as List;
       return jsonList.map((json) => TrainingResult.fromJson(json)).toList();
     } catch (e) {
@@ -297,21 +304,21 @@ class ResultsManager {
   static Future<List<MapEntry<DateTime, double?>>> getLast30DaysData() async {
     final results = await getResults();
     final data = <MapEntry<DateTime, double?>>[];
-    
+
     // Create map of date -> score for quick lookup
     final resultMap = <String, double>{};
     for (final result in results) {
       final dateKey = DateFormat('yyyy-MM-dd').format(result.date);
       resultMap[dateKey] = result.score;
     }
-    
+
     // Generate last 30 days
     for (int i = StorageConstants.maxDataRetentionDays - 1; i >= 0; i--) {
       final date = DateTime.now().subtract(Duration(days: i));
       final dateKey = DateFormat('yyyy-MM-dd').format(date);
       data.add(MapEntry(date, resultMap[dateKey]));
     }
-    
+
     return data;
   }
 }
@@ -373,8 +380,8 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     TrainingConstants.baseInhaleDuration,
     17, // Will be calculated
     TrainingConstants.baseExhaleDuration,
-    0,  // Will be calculated
-    0,  // Done phase has no duration
+    0, // Will be calculated
+    0, // Done phase has no duration
   ];
 
   @override
@@ -388,8 +395,12 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       setState(() {
-        totalCycles = prefs.getInt(StorageConstants.totalCyclesKey) ?? TrainingConstants.defaultTotalCycles;
-        cycleDuration = prefs.getInt(StorageConstants.cycleDurationKey) ?? TrainingConstants.defaultCycleDuration;
+        totalCycles =
+            prefs.getInt(StorageConstants.totalCyclesKey) ??
+            TrainingConstants.defaultTotalCycles;
+        cycleDuration =
+            prefs.getInt(StorageConstants.cycleDurationKey) ??
+            TrainingConstants.defaultCycleDuration;
       });
       _recalculatePhases();
     } catch (e) {
@@ -412,9 +423,10 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   void _recalculatePhases() {
     // Calculate phase durations based on cycle length
     int inhale = TrainingConstants.baseInhaleDuration;
-    int exhale = (cycleDuration > TrainingConstants.longExhaleThreshold) 
-        ? TrainingConstants.longExhaleDuration 
-        : TrainingConstants.baseExhaleDuration;
+    int exhale =
+        (cycleDuration > TrainingConstants.longExhaleThreshold)
+            ? TrainingConstants.longExhaleDuration
+            : TrainingConstants.baseExhaleDuration;
     int remain = cycleDuration - inhale - exhale;
     int holdInhale = (remain * TrainingConstants.holdInhaleRatio).round();
     int holdExhale = remain - holdInhale;
@@ -443,8 +455,8 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     });
     timer?.cancel();
     timer = Timer.periodic(
-      Duration(seconds: TrainingConstants.timerTickInterval), 
-      (_) => _tick()
+      Duration(seconds: TrainingConstants.timerTickInterval),
+      (_) => _tick(),
     );
   }
 
@@ -487,7 +499,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         duration: cycleDuration,
         cycles: totalCycles,
       );
-      
+
       // Save the result
       await ResultsManager.saveResult(result);
     }
@@ -612,14 +624,16 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   bool _shouldUseHorizontalLayout(Size screenSize) {
     return screenSize.width > AppLayout.wideScreenThreshold &&
         screenSize.height < AppLayout.tallScreenThreshold &&
-        screenSize.width / screenSize.height > AppLayout.wideAspectRatioThreshold;
+        screenSize.width / screenSize.height >
+            AppLayout.wideAspectRatioThreshold;
   }
 
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final bool useHorizontalLayout = _shouldUseHorizontalLayout(screenSize);
-    double contentWidth = (useHorizontalLayout ? 2 : 1) * _getContentWidth(screenSize);
+    double contentWidth =
+        (useHorizontalLayout ? 2 : 1) * _getContentWidth(screenSize);
 
     return Scaffold(
       // Navigation drawer with Home and Statistics options
@@ -695,10 +709,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
           ),
           ListTile(
             leading: Icon(Icons.home, color: AppColors.textPrimary),
-            title: Text(
-              'Home',
-              style: TextStyle(color: AppColors.textPrimary),
-            ),
+            title: Text('Home', style: TextStyle(color: AppColors.textPrimary)),
             onTap: () {
               Navigator.pop(context); // Close drawer
             },
@@ -793,14 +804,18 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
           value: cycleDuration,
           onDec: () {
             if (cycleDuration > TrainingConstants.minCycleDuration) {
-              setState(() => cycleDuration -= TrainingConstants.cycleDurationStep);
+              setState(
+                () => cycleDuration -= TrainingConstants.cycleDurationStep,
+              );
               _recalculatePhases();
               _saveSettings();
             }
           },
           onInc: () {
             if (cycleDuration < TrainingConstants.maxCycleDuration) {
-              setState(() => cycleDuration += TrainingConstants.cycleDurationStep);
+              setState(
+                () => cycleDuration += TrainingConstants.cycleDurationStep,
+              );
               _recalculatePhases();
               _saveSettings();
             }
@@ -819,17 +834,20 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppLayout.legendSpacing, 
+      spacing: AppLayout.legendSpacing,
       runSpacing: 2,
-      children: phases
-          .map((text) => Text(
-                text,
-                style: TextStyle(
-                  fontSize: AppLayout.phaseInfoFontSize,
-                  color: AppColors.textSecondary,
+      children:
+          phases
+              .map(
+                (text) => Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: AppLayout.phaseInfoFontSize,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ))
-          .toList(),
+              )
+              .toList(),
     );
   }
 
@@ -945,7 +963,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   }
 }
 
-
 /// Statistics page showing training results over the last 30 days with a dual-axis chart
 class StatisticsPage extends StatefulWidget {
   @override
@@ -967,21 +984,21 @@ class _StatisticsPageState extends State<StatisticsPage> {
     setState(() => isLoading = true);
     final results = await ResultsManager.getResults();
     final data = <MapEntry<DateTime, TrainingResult?>>[];
-    
+
     // Create map of date -> result for quick lookup
     final resultMap = <String, TrainingResult>{};
     for (final result in results) {
       final dateKey = DateFormat('yyyy-MM-dd').format(result.date);
       resultMap[dateKey] = result;
     }
-    
+
     // Generate last 30 days
     for (int i = StorageConstants.maxDataRetentionDays - 1; i >= 0; i--) {
       final date = DateTime.now().subtract(Duration(days: i));
       final dateKey = DateFormat('yyyy-MM-dd').format(date);
       data.add(MapEntry(date, resultMap[dateKey]));
     }
-    
+
     setState(() {
       chartData = data;
       isLoading = false;
@@ -992,27 +1009,31 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Future<void> _clearResults() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.cardBackground,
-        title: Text(
-          'Clear All Results',
-          style: TextStyle(color: AppColors.textPrimary),
-        ),
-        content: Text(
-          'Are you sure you want to delete all training results? This action cannot be undone.',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: AppColors.cardBackground,
+            title: Text(
+              'Clear All Results',
+              style: TextStyle(color: AppColors.textPrimary),
+            ),
+            content: Text(
+              'Are you sure you want to delete all training results? This action cannot be undone.',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Clear', style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text('Clear', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
     );
 
     if (confirmed == true) {
@@ -1043,330 +1064,409 @@ class _StatisticsPageState extends State<StatisticsPage> {
         ],
       ),
       backgroundColor: AppColors.background,
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: AppColors.chartLine),
-            )
-          : _buildStatisticsContent(),
+      body:
+          isLoading
+              ? Center(
+                child: CircularProgressIndicator(color: AppColors.chartLine),
+              )
+              : _buildStatisticsContent(),
     );
   }
 
+  Widget _buildStatisticsContent() {
+    final hasData = chartData.any((entry) => entry.value != null);
 
-Widget _buildStatisticsContent() {
-  final hasData = chartData.any((entry) => entry.value != null);
-
-  return SafeArea(child:Padding(
-    padding: EdgeInsets.all(AppLayout.maxScreenPadding),
-    child: Card(
-      elevation: AppLayout.cardElevation,
-      color: AppColors.cardBackground,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
-      ),
+    return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(AppLayout.statsContentPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Expanded(
-              child: hasData
-                  ? LineChart(
-                      LineChartData(
-                        // Grid and background styling
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: true,
-                          drawHorizontalLine: true,
-                          horizontalInterval: 25,
-                          verticalInterval: ChartConstants.dateDisplayInterval.toDouble(),
-                          getDrawingHorizontalLine: (value) => FlLine(
-                            color: AppColors.chartGrid,
-                            strokeWidth: ChartConstants.gridStrokeWidth.toDouble(),
-                          ),
-                          getDrawingVerticalLine: (value) => FlLine(
-                            color: AppColors.chartGrid,
-                            strokeWidth: ChartConstants.gridStrokeWidth.toDouble(),
-                          ),
-                        ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              interval: ChartConstants.dateDisplayInterval.toDouble(),
-                              getTitlesWidget: (value, meta) {
-                                final index = value.toInt();
-                                if (index >= 0 && index < chartData.length && index % ChartConstants.dateDisplayInterval == 0) {
-                                  final date = chartData[index].key;
-                                  return Padding(
-                                    padding: EdgeInsets.only(top: AppLayout.legendSpacing),
-                                    child: Text(
-                                      DateFormat('d').format(date),
-                                      style: TextStyle(
-                                        color: AppColors.textSecondary,
-                                        fontSize: ChartConstants.tooltipFontSize.toDouble(),
-                                      ),
+        padding: EdgeInsets.all(AppLayout.maxScreenPadding),
+        child: Card(
+          elevation: AppLayout.cardElevation,
+          color: AppColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(AppLayout.statsContentPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child:
+                      hasData
+                          ? LineChart(
+                            LineChartData(
+                              // Grid and background styling
+                              gridData: FlGridData(
+                                show: true,
+                                drawVerticalLine: true,
+                                drawHorizontalLine: true,
+                                horizontalInterval: 25,
+                                verticalInterval:
+                                    ChartConstants.dateDisplayInterval
+                                        .toDouble(),
+                                getDrawingHorizontalLine:
+                                    (value) => FlLine(
+                                      color: AppColors.chartGrid,
+                                      strokeWidth:
+                                          ChartConstants.gridStrokeWidth
+                                              .toDouble(),
                                     ),
-                                  );
-                                }
-                                return SizedBox();
-                              },
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 20,
-                              interval: 25,
-                              getTitlesWidget: (value, meta) {
-                                final duration = _normalizedToDuration(value);
-                                if (duration >= TrainingConstants.minCycleDuration &&
-                                    duration <= TrainingConstants.maxCycleDuration &&
-                                    duration % 15 == 0) {
-                                  return Text(
-                                    duration.toString(),
-                                    style: TextStyle(
-                                      color: AppColors.phaseIn,
-                                      fontSize: ChartConstants.tooltipFontSize.toDouble(),
+                                getDrawingVerticalLine:
+                                    (value) => FlLine(
+                                      color: AppColors.chartGrid,
+                                      strokeWidth:
+                                          ChartConstants.gridStrokeWidth
+                                              .toDouble(),
                                     ),
-                                  );
-                                }
-                                return SizedBox();
-                              },
-                            ),
-                          ),
-                          rightTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 10,
-                              interval: 25,
-                              getTitlesWidget: (value, meta) {
-                                final cycles = _normalizedToCycles(value);
-                                if (cycles >= TrainingConstants.minCycles &&
-                                    cycles <= TrainingConstants.maxCycles) {
-                                  return Text(
-                                    cycles.toString(),
-                                    style: TextStyle(
-                                      color: AppColors.phaseOut,
-                                      fontSize: ChartConstants.tooltipFontSize.toDouble(),
-                                    ),
-                                  );
-                                }
-                                return SizedBox();
-                              },
-                            ),
-                          ),
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        borderData: FlBorderData(
-                          show: true,
-                          border: Border.all(color: AppColors.chartGrid, width: ChartConstants.gridStrokeWidth.toDouble()),
-                        ),
-                        minX: 0,
-                        maxX: (chartData.length - 1).toDouble(),
-                        minY: 0,
-                        maxY: 100,
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: _getDurationSpots(),
-                            isCurved: true,
-                            curveSmoothness: ChartConstants.curveSmoothness,
-                            color: AppColors.phaseIn,
-                            barWidth: ChartConstants.lineWidth,
-                            dotData: FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, barData, index) {
-                                return FlDotCirclePainter(
-                                  radius: ChartConstants.dotRadius,
+                              ),
+                              titlesData: FlTitlesData(
+                                show: true,
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 40,
+                                    interval:
+                                        ChartConstants.dateDisplayInterval
+                                            .toDouble(),
+                                    getTitlesWidget: (value, meta) {
+                                      final index = value.toInt();
+                                      if (index >= 0 &&
+                                          index < chartData.length &&
+                                          index %
+                                                  ChartConstants
+                                                      .dateDisplayInterval ==
+                                              0) {
+                                        final date = chartData[index].key;
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            top: AppLayout.legendSpacing,
+                                          ),
+                                          child: Text(
+                                            DateFormat('d').format(date),
+                                            style: TextStyle(
+                                              color: AppColors.textSecondary,
+                                              fontSize:
+                                                  ChartConstants.tooltipFontSize
+                                                      .toDouble(),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox();
+                                    },
+                                  ),
+                                ),
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 20,
+                                    interval: 25,
+                                    getTitlesWidget: (value, meta) {
+                                      final duration = _normalizedToDuration(
+                                        value,
+                                      );
+                                      if (duration >=
+                                              TrainingConstants
+                                                  .minCycleDuration &&
+                                          duration <=
+                                              TrainingConstants
+                                                  .maxCycleDuration &&
+                                          duration % 15 == 0) {
+                                        return Text(
+                                          duration.toString(),
+                                          style: TextStyle(
+                                            color: AppColors.phaseIn,
+                                            fontSize:
+                                                ChartConstants.tooltipFontSize
+                                                    .toDouble(),
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox();
+                                    },
+                                  ),
+                                ),
+                                rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 10,
+                                    interval: 25,
+                                    getTitlesWidget: (value, meta) {
+                                      final cycles = _normalizedToCycles(value);
+                                      if (cycles >=
+                                              TrainingConstants.minCycles &&
+                                          cycles <=
+                                              TrainingConstants.maxCycles) {
+                                        return Text(
+                                          cycles.toString(),
+                                          style: TextStyle(
+                                            color: AppColors.phaseOut,
+                                            fontSize:
+                                                ChartConstants.tooltipFontSize
+                                                    .toDouble(),
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox();
+                                    },
+                                  ),
+                                ),
+                                topTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                              ),
+                              borderData: FlBorderData(
+                                show: true,
+                                border: Border.all(
+                                  color: AppColors.chartGrid,
+                                  width:
+                                      ChartConstants.gridStrokeWidth.toDouble(),
+                                ),
+                              ),
+                              minX: 0,
+                              maxX: (chartData.length - 1).toDouble(),
+                              minY: 0,
+                              maxY: 100,
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: _getDurationSpots(),
+                                  isCurved: true,
+                                  curveSmoothness:
+                                      ChartConstants.curveSmoothness,
                                   color: AppColors.phaseIn,
-                                  strokeWidth: ChartConstants.dotStrokeWidth,
-                                  strokeColor: AppColors.background,
-                                );
-                              },
-                            ),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              color: AppColors.phaseIn.withOpacity(ChartConstants.areaOpacity),
-                            ),
-                          ),
-                          LineChartBarData(
-                            spots: _getCyclesSpots(),
-                            isCurved: true,
-                            curveSmoothness: ChartConstants.curveSmoothness,
-                            color: AppColors.phaseOut,
-                            barWidth: ChartConstants.lineWidth,
-                            dotData: FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, barData, index) {
-                                return FlDotCirclePainter(
-                                  radius: ChartConstants.dotRadius,
+                                  barWidth: ChartConstants.lineWidth,
+                                  dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter: (
+                                      spot,
+                                      percent,
+                                      barData,
+                                      index,
+                                    ) {
+                                      return FlDotCirclePainter(
+                                        radius: ChartConstants.dotRadius,
+                                        color: AppColors.phaseIn,
+                                        strokeWidth:
+                                            ChartConstants.dotStrokeWidth,
+                                        strokeColor: AppColors.background,
+                                      );
+                                    },
+                                  ),
+                                  belowBarData: BarAreaData(
+                                    show: true,
+                                    color: AppColors.phaseIn.withOpacity(
+                                      ChartConstants.areaOpacity,
+                                    ),
+                                  ),
+                                ),
+                                LineChartBarData(
+                                  spots: _getCyclesSpots(),
+                                  isCurved: true,
+                                  curveSmoothness:
+                                      ChartConstants.curveSmoothness,
                                   color: AppColors.phaseOut,
-                                  strokeWidth: ChartConstants.dotStrokeWidth,
-                                  strokeColor: AppColors.background,
-                                );
-                              },
+                                  barWidth: ChartConstants.lineWidth,
+                                  dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter: (
+                                      spot,
+                                      percent,
+                                      barData,
+                                      index,
+                                    ) {
+                                      return FlDotCirclePainter(
+                                        radius: ChartConstants.dotRadius,
+                                        color: AppColors.phaseOut,
+                                        strokeWidth:
+                                            ChartConstants.dotStrokeWidth,
+                                        strokeColor: AppColors.background,
+                                      );
+                                    },
+                                  ),
+                                  belowBarData: BarAreaData(show: false),
+                                ),
+                              ],
+                              lineTouchData: LineTouchData(
+                                enabled: true,
+                                touchTooltipData: LineTouchTooltipData(
+                                  getTooltipItems: (touchedSpots) {
+                                    final tooltips = <LineTooltipItem?>[];
+                                    for (
+                                      int i = 0;
+                                      i < touchedSpots.length;
+                                      i++
+                                    ) {
+                                      final spot = touchedSpots[i];
+                                      final index = spot.x.toInt();
+                                      if (index >= 0 &&
+                                          index < chartData.length &&
+                                          chartData[index].value != null) {
+                                        final date = chartData[index].key;
+                                        final result = chartData[index].value!;
+                                        if (i == 0) {
+                                          tooltips.add(
+                                            LineTooltipItem(
+                                              '${DateFormat('MMM d').format(date)}\nDuration: ${result.duration}s\nCycles: ${result.cycles}',
+                                              TextStyle(
+                                                color: AppColors.textPrimary,
+                                                fontSize:
+                                                    ChartConstants
+                                                        .tooltipFontSize
+                                                        .toDouble(),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          tooltips.add(null);
+                                        }
+                                      } else {
+                                        tooltips.add(null);
+                                      }
+                                    }
+                                    return tooltips;
+                                  },
+                                ),
+                              ),
                             ),
-                            belowBarData: BarAreaData(show: false),
+                          )
+                          : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.insights,
+                                  size: AppLayout.noDataIconSize,
+                                  color: AppColors.textSecondary.withOpacity(
+                                    0.5,
+                                  ),
+                                ),
+                                SizedBox(height: AppLayout.maxScreenPadding),
+                                Text(
+                                  'No Training Data Yet',
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: AppLayout.noDataTitleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: AppLayout.legendSpacing),
+                                Text(
+                                  'Complete some training sessions to see your progress here.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize:
+                                        AppLayout.noDataDescriptionFontSize,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                        lineTouchData: LineTouchData(
-                          enabled: true,
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipItems: (touchedSpots) {
-                              final tooltips = <LineTooltipItem?>[];
-                              for (int i = 0; i < touchedSpots.length; i++) {
-                                final spot = touchedSpots[i];
-                                final index = spot.x.toInt();
-                                if (index >= 0 && index < chartData.length && chartData[index].value != null) {
-                                  final date = chartData[index].key;
-                                  final result = chartData[index].value!;
-                                  if (i == 0) {
-                                    tooltips.add(LineTooltipItem(
-                                      '${DateFormat('MMM d').format(date)}\nDuration: ${result.duration}s\nCycles: ${result.cycles}',
-                                      TextStyle(
-                                        color: AppColors.textPrimary,
-                                        fontSize: ChartConstants.tooltipFontSize.toDouble(),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ));
-                                  } else {
-                                    tooltips.add(null);
-                                  }
-                                } else {
-                                  tooltips.add(null);
-                                }
-                              }
-                              return tooltips;
-                            },
-                          ),
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                ),
+                if (hasData) ...[
+                  SizedBox(height: AppLayout.statsContentPadding),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.insights,
-                            size: AppLayout.noDataIconSize,
-                            color: AppColors.textSecondary.withOpacity(0.5),
+                          Container(
+                            width: AppLayout.legendIndicatorWidth,
+                            height: AppLayout.legendIndicatorHeight,
+                            decoration: BoxDecoration(
+                              color: AppColors.phaseIn,
+                              borderRadius: BorderRadius.circular(
+                                AppLayout.legendIndicatorRadius,
+                              ),
+                            ),
                           ),
-                          SizedBox(height: AppLayout.maxScreenPadding),
+                          SizedBox(width: AppLayout.legendSpacing),
                           Text(
-                            'No Training Data Yet',
+                            'Duration (sec)',
                             style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: AppLayout.noDataTitleFontSize,
+                              color: AppColors.phaseIn,
+                              fontSize: AppLayout.legendFontSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: AppLayout.legendSpacing),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: AppLayout.legendIndicatorWidth,
+                            height: AppLayout.legendIndicatorHeight,
+                            decoration: BoxDecoration(
+                              color: AppColors.phaseOut,
+                              borderRadius: BorderRadius.circular(
+                                AppLayout.legendIndicatorRadius,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: AppLayout.legendSpacing),
                           Text(
-                            'Complete some training sessions to see your progress here.',
-                            textAlign: TextAlign.center,
+                            'Cycles',
                             style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: AppLayout.noDataDescriptionFontSize,
+                              color: AppColors.phaseOut,
+                              fontSize: AppLayout.legendFontSize,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
-                      ),
-                    ),
-            ),
-            if (hasData) ...[
-              SizedBox(height: AppLayout.statsContentPadding),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: AppLayout.legendIndicatorWidth,
-                        height: AppLayout.legendIndicatorHeight,
-                        decoration: BoxDecoration(
-                          color: AppColors.phaseIn,
-                          borderRadius: BorderRadius.circular(AppLayout.legendIndicatorRadius),
-                        ),
-                      ),
-                      SizedBox(width: AppLayout.legendSpacing),
-                      Text(
-                        'Duration (sec)',
-                        style: TextStyle(
-                          color: AppColors.phaseIn,
-                          fontSize: AppLayout.legendFontSize,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: AppLayout.legendIndicatorWidth,
-                        height: AppLayout.legendIndicatorHeight,
-                        decoration: BoxDecoration(
-                          color: AppColors.phaseOut,
-                          borderRadius: BorderRadius.circular(AppLayout.legendIndicatorRadius),
-                        ),
-                      ),
-                      SizedBox(width: AppLayout.legendSpacing),
-                      Text(
-                        'Cycles',
-                        style: TextStyle(
-                          color: AppColors.phaseOut,
-                          fontSize: AppLayout.legendFontSize,
-                          fontWeight: FontWeight.bold,
-                        ),
                       ),
                     ],
                   ),
                 ],
-              ),
-            ],
-            SizedBox(height: AppLayout.statsChartPadding),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: hasData ? _clearResults : null,
-                icon: Icon(Icons.delete_outline),
-                label: Text('Clear All Results'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.withOpacity(0.8),
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: AppColors.textSecondary.withOpacity(0.3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppLayout.statsContentPadding,
-                    vertical: AppLayout.statsHeaderSpacing,
+                SizedBox(height: AppLayout.statsChartPadding),
+                Center(
+                  child: ElevatedButton.icon(
+                    onPressed: hasData ? _clearResults : null,
+                    icon: Icon(Icons.delete_outline),
+                    label: Text('Clear All Results'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.withOpacity(0.8),
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppColors.textSecondary
+                          .withOpacity(0.3),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppLayout.buttonBorderRadius,
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppLayout.statsContentPadding,
+                        vertical: AppLayout.statsHeaderSpacing,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  )
-  );
-}
-
+    );
+  }
 
   /// Converts duration chart data to FlSpot objects with normalized values
   List<FlSpot> _getDurationSpots() {
     final spots = <FlSpot>[];
-    
+
     for (int i = 0; i < chartData.length; i++) {
       final result = chartData[i].value;
       if (result != null) {
         // Normalize duration to 0-100 scale using fixed training constants
-        final durationRange = TrainingConstants.maxCycleDuration - TrainingConstants.minCycleDuration;
-        double normalizedValue = ((result.duration - TrainingConstants.minCycleDuration) / durationRange) * 100;
+        final durationRange =
+            TrainingConstants.maxCycleDuration -
+            TrainingConstants.minCycleDuration;
+        double normalizedValue =
+            ((result.duration - TrainingConstants.minCycleDuration) /
+                durationRange) *
+            100;
         normalizedValue = normalizedValue.clamp(0.0, 100.0);
         spots.add(FlSpot(i.toDouble(), normalizedValue));
       }
@@ -1377,13 +1477,15 @@ Widget _buildStatisticsContent() {
   /// Converts cycles chart data to FlSpot objects with normalized values
   List<FlSpot> _getCyclesSpots() {
     final spots = <FlSpot>[];
-    
+
     for (int i = 0; i < chartData.length; i++) {
       final result = chartData[i].value;
       if (result != null) {
         // Normalize cycles to 0-100 scale using fixed training constants
-        final cycleRange = TrainingConstants.maxCycles - TrainingConstants.minCycles;
-        double normalizedValue = ((result.cycles - TrainingConstants.minCycles) / cycleRange) * 100;
+        final cycleRange =
+            TrainingConstants.maxCycles - TrainingConstants.minCycles;
+        double normalizedValue =
+            ((result.cycles - TrainingConstants.minCycles) / cycleRange) * 100;
         normalizedValue = normalizedValue.clamp(0.0, 100.0);
         spots.add(FlSpot(i.toDouble(), normalizedValue));
       }
@@ -1393,13 +1495,18 @@ Widget _buildStatisticsContent() {
 
   /// Converts normalized value back to actual duration for Y-axis labels
   int _normalizedToDuration(double normalizedValue) {
-    final durationRange = TrainingConstants.maxCycleDuration - TrainingConstants.minCycleDuration;
-    return (TrainingConstants.minCycleDuration + (normalizedValue / 100) * durationRange).round();
+    final durationRange =
+        TrainingConstants.maxCycleDuration - TrainingConstants.minCycleDuration;
+    return (TrainingConstants.minCycleDuration +
+            (normalizedValue / 100) * durationRange)
+        .round();
   }
 
   /// Converts normalized value back to actual cycles for Y-axis labels
   int _normalizedToCycles(double normalizedValue) {
-    final cycleRange = TrainingConstants.maxCycles - TrainingConstants.minCycles;
-    return (TrainingConstants.minCycles + (normalizedValue / 100) * cycleRange).round();
+    final cycleRange =
+        TrainingConstants.maxCycles - TrainingConstants.minCycles;
+    return (TrainingConstants.minCycles + (normalizedValue / 100) * cycleRange)
+        .round();
   }
 }
