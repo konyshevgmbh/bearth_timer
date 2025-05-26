@@ -727,8 +727,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildHeader(),
-        SizedBox(height: AppLayout.sectionSpacingMedium),
         _buildControlsSection(),
         SizedBox(height: AppLayout.sectionSpacingSmall),
         _buildPhaseInfoText(),
@@ -746,8 +744,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildHeader(),
-        SizedBox(height: AppLayout.sectionSpacingMedium),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -769,27 +765,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         ),
         SizedBox(height: AppLayout.sectionSpacingSmall),
       ],
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.all(AppLayout.headerPadding),
-      decoration: BoxDecoration(
-        color: AppColors.headerBackground.withOpacity(
-          AppColors.headerBackgroundOpacity,
-        ),
-        borderRadius: BorderRadius.circular(AppLayout.headerBorderRadius),
-      ),
-      child: Text(
-        "TIMER",
-        style: TextStyle(
-          color: AppColors.textPrimary.withOpacity(AppColors.headerTextOpacity),
-          fontWeight: FontWeight.bold,
-          fontSize: AppLayout.headerFontSize,
-          letterSpacing: 1.5,
-        ),
-      ),
     );
   }
 
@@ -1092,23 +1067,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header section
-              Row(
-                children: [
-                  Icon(Icons.bar_chart, color: AppColors.textPrimary, size: AppLayout.statsIconSize),
-                  SizedBox(width: AppLayout.statsHeaderSpacing),
-                  Text(
-                    'Progress Tracking',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: AppLayout.statsTitleFontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: AppLayout.statsChartPadding),
 
               // Chart section
               if (hasData) ...[
