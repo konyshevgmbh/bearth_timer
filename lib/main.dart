@@ -1155,7 +1155,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 return Padding(
                                   padding: EdgeInsets.only(top: AppLayout.legendSpacing),
                                   child: Text(
-                                    DateFormat('M/d').format(date),
+                                    DateFormat('d').format(date),
                                     style: TextStyle(
                                       color: AppColors.textSecondary,
                                       fontSize: ChartConstants.tooltipFontSize.toDouble(),
@@ -1168,17 +1168,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           ),
                         ),
                         leftTitles: AxisTitles(
-                          axisNameWidget: Text(
-                            'Duration (sec)',
-                            style: TextStyle(
-                              color: AppColors.phaseIn,
-                              fontSize: ChartConstants.tooltipFontSize.toDouble(),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 50,
+                            reservedSize: 20,
                             interval: 25,
                             getTitlesWidget: (value, meta) {
                               // Show duration values in 30-90 range
@@ -1199,17 +1191,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           ),
                         ),
                         rightTitles: AxisTitles(
-                          axisNameWidget: Text(
-                            'Cycles',
-                            style: TextStyle(
-                              color: AppColors.phaseOut,
-                              fontSize: ChartConstants.tooltipFontSize.toDouble(),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 50,
+                            reservedSize: 10,
                             interval: 25,
                             getTitlesWidget: (value, meta) {
                               // Show cycle count values in 1-9 range
