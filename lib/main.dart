@@ -1107,14 +1107,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   ),
                 ],
               ),
-              SizedBox(height: AppLayout.legendSpacing),
-              Text(
-                'Cycle duration and count over time',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: AppLayout.statsDescriptionFontSize,
-                ),
-              ),
+
               SizedBox(height: AppLayout.statsChartPadding),
 
               // Chart section
