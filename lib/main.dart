@@ -1055,7 +1055,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 Widget _buildStatisticsContent() {
   final hasData = chartData.any((entry) => entry.value != null);
 
-  return Padding(
+  return SafeArea(child:Padding(
     padding: EdgeInsets.all(AppLayout.maxScreenPadding),
     child: Card(
       elevation: AppLayout.cardElevation,
@@ -1352,6 +1352,7 @@ Widget _buildStatisticsContent() {
         ),
       ),
     ),
+  )
   );
 }
 
