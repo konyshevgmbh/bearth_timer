@@ -970,14 +970,15 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   }
 }
 
-/// Statistics page showing training results over the last 30 days with a chart
+
+/// Statistics page showing training results over the last 30 days with a dual-axis chart
 class StatisticsPage extends StatefulWidget {
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
-  List<MapEntry<DateTime, double?>> chartData = [];
+  List<MapEntry<DateTime, TrainingResult?>> chartData = [];
   bool isLoading = true;
 
   @override
@@ -989,7 +990,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
   /// Loads the last 30 days of training data for the chart
   Future<void> _loadData() async {
     setState(() => isLoading = true);
-    final data = await ResultsManager.getLast30DaysData();
+    final results = await ResultsManager.getResults();
+    final data = <MapEntry<DateTime, TrainingResult?>>[];
+    
+    // Create map of date -> result for quick lookup
+    final resultMap = <String, TrainingResult>{};
+    for (final result in results) {
+      final dateKey = DateFormat('yyyy-MM-dd').format(result.date);
+      resultMap[dateKey] = result;
+    }
+    
+    // Generate last 30 days
+    for (int i = StorageConstants.maxDataRetentionDays - 1; i >= 0; i--) {
+      final date = DateTime.now().subtract(Duration(days: i));
+      final dateKey = DateFormat('yyyy-MM-dd').format(date);
+      data.add(MapEntry(date, resultMap[dateKey]));
+    }
+    
     setState(() {
       chartData = data;
       isLoading = false;
@@ -1081,7 +1098,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   Icon(Icons.bar_chart, color: AppColors.textPrimary, size: AppLayout.statsIconSize),
                   SizedBox(width: AppLayout.statsHeaderSpacing),
                   Text(
-                    'Progress',
+                    'Progress Tracking',
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: AppLayout.statsTitleFontSize,
@@ -1092,7 +1109,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ),
               SizedBox(height: AppLayout.legendSpacing),
               Text(
-                'Training performance over time',
+                'Cycle duration and count over time',
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: AppLayout.statsDescriptionFontSize,
@@ -1111,7 +1128,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         show: true,
                         drawVerticalLine: true,
                         drawHorizontalLine: true,
-                        horizontalInterval: ChartConstants.scoreDisplayInterval.toDouble(),
+                        horizontalInterval: 25, // Better spacing for 0-100 normalized scale
                         verticalInterval: ChartConstants.dateDisplayInterval.toDouble(),
                         getDrawingHorizontalLine: (value) => FlLine(
                           color: AppColors.chartGrid,
@@ -1151,23 +1168,67 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           ),
                         ),
                         leftTitles: AxisTitles(
+                          axisNameWidget: Text(
+                            'Duration (sec)',
+                            style: TextStyle(
+                              color: AppColors.phaseIn,
+                              fontSize: ChartConstants.tooltipFontSize.toDouble(),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 50,
-                            interval: ChartConstants.scoreDisplayInterval.toDouble(),
+                            interval: 25,
                             getTitlesWidget: (value, meta) {
-                              return Text(
-                                value.toInt().toString(),
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: ChartConstants.tooltipFontSize.toDouble(),
-                                ),
-                              );
+                              // Show duration values in 30-90 range
+                              final duration = _normalizedToDuration(value);
+                              if (duration >= TrainingConstants.minCycleDuration && 
+                                  duration <= TrainingConstants.maxCycleDuration &&
+                                  duration % 15 == 0) { // Show every 15 seconds
+                                return Text(
+                                  duration.toString(),
+                                  style: TextStyle(
+                                    color: AppColors.phaseIn,
+                                    fontSize: ChartConstants.tooltipFontSize.toDouble(),
+                                  ),
+                                );
+                              }
+                              return SizedBox();
+                            },
+                          ),
+                        ),
+                        rightTitles: AxisTitles(
+                          axisNameWidget: Text(
+                            'Cycles',
+                            style: TextStyle(
+                              color: AppColors.phaseOut,
+                              fontSize: ChartConstants.tooltipFontSize.toDouble(),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 50,
+                            interval: 25,
+                            getTitlesWidget: (value, meta) {
+                              // Show cycle count values in 1-9 range
+                              final cycles = _normalizedToCycles(value);
+                              if (cycles >= TrainingConstants.minCycles && 
+                                  cycles <= TrainingConstants.maxCycles) {
+                                return Text(
+                                  cycles.toString(),
+                                  style: TextStyle(
+                                    color: AppColors.phaseOut,
+                                    fontSize: ChartConstants.tooltipFontSize.toDouble(),
+                                  ),
+                                );
+                              }
+                              return SizedBox();
                             },
                           ),
                         ),
                         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       ),
                       
                       // Chart borders
@@ -1180,22 +1241,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       minX: 0,
                       maxX: (chartData.length - 1).toDouble(),
                       minY: 0,
-                      maxY: _getMaxScore() * ChartConstants.chartScaleMultiplier,
+                      maxY: 100, // Normalized scale
                       
-                      // Line data
+                      // Line data - Duration and Cycles
                       lineBarsData: [
+                        // Duration line (primary Y-axis)
                         LineChartBarData(
-                          spots: _getChartSpots(),
+                          spots: _getDurationSpots(),
                           isCurved: true,
                           curveSmoothness: ChartConstants.curveSmoothness,
-                          color: AppColors.chartLine,
+                          color: AppColors.phaseIn,
                           barWidth: ChartConstants.lineWidth,
                           dotData: FlDotData(
                             show: true,
                             getDotPainter: (spot, percent, barData, index) {
                               return FlDotCirclePainter(
                                 radius: ChartConstants.dotRadius,
-                                color: AppColors.chartLine,
+                                color: AppColors.phaseIn,
                                 strokeWidth: ChartConstants.dotStrokeWidth,
                                 strokeColor: AppColors.background,
                               );
@@ -1203,8 +1265,28 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           ),
                           belowBarData: BarAreaData(
                             show: true,
-                            color: AppColors.chartLine.withOpacity(ChartConstants.areaOpacity),
+                            color: AppColors.phaseIn.withOpacity(ChartConstants.areaOpacity),
                           ),
+                        ),
+                        // Cycles line (secondary Y-axis)
+                        LineChartBarData(
+                          spots: _getCyclesSpots(),
+                          isCurved: true,
+                          curveSmoothness: ChartConstants.curveSmoothness,
+                          color: AppColors.phaseOut,
+                          barWidth: ChartConstants.lineWidth,
+                          dotData: FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, barData, index) {
+                              return FlDotCirclePainter(
+                                radius: ChartConstants.dotRadius,
+                                color: AppColors.phaseOut,
+                                strokeWidth: ChartConstants.dotStrokeWidth,
+                                strokeColor: AppColors.background,
+                              );
+                            },
+                          ),
+                          belowBarData: BarAreaData(show: false), // Only show area for duration
                         ),
                       ],
                       
@@ -1213,18 +1295,36 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
                           getTooltipItems: (touchedSpots) {
-                            return touchedSpots.map((spot) {
+                            final tooltips = <LineTooltipItem?>[];
+                            
+                            for (int i = 0; i < touchedSpots.length; i++) {
+                              final spot = touchedSpots[i];
                               final index = spot.x.toInt();
-                              if (index >= 0 && index < chartData.length) {
+                              
+                              if (index >= 0 && index < chartData.length && chartData[index].value != null) {
                                 final date = chartData[index].key;
-                                final score = spot.y;
-                                return LineTooltipItem(
-                                  '${DateFormat('MMM d').format(date)}\nScore: ${score.toInt()}',
-                                  TextStyle(color: AppColors.textPrimary, fontSize: ChartConstants.tooltipFontSize.toDouble()),
-                                );
+                                final result = chartData[index].value!;
+                                
+                                if (i == 0) {
+                                  // Duration line tooltip
+                                  tooltips.add(LineTooltipItem(
+                                    '${DateFormat('MMM d').format(date)}\nDuration: ${result.duration}s\nCycles: ${result.cycles}',
+                                    TextStyle(
+                                      color: AppColors.textPrimary,
+                                      fontSize: ChartConstants.tooltipFontSize.toDouble(),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ));
+                                } else {
+                                  // For cycles line, we don't want duplicate tooltip
+                                  tooltips.add(null);
+                                }
+                              } else {
+                                tooltips.add(null);
                               }
-                              return null;
-                            }).toList();
+                            }
+                            
+                            return tooltips;
                           },
                         ),
                       ),
@@ -1235,23 +1335,53 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 
                 // Chart legend
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      width: AppLayout.legendIndicatorWidth,
-                      height: AppLayout.legendIndicatorHeight,
-                      decoration: BoxDecoration(
-                        color: AppColors.chartLine,
-                        borderRadius: BorderRadius.circular(AppLayout.legendIndicatorRadius),
-                      ),
+                    // Duration legend
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: AppLayout.legendIndicatorWidth,
+                          height: AppLayout.legendIndicatorHeight,
+                          decoration: BoxDecoration(
+                            color: AppColors.phaseIn,
+                            borderRadius: BorderRadius.circular(AppLayout.legendIndicatorRadius),
+                          ),
+                        ),
+                        SizedBox(width: AppLayout.legendSpacing),
+                        Text(
+                          'Duration (sec)',
+                          style: TextStyle(
+                            color: AppColors.phaseIn,
+                            fontSize: AppLayout.legendFontSize,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: AppLayout.legendSpacing),
-                    Text(
-                      'Training Score ',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: AppLayout.legendFontSize,
-                      ),
+                    // Cycles legend
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: AppLayout.legendIndicatorWidth,
+                          height: AppLayout.legendIndicatorHeight,
+                          decoration: BoxDecoration(
+                            color: AppColors.phaseOut,
+                            borderRadius: BorderRadius.circular(AppLayout.legendIndicatorRadius),
+                          ),
+                        ),
+                        SizedBox(width: AppLayout.legendSpacing),
+                        Text(
+                          'Cycles',
+                          style: TextStyle(
+                            color: AppColors.phaseOut,
+                            fontSize: AppLayout.legendFontSize,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -1268,7 +1398,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           size: AppLayout.noDataIconSize,
                           color: AppColors.textSecondary.withOpacity(0.5),
                         ),
-                        SizedBox(width: AppLayout.maxScreenPadding),
+                        SizedBox(height: AppLayout.maxScreenPadding),
                         Text(
                           'No Training Data Yet',
                           style: TextStyle(
@@ -1318,26 +1448,49 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 
-  /// Converts chart data to FlSpot objects for the line chart
-  List<FlSpot> _getChartSpots() {
+  /// Converts duration chart data to FlSpot objects with normalized values
+  List<FlSpot> _getDurationSpots() {
     final spots = <FlSpot>[];
+    
     for (int i = 0; i < chartData.length; i++) {
-      final score = chartData[i].value;
-      if (score != null) {
-        spots.add(FlSpot(i.toDouble(), score));
+      final result = chartData[i].value;
+      if (result != null) {
+        // Normalize duration to 0-100 scale using fixed training constants
+        final durationRange = TrainingConstants.maxCycleDuration - TrainingConstants.minCycleDuration;
+        double normalizedValue = ((result.duration - TrainingConstants.minCycleDuration) / durationRange) * 100;
+        normalizedValue = normalizedValue.clamp(0.0, 100.0);
+        spots.add(FlSpot(i.toDouble(), normalizedValue));
       }
     }
     return spots;
   }
 
-  /// Gets the maximum score value for chart scaling
-  double _getMaxScore() {
-    double maxScore = ChartConstants.minChartScale; // Minimum scale
-    for (final entry in chartData) {
-      if (entry.value != null && entry.value! > maxScore) {
-        maxScore = entry.value!;
+  /// Converts cycles chart data to FlSpot objects with normalized values
+  List<FlSpot> _getCyclesSpots() {
+    final spots = <FlSpot>[];
+    
+    for (int i = 0; i < chartData.length; i++) {
+      final result = chartData[i].value;
+      if (result != null) {
+        // Normalize cycles to 0-100 scale using fixed training constants
+        final cycleRange = TrainingConstants.maxCycles - TrainingConstants.minCycles;
+        double normalizedValue = ((result.cycles - TrainingConstants.minCycles) / cycleRange) * 100;
+        normalizedValue = normalizedValue.clamp(0.0, 100.0);
+        spots.add(FlSpot(i.toDouble(), normalizedValue));
       }
     }
-    return maxScore;
+    return spots;
+  }
+
+  /// Converts normalized value back to actual duration for Y-axis labels
+  int _normalizedToDuration(double normalizedValue) {
+    final durationRange = TrainingConstants.maxCycleDuration - TrainingConstants.minCycleDuration;
+    return (TrainingConstants.minCycleDuration + (normalizedValue / 100) * durationRange).round();
+  }
+
+  /// Converts normalized value back to actual cycles for Y-axis labels
+  int _normalizedToCycles(double normalizedValue) {
+    final cycleRange = TrainingConstants.maxCycles - TrainingConstants.minCycles;
+    return (TrainingConstants.minCycles + (normalizedValue / 100) * cycleRange).round();
   }
 }
