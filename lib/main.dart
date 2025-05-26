@@ -5,6 +5,70 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
+// =============================================================================
+// ALGORITHM & TRAINING CONSTANTS
+// =============================================================================
+
+/// Core training algorithm parameters and limits
+class TrainingConstants {
+  // Default training settings
+  static const int defaultTotalCycles = 5;
+  static const int defaultCycleDuration = 30; // seconds
+  
+  // Training limits and constraints
+  static const int minCycles = 1;
+  static const int maxCycles = 9;
+  static const int minCycleDuration = 30; // seconds
+  static const int maxCycleDuration = 90; // seconds  
+  static const int cycleDurationStep = 5; // seconds
+  
+  // Phase timing constants
+  static const int waitPhaseDuration = 3; // seconds
+  static const int baseInhaleDuration = 5; // seconds
+  static const int baseExhaleDuration = 5; // seconds
+  static const int longExhaleDuration = 7; // seconds
+  static const int longExhaleThreshold = 60; // seconds - when to use longer exhale
+  
+  // Phase calculation ratios
+  static const double holdInhaleRatio = 0.75; // 75% of remaining time for hold inhale
+  
+  // Timer and session constants
+  static const int timerTickInterval = 1; // seconds
+}
+
+/// Data storage and persistence constants
+class StorageConstants {
+  static const String trainingResultsKey = 'training_results';
+  static const String totalCyclesKey = 'totalCycles';
+  static const String cycleDurationKey = 'cycleDuration';
+  static const int maxDataRetentionDays = 30;
+}
+
+/// Statistics and chart display constants
+class ChartConstants {
+  // Chart dimensions and intervals
+  static const double chartHeight = 300.0;
+  static const int dateDisplayInterval = 5; // Show every 5th date
+  static const int scoreDisplayInterval = 100;
+  static const double chartScaleMultiplier = 1.1; // 10% padding above max value
+  static const double minChartScale = 100.0; // Minimum Y-axis scale
+  
+  // Chart styling
+  static const double lineWidth = 3.0;
+  static const double dotRadius = 4.0;
+  static const double dotStrokeWidth = 2.0;
+  static const double curveSmoothness = 0.3;
+  static const double areaOpacity = 0.1;
+  static const int gridStrokeWidth = 1;
+  
+  // Touch interaction
+  static const int tooltipFontSize = 12;
+}
+
+// =============================================================================
+// UI DESIGN CONSTANTS
+// =============================================================================
+
 // App color scheme - centralized color management
 class AppColors {
   // Theme
@@ -71,11 +135,41 @@ class AppLayout {
   // Layout breakpoints
   static const double wideScreenThreshold = 600.0;
   static const double tallScreenThreshold = 600.0;
+  static const double wideAspectRatioThreshold = 1.3;
 
   // Container constraints
   static const double maxContentWidth = 600.0;
   static const double minContentWidth = 320.0;
+  
+  // Stepper control sizing
+  static const double stepperValueWidth = 38.0;
+  
+  // Navigation drawer
+  static const double drawerIconSize = 48.0;
+  static const double drawerHeaderSpacing = 8.0;
+  static const double drawerTitleFontSize = 20.0;
+  
+  // Statistics page
+  static const double statsIconSize = 28.0;
+  static const double statsHeaderSpacing = 12.0;
+  static const double statsTitleFontSize = 24.0;
+  static const double statsDescriptionFontSize = 16.0;
+  static const double statsContentPadding = 24.0;
+  static const double statsChartPadding = 32.0;
+  static const double noDataIconSize = 64.0;
+  static const double noDataTitleFontSize = 20.0;
+  static const double noDataDescriptionFontSize = 16.0;
+  static const double buttonBorderRadius = 12.0;
+  static const double legendIndicatorWidth = 16.0;
+  static const double legendIndicatorHeight = 3.0;
+  static const double legendIndicatorRadius = 2.0;
+  static const double legendSpacing = 8.0;
+  static const double legendFontSize = 14.0;
 }
+
+// =============================================================================
+// MAIN APPLICATION CODE
+// =============================================================================
 
 /// Represents a training result with date, duration, and cycles completed.
 /// Used to track and compare training sessions over time.
@@ -121,17 +215,13 @@ class TrainingResult {
   /// Calculates a score for chart display purposes.
   /// Score combines cycles and duration with cycles being more important.
   double get score {
-    
-    return duration *1.0 + cycles/10.0 ; // Higher cycles have more weight
+    return duration.toDouble();
   }
 }
 
 /// Manages storage and retrieval of training results using SharedPreferences.
 /// Automatically maintains only the last 30 days of data with best result per day.
 class ResultsManager {
-  static const String _storageKey = 'training_results';
-  static const int _maxDays = 30;
-
   /// Saves a new training result, keeping only the best result per day
   static Future<void> saveResult(TrainingResult result) async {
     try {
@@ -161,7 +251,7 @@ class ResultsManager {
         }
         
         // Clean up old results (keep only last 30 days)
-        final cutoffDate = DateTime.now().subtract(Duration(days: _maxDays));
+        final cutoffDate = DateTime.now().subtract(Duration(days: StorageConstants.maxDataRetentionDays));
         results.removeWhere((r) => r.date.isBefore(cutoffDate));
         
         // Sort by date (newest first)
@@ -169,7 +259,7 @@ class ResultsManager {
         
         // Save to SharedPreferences
         final jsonList = results.map((r) => r.toJson()).toList();
-        await prefs.setString(_storageKey, jsonEncode(jsonList));
+        await prefs.setString(StorageConstants.trainingResultsKey, jsonEncode(jsonList));
       }
     } catch (e) {
       // Silently handle errors to avoid disrupting the user experience
@@ -181,7 +271,7 @@ class ResultsManager {
   static Future<List<TrainingResult>> getResults() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(_storageKey);
+      final jsonString = prefs.getString(StorageConstants.trainingResultsKey);
       
       if (jsonString == null) return [];
       
@@ -197,7 +287,7 @@ class ResultsManager {
   static Future<void> clearResults() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_storageKey);
+      await prefs.remove(StorageConstants.trainingResultsKey);
     } catch (e) {
       print('Error clearing results: $e');
     }
@@ -216,7 +306,7 @@ class ResultsManager {
     }
     
     // Generate last 30 days
-    for (int i = 29; i >= 0; i--) {
+    for (int i = StorageConstants.maxDataRetentionDays - 1; i >= 0; i--) {
       final date = DateTime.now().subtract(Duration(days: i));
       final dateKey = DateFormat('yyyy-MM-dd').format(date);
       data.add(MapEntry(date, resultMap[dateKey]));
@@ -253,8 +343,8 @@ class BreathHoldHomePage extends StatefulWidget {
 
 class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   // Default settings
-  int totalCycles = 5;
-  int cycleDuration = 30; // seconds
+  int totalCycles = TrainingConstants.defaultTotalCycles;
+  int cycleDuration = TrainingConstants.defaultCycleDuration;
 
   // Current session state
   int currentCycle = 1;
@@ -278,7 +368,14 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     Phase.Rest,
     Phase.Done,
   ];
-  List<int> phaseDurations = [3, 5, 17, 5, 0, 0]; // Default values
+  List<int> phaseDurations = [
+    TrainingConstants.waitPhaseDuration,
+    TrainingConstants.baseInhaleDuration,
+    17, // Will be calculated
+    TrainingConstants.baseExhaleDuration,
+    0,  // Will be calculated
+    0,  // Done phase has no duration
+  ];
 
   @override
   void initState() {
@@ -291,8 +388,8 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       setState(() {
-        totalCycles = prefs.getInt('totalCycles') ?? 5;
-        cycleDuration = prefs.getInt('cycleDuration') ?? 30;
+        totalCycles = prefs.getInt(StorageConstants.totalCyclesKey) ?? TrainingConstants.defaultTotalCycles;
+        cycleDuration = prefs.getInt(StorageConstants.cycleDurationKey) ?? TrainingConstants.defaultCycleDuration;
       });
       _recalculatePhases();
     } catch (e) {
@@ -305,8 +402,8 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   Future<void> _saveSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('totalCycles', totalCycles);
-      await prefs.setInt('cycleDuration', cycleDuration);
+      await prefs.setInt(StorageConstants.totalCyclesKey, totalCycles);
+      await prefs.setInt(StorageConstants.cycleDurationKey, cycleDuration);
     } catch (e) {
       // Silently fail if saving is not available
     }
@@ -314,20 +411,22 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
 
   void _recalculatePhases() {
     // Calculate phase durations based on cycle length
-    int inhale = 5;
-    int exhale = (cycleDuration > 60) ? 7 : 5;
+    int inhale = TrainingConstants.baseInhaleDuration;
+    int exhale = (cycleDuration > TrainingConstants.longExhaleThreshold) 
+        ? TrainingConstants.longExhaleDuration 
+        : TrainingConstants.baseExhaleDuration;
     int remain = cycleDuration - inhale - exhale;
-    int holdInhale = (remain * 0.75).round();
+    int holdInhale = (remain * TrainingConstants.holdInhaleRatio).round();
     int holdExhale = remain - holdInhale;
 
     // Phase durations: Wait, In, Hold, Out, Rest, Done
     phaseDurations = [
-      3, // Wait: 3 seconds preparation
-      inhale, // In: inhale phase
-      holdInhale, // Hold: breath hold phase
-      exhale, // Out: exhale phase
-      holdExhale, // Rest: rest phase
-      0, // Done: completion (no duration)
+      TrainingConstants.waitPhaseDuration,
+      inhale,
+      holdInhale,
+      exhale,
+      holdExhale,
+      0, // Done phase has no duration
     ];
     setState(() {});
   }
@@ -343,7 +442,10 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
       sessionStartTime = DateTime.now(); // Track session start
     });
     timer?.cancel();
-    timer = Timer.periodic(Duration(seconds: 1), (_) => _tick());
+    timer = Timer.periodic(
+      Duration(seconds: TrainingConstants.timerTickInterval), 
+      (_) => _tick()
+    );
   }
 
   void _tick() {
@@ -510,7 +612,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   bool _shouldUseHorizontalLayout(Size screenSize) {
     return screenSize.width > AppLayout.wideScreenThreshold &&
         screenSize.height < AppLayout.tallScreenThreshold &&
-        screenSize.width / screenSize.height > 1.3; // Wide aspect ratio
+        screenSize.width / screenSize.height > AppLayout.wideAspectRatioThreshold;
   }
 
   @override
@@ -577,14 +679,14 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
                 Icon(
                   Icons.air,
                   color: AppColors.textPrimary,
-                  size: 48,
+                  size: AppLayout.drawerIconSize,
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: AppLayout.drawerHeaderSpacing),
                 Text(
                   '',
                   style: TextStyle(
                     color: AppColors.textPrimary,
-                    fontSize: 20,
+                    fontSize: AppLayout.drawerTitleFontSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -699,13 +801,13 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
           label: "CYCLES",
           value: totalCycles,
           onDec: () {
-            if (totalCycles > 1) {
+            if (totalCycles > TrainingConstants.minCycles) {
               setState(() => totalCycles--);
               _saveSettings();
             }
           },
           onInc: () {
-            if (totalCycles < 9) {
+            if (totalCycles < TrainingConstants.maxCycles) {
               setState(() => totalCycles++);
               _saveSettings();
             }
@@ -715,15 +817,15 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
           label: "TIME",
           value: cycleDuration,
           onDec: () {
-            if (cycleDuration > 30) {
-              setState(() => cycleDuration -= 5);
+            if (cycleDuration > TrainingConstants.minCycleDuration) {
+              setState(() => cycleDuration -= TrainingConstants.cycleDurationStep);
               _recalculatePhases();
               _saveSettings();
             }
           },
           onInc: () {
-            if (cycleDuration < 90) {
-              setState(() => cycleDuration += 5);
+            if (cycleDuration < TrainingConstants.maxCycleDuration) {
+              setState(() => cycleDuration += TrainingConstants.cycleDurationStep);
               _recalculatePhases();
               _saveSettings();
             }
@@ -734,78 +836,78 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   }
 
   Widget _buildPhaseInfoText() {
-  final phases = [
-    'In: ${phaseDurations[1]}s Hold: ${phaseDurations[2]}s',
-    'Out: ${phaseDurations[3]}s Rest: ${phaseDurations[4]}s',
-  ];
+    final phases = [
+      'In: ${phaseDurations[1]}s Hold: ${phaseDurations[2]}s',
+      'Out: ${phaseDurations[3]}s Rest: ${phaseDurations[4]}s',
+    ];
 
-  return Wrap(
-    alignment: WrapAlignment.center,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    spacing: 8, 
-    runSpacing: 2,
-    children: phases
-        .map((text) => Text(
-              text,
-              style: TextStyle(
-                fontSize: AppLayout.phaseInfoFontSize,
-                color: AppColors.textSecondary,
-              ),
-            ))
-        .toList(),
-  );
-}
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppLayout.legendSpacing, 
+      runSpacing: 2,
+      children: phases
+          .map((text) => Text(
+                text,
+                style: TextStyle(
+                  fontSize: AppLayout.phaseInfoFontSize,
+                  color: AppColors.textSecondary,
+                ),
+              ))
+          .toList(),
+    );
+  }
 
   Widget _buildTimerSection() {
-  return Stack(
-    alignment: Alignment.center,
-    children: [
-      SizedBox(
-        width: AppLayout.progressCircleSize,
-        height: AppLayout.progressCircleSize,
-        child: CircularProgressIndicator(
-          value: currentCycleProgress,
-          strokeWidth: AppLayout.progressStrokeWidth,
-          valueColor: AlwaysStoppedAnimation<Color>(phaseColor),
-          backgroundColor: AppColors.progressBackground,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        SizedBox(
+          width: AppLayout.progressCircleSize,
+          height: AppLayout.progressCircleSize,
+          child: CircularProgressIndicator(
+            value: currentCycleProgress,
+            strokeWidth: AppLayout.progressStrokeWidth,
+            valueColor: AlwaysStoppedAnimation<Color>(phaseColor),
+            backgroundColor: AppColors.progressBackground,
+          ),
         ),
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            phaseLabel,
-            style: TextStyle(
-              color: phaseColor,
-              fontWeight: FontWeight.bold,
-              fontSize: AppLayout.phaseLabelFontSize,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              phaseLabel,
+              style: TextStyle(
+                color: phaseColor,
+                fontWeight: FontWeight.bold,
+                fontSize: AppLayout.phaseLabelFontSize,
+              ),
             ),
-          ),
-          SizedBox(height: AppLayout.phaseTimerSpacing),
-          Text(
-            !isDone
-                ? timerDisplay
-                : "${cycleDuration.toString().padLeft(2, '0')}:00",
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: AppLayout.timerFontSize,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
+            SizedBox(height: AppLayout.phaseTimerSpacing),
+            Text(
+              !isDone
+                  ? timerDisplay
+                  : "${cycleDuration.toString().padLeft(2, '0')}:00",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: AppLayout.timerFontSize,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
             ),
-          ),
-          SizedBox(height: AppLayout.cycleInfoSpacing),
-          Text(
-            'Cycle $currentCycle / $totalCycles',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: AppLayout.cycleInfoFontSize,
+            SizedBox(height: AppLayout.cycleInfoSpacing),
+            Text(
+              'Cycle $currentCycle / $totalCycles',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: AppLayout.cycleInfoFontSize,
+              ),
             ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _buildActionButton() {
     return IconButton(
@@ -846,7 +948,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
               onPressed: onDec,
             ),
             Container(
-              width: 38,
+              width: AppLayout.stepperValueWidth,
               alignment: Alignment.center,
               child: Text(
                 '$value',
@@ -961,7 +1063,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     final hasData = chartData.any((entry) => entry.value != null);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(AppLayout.maxScreenPadding),
       child: Card(
         elevation: AppLayout.cardElevation,
         color: AppColors.cardBackground,
@@ -969,39 +1071,39 @@ class _StatisticsPageState extends State<StatisticsPage> {
           borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
         ),
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(AppLayout.statsContentPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header section
               Row(
                 children: [
-                  Icon(Icons.bar_chart, color: AppColors.textPrimary, size: 28),
-                  SizedBox(width: 12),
+                  Icon(Icons.bar_chart, color: AppColors.textPrimary, size: AppLayout.statsIconSize),
+                  SizedBox(width: AppLayout.statsHeaderSpacing),
                   Text(
                     'Progress',
                     style: TextStyle(
                       color: AppColors.textPrimary,
-                      fontSize: 24,
+                      fontSize: AppLayout.statsTitleFontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 8),
+              SizedBox(height: AppLayout.legendSpacing),
               Text(
                 'Training performance over time',
                 style: TextStyle(
                   color: AppColors.textSecondary,
-                  fontSize: 16,
+                  fontSize: AppLayout.statsDescriptionFontSize,
                 ),
               ),
-              SizedBox(height: 32),
+              SizedBox(height: AppLayout.statsChartPadding),
 
               // Chart section
               if (hasData) ...[
                 Container(
-                  height: 300,
+                  height: ChartConstants.chartHeight,
                   child: LineChart(
                     LineChartData(
                       // Grid and background styling
@@ -1009,15 +1111,15 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         show: true,
                         drawVerticalLine: true,
                         drawHorizontalLine: true,
-                        horizontalInterval: 50,
-                        verticalInterval: 5,
+                        horizontalInterval: ChartConstants.scoreDisplayInterval.toDouble(),
+                        verticalInterval: ChartConstants.dateDisplayInterval.toDouble(),
                         getDrawingHorizontalLine: (value) => FlLine(
                           color: AppColors.chartGrid,
-                          strokeWidth: 1,
+                          strokeWidth: ChartConstants.gridStrokeWidth.toDouble(),
                         ),
                         getDrawingVerticalLine: (value) => FlLine(
                           color: AppColors.chartGrid,
-                          strokeWidth: 1,
+                          strokeWidth: ChartConstants.gridStrokeWidth.toDouble(),
                         ),
                       ),
                       
@@ -1028,18 +1130,18 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 40,
-                            interval: 5,
+                            interval: ChartConstants.dateDisplayInterval.toDouble(),
                             getTitlesWidget: (value, meta) {
                               final index = value.toInt();
-                              if (index >= 0 && index < chartData.length && index % 5 == 0) {
+                              if (index >= 0 && index < chartData.length && index % ChartConstants.dateDisplayInterval == 0) {
                                 final date = chartData[index].key;
                                 return Padding(
-                                  padding: EdgeInsets.only(top: 8),
+                                  padding: EdgeInsets.only(top: AppLayout.legendSpacing),
                                   child: Text(
                                     DateFormat('M/d').format(date),
                                     style: TextStyle(
                                       color: AppColors.textSecondary,
-                                      fontSize: 12,
+                                      fontSize: ChartConstants.tooltipFontSize.toDouble(),
                                     ),
                                   ),
                                 );
@@ -1052,13 +1154,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 50,
-                            interval: 100,
+                            interval: ChartConstants.scoreDisplayInterval.toDouble(),
                             getTitlesWidget: (value, meta) {
                               return Text(
                                 value.toInt().toString(),
                                 style: TextStyle(
                                   color: AppColors.textSecondary,
-                                  fontSize: 12,
+                                  fontSize: ChartConstants.tooltipFontSize.toDouble(),
                                 ),
                               );
                             },
@@ -1071,37 +1173,37 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       // Chart borders
                       borderData: FlBorderData(
                         show: true,
-                        border: Border.all(color: AppColors.chartGrid, width: 1),
+                        border: Border.all(color: AppColors.chartGrid, width: ChartConstants.gridStrokeWidth.toDouble()),
                       ),
                       
                       // Min/max values
                       minX: 0,
                       maxX: (chartData.length - 1).toDouble(),
                       minY: 0,
-                      maxY: _getMaxScore() * 1.1,
+                      maxY: _getMaxScore() * ChartConstants.chartScaleMultiplier,
                       
                       // Line data
                       lineBarsData: [
                         LineChartBarData(
                           spots: _getChartSpots(),
                           isCurved: true,
-                          curveSmoothness: 0.3,
+                          curveSmoothness: ChartConstants.curveSmoothness,
                           color: AppColors.chartLine,
-                          barWidth: 3,
+                          barWidth: ChartConstants.lineWidth,
                           dotData: FlDotData(
                             show: true,
                             getDotPainter: (spot, percent, barData, index) {
                               return FlDotCirclePainter(
-                                radius: 4,
+                                radius: ChartConstants.dotRadius,
                                 color: AppColors.chartLine,
-                                strokeWidth: 2,
+                                strokeWidth: ChartConstants.dotStrokeWidth,
                                 strokeColor: AppColors.background,
                               );
                             },
                           ),
                           belowBarData: BarAreaData(
                             show: true,
-                            color: AppColors.chartLine.withOpacity(0.1),
+                            color: AppColors.chartLine.withOpacity(ChartConstants.areaOpacity),
                           ),
                         ),
                       ],
@@ -1110,7 +1212,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       lineTouchData: LineTouchData(
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
-                          // getTooltipColor: (touchedSpot) => AppColors.cardBackground,
                           getTooltipItems: (touchedSpots) {
                             return touchedSpots.map((spot) {
                               final index = spot.x.toInt();
@@ -1119,7 +1220,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 final score = spot.y;
                                 return LineTooltipItem(
                                   '${DateFormat('MMM d').format(date)}\nScore: ${score.toInt()}',
-                                  TextStyle(color: AppColors.textPrimary, fontSize: 12),
+                                  TextStyle(color: AppColors.textPrimary, fontSize: ChartConstants.tooltipFontSize.toDouble()),
                                 );
                               }
                               return null;
@@ -1130,26 +1231,26 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: AppLayout.statsContentPadding),
                 
                 // Chart legend
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 16,
-                      height: 3,
+                      width: AppLayout.legendIndicatorWidth,
+                      height: AppLayout.legendIndicatorHeight,
                       decoration: BoxDecoration(
                         color: AppColors.chartLine,
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(AppLayout.legendIndicatorRadius),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: AppLayout.legendSpacing),
                     Text(
                       'Training Score ',
                       style: TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 14,
+                        fontSize: AppLayout.legendFontSize,
                       ),
                     ),
                   ],
@@ -1157,32 +1258,32 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ] else ...[
                 // No data message
                 Container(
-                  height: 300,
+                  height: ChartConstants.chartHeight,
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.insights,
-                          size: 64,
+                          size: AppLayout.noDataIconSize,
                           color: AppColors.textSecondary.withOpacity(0.5),
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(width: AppLayout.maxScreenPadding),
                         Text(
                           'No Training Data Yet',
                           style: TextStyle(
                             color: AppColors.textPrimary,
-                            fontSize: 20,
+                            fontSize: AppLayout.noDataTitleFontSize,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: AppLayout.legendSpacing),
                         Text(
                           'Complete some training sessions to see your progress here.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.textSecondary,
-                            fontSize: 16,
+                            fontSize: AppLayout.noDataDescriptionFontSize,
                           ),
                         ),
                       ],
@@ -1191,7 +1292,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 ),
               ],
               
-              SizedBox(height: 32),
+              SizedBox(height: AppLayout.statsChartPadding),
               
               // Clear results button
               Center(
@@ -1204,9 +1305,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     foregroundColor: Colors.white,
                     disabledBackgroundColor: AppColors.textSecondary.withOpacity(0.3),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: EdgeInsets.symmetric(horizontal: AppLayout.statsContentPadding, vertical: AppLayout.statsHeaderSpacing),
                   ),
                 ),
               ),
@@ -1231,7 +1332,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   /// Gets the maximum score value for chart scaling
   double _getMaxScore() {
-    double maxScore = 100; // Minimum scale
+    double maxScore = ChartConstants.minChartScale; // Minimum scale
     for (final entry in chartData) {
       if (entry.value != null && entry.value! > maxScore) {
         maxScore = entry.value!;
