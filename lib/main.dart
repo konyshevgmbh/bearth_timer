@@ -581,7 +581,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Breath-Hold\nTraining',
+                  '',
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 20,
@@ -979,7 +979,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   Icon(Icons.bar_chart, color: AppColors.textPrimary, size: 28),
                   SizedBox(width: 12),
                   Text(
-                    'Last 30 Days Progress',
+                    'Progress',
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 24,
