@@ -562,11 +562,11 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
       case Phase.In:
         return "In";
       case Phase.Hold:
-        return "Hold(Full)";
+        return "Hold (full)";
       case Phase.Out:
         return "Out";
       case Phase.Rest:
-        return "Hold(Empty)";
+        return "Hold (empty)";
     }
   }
 
