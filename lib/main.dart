@@ -1055,13 +1055,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
         title: Text('Training Statistics'),
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textPrimary,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.delete_outline),
-            onPressed: _clearResults,
-            tooltip: 'Clear all results',
-          ),
-        ],
       ),
       backgroundColor: AppColors.background,
       body:
