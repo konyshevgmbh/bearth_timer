@@ -93,7 +93,6 @@ class AppColors {
   static const Color phaseHold = Color(0xFFCBBBEF);
   static const Color phaseRest = Color(0xFFD8C9F9);
   static const Color phaseWait = Color(0xFFFFFFFF);
-  static const Color phaseDone = Color(0xFF9E9E9E);
 
   // Chart colors
   static const Color chartLine = Color(0xFF80DEEA);
@@ -341,7 +340,7 @@ class BreathHoldApp extends StatelessWidget {
   }
 }
 
-enum Phase { Wait, In, Hold, Out, Rest, Done }
+enum Phase { Wait, In, Hold, Out, Rest }
 
 class BreathHoldHomePage extends StatefulWidget {
   @override
@@ -373,7 +372,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     Phase.Hold,
     Phase.Out,
     Phase.Rest,
-    Phase.Done,
   ];
   List<int> phaseDurations = [
     TrainingConstants.waitPhaseDuration,
@@ -381,7 +379,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     17, // Will be calculated
     TrainingConstants.baseExhaleDuration,
     0, // Will be calculated
-    0, // Done phase has no duration
   ];
 
   @override
@@ -431,14 +428,13 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     int holdInhale = (remain * TrainingConstants.holdInhaleRatio).round();
     int holdExhale = remain - holdInhale;
 
-    // Phase durations: Wait, In, Hold, Out, Rest, Done
+    // Phase durations: Wait, In, Hold, Out, Rest 
     phaseDurations = [
       TrainingConstants.waitPhaseDuration,
       inhale,
       holdInhale,
       exhale,
       holdExhale,
-      0, // Done phase has no duration
     ];
     setState(() {});
   }
@@ -470,8 +466,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
       } else {
         totalElapsed++;
         // Move to next phase or cycle
-        if (currentPhaseIndex < phases.length - 2) {
-          // Don't include Done phase
+        if (currentPhaseIndex < phases.length - 1) {
           currentPhaseIndex++;
           secondsLeftInPhase = phaseDurations[currentPhaseIndex];
         } else {
@@ -505,7 +500,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
     }
 
     setState(() {
-      currentPhaseIndex = phases.length - 1; // Done phase
+      currentPhaseIndex = 0;  
       secondsLeftInPhase = 0;
       isRunning = false;
       isDone = true;
@@ -534,8 +529,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
 
   // Calculate progress within current cycle (0.0 to 1.0)
   double get currentCycleProgress {
-    if (phases[currentPhaseIndex] == Phase.Wait ||
-        phases[currentPhaseIndex] == Phase.Done) {
+    if (phases[currentPhaseIndex] == Phase.Wait) {
       return 0.0;
     }
 
@@ -548,7 +542,7 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         phaseSum + (phaseDurations[currentPhaseIndex] - secondsLeftInPhase);
     int cyclePhasesTotal = phaseDurations
         .sublist(1, 5)
-        .reduce((a, b) => a + b); // In+Hold+Out+Rest
+        .reduce((a, b) => a + b); // In+Hold+Out+Hold
 
     return (timeInCycle / cyclePhasesTotal).clamp(0.0, 1.0);
   }
@@ -564,17 +558,15 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
   String get phaseLabel {
     switch (phases[currentPhaseIndex]) {
       case Phase.Wait:
-        return "Wait";
+        return "Go!";
       case Phase.In:
         return "In";
       case Phase.Hold:
-        return "Hold";
+        return "Hold(Full)";
       case Phase.Out:
         return "Out";
       case Phase.Rest:
-        return "Rest";
-      case Phase.Done:
-        return "Done";
+        return "Hold(Empty)";
     }
   }
 
@@ -591,8 +583,6 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
         return AppColors.phaseOut;
       case Phase.Rest:
         return AppColors.phaseRest;
-      case Phase.Done:
-        return AppColors.phaseDone;
     }
   }
 
@@ -827,8 +817,8 @@ class _BreathHoldHomePageState extends State<BreathHoldHomePage> {
 
   Widget _buildPhaseInfoText() {
     final phases = [
-      'In: ${phaseDurations[1]}s Hold: ${phaseDurations[2]}s',
-      'Out: ${phaseDurations[3]}s Rest: ${phaseDurations[4]}s',
+      'In: ${phaseDurations[1]}s Hold (full): ${phaseDurations[2]}s',
+      'Out: ${phaseDurations[3]}s Hold (empty): ${phaseDurations[4]}s',
     ];
 
     return Wrap(
