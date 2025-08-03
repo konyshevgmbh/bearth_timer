@@ -1,0 +1,85 @@
+{
+  "name": "Flutter Development with Android Support",
+
+  // Use the custom Dockerfile
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Additional features (Git and GitHub CLI)
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  // Enable privileged mode for Android emulator
+  "privileged": true,
+  "capAdd": ["SYS_ADMIN"],
+  "securityOpt": ["apparmor:unconfined"],
+
+  // Post-create command for final setup - Windows/WSL2 compatible with audio
+  "postCreateCommand": "sudo chown -R vscode:vscode .dart_tool 2>/dev/null || true && mkdir -p ~/.android && echo 'PlayStoreImage.enabled=false' > ~/.android/advancedFeatures.ini && echo 'audio.enabled=1' >> ~/.android/advancedFeatures.ini && echo 'hw.audioInput=yes' >> ~/.android/advancedFeatures.ini && echo 'hw.audioOutput=yes' >> ~/.android/advancedFeatures.ini && flutter doctor && $ANDROID_HOME/emulator/emulator -avd Pixel_7_API_34 -no-window -qemu -audiodev none,id=none &>/dev/null & echo '✅ Flutter development environment with Android support and audio ready!'",
+
+  // VS Code customizations
+  "customizations": {
+    "vscode": {
+      // Essential extensions for Flutter development
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter",
+        "ms-vscode.vscode-json",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "anthropic.claude-code"
+      ],
+      // Flutter and Dart SDK paths
+      "settings": {
+        "dart.flutterSdkPath": "/opt/flutter",
+        "dart.sdkPath": "/opt/flutter/bin/cache/dart-sdk",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "java.home": "/usr/lib/jvm/java-17-openjdk-amd64",
+        "android.sdk.path": "/opt/android-sdk"
+      }
+    }
+  },
+
+  // Ports to forward for development servers and Android emulator
+  "forwardPorts": [8080, 3000, 5554, 5555],
+  "portsAttributes": {
+    "8080": {
+      "label": "Flutter Web",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Development Server",
+      "onAutoForward": "notify"
+    },
+    "5554": {
+      "label": "Android Emulator Console",
+      "onAutoForward": "silent"
+    },
+    "5555": {
+      "label": "Android ADB",
+      "onAutoForward": "silent"
+    }
+  },
+
+  // Run as vscode user for proper permissions
+  "remoteUser": "vscode",
+
+  // Mount options - WSL2/Windows compatible
+  "mounts": [
+    "source=${localWorkspaceFolder}/.dart_tool,target=${containerWorkspaceFolder}/.dart_tool,type=bind,consistency=cached"
+  ],
+
+  // Additional run arguments for Android emulator support (Windows/WSL2)
+  "runArgs": [
+    "--device=/dev/kvm",
+    "--privileged"
+  ],
+
+  // Environment variables - removed audio vars for Windows compatibility
+  "containerEnv": {
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "FileEdit(*)",
+      "FileCreate(*)",
+      "FileDelete(*)",
+      "DirectoryCreate(*)",
+      "DirectoryDelete(*)",
+      "Bash(mkdir:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter build:*)",
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(timeout 20 dart analyze lib/responsive/main_app_wrapper.dart)",
+      "Bash(timeout:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(flutter pub:*)",
+      "Bash(ls:*)",
+      "Bash(sudo chown:*)",
+      "Bash(chmod:*)",
+      "Bash(flutter clean:*)",
+      "Bash(dart pub deps:*)",
+      "Bash(flutter:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(sed:*)",
+      "Bash(dart analyze:*)",
+      "Bash(mv:*)",
+      "Bash(tree:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(zenity:*)"
+    ],
+    "deny": []
+  }
+}
