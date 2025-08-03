@@ -61,6 +61,126 @@ class _TimerPageState extends State<TimerPage> {
     debugPrint('TimerPage: Session stopped');
   }
 
+  void _showExerciseDescription() {
+    final exercise = _sessionService.currentExercise;
+    if (exercise == null) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                color: AppColors.primary,
+                size: 24,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  exercise.name,
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: AppLayout.fontSizeMedium,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  exercise.description.isNotEmpty 
+                      ? exercise.description 
+                      : 'No description available for this exercise.',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: AppLayout.fontSizeSmall,
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(height: 16),
+                // Exercise details
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Exercise Details:',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: AppLayout.fontSizeSmall,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      _buildDetailRow('Cycles', '${exercise.cycles}'),
+                      _buildDetailRow('Cycle Duration', '${exercise.cycleDuration}s'),
+                      _buildDetailRow('Total Duration', '${(exercise.cycles * exercise.cycleDuration / 60).toStringAsFixed(1)} min'),
+                      _buildDetailRow('Phases', '${exercise.phases.length}'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: AppLayout.fontSizeSmall,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: AppLayout.fontSizeSmall,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: AppLayout.fontSizeSmall,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _navigateToEditExercise() async {
     if (_sessionService.isRunning) {
       await _stopSession();
@@ -149,6 +269,11 @@ class _TimerPageState extends State<TimerPage> {
         foregroundColor: AppColors.textPrimary,
         automaticallyImplyLeading: false,
         actions: [
+          IconButton(
+            icon: Icon(Icons.info_outline),
+            onPressed: _showExerciseDescription,
+            tooltip: 'Description',
+          ),
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: _sessionService.isRunning ? null : _navigateToEditExercise,
