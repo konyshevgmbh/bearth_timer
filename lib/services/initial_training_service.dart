@@ -17,6 +17,42 @@ class InitialTrainingService {
   static const Color _phaseColorHold = Color(0xFFCBBBEF);
   static const Color _phaseColorOut = Color(0xFFFFD59E);
 
+  // Exercise descriptions
+  static const String _molchanovDescription = 'Aleksey Molchanov\'s daily exercise for breath-hold development. Used by the world champion during competitions. Builds CO₂ tolerance through cyclical holds without rest.\n\n'
+      'TECHNIQUE:\n'
+      '1. Inhale 5 seconds through pursed lips\n'
+      '2. Hold breath on full inhale (main phase)\n'
+      '3. Exhale 5-10 seconds with resistance\n'
+      '4. Hold on empty lungs (optional for beginners)\n\n'
+      'KEY PRINCIPLE:\n'
+      'No rest between cycles. This accumulates CO₂ and helps body adapt to higher carbon dioxide levels.\n\n'
+      'PROGRESSION:\n'
+      'Start: 5 minutes with 30-second cycles\n'
+      'Advance: Gradually increase to 15 minutes total\n'
+      'Cycles: 30s → 35s → 40s → 45s → 50s...\n'
+      'Focus: Extend mainly the hold after inhale\n\n'
+      'SAFETY:\n'
+      'Always sit or lie down. Never practice in water as beginner. Take rest days when needed.\n\n'
+      'Learn more: Search "Molchanov breath hold training"';
+
+  static const String _breathing478Description = 'Relaxing breathing pattern: inhale for 4, hold for 7, exhale for 8. Great for stress relief and better sleep.\n\n'
+      'HOW TO USE:\n'
+      'Best used before sleep or when stressed. Exhale completely before starting. Use tongue position: tip behind front teeth. Count steadily and consistently.\n\n'
+      'PROGRESSION:\n'
+      'Week 1: 4 cycles before bed\n'
+      'Week 2-3: 6 cycles, twice daily\n'
+      'Week 4+: 8 cycles, anytime for calm\n\n'
+      'Learn more: Search "4-7-8 breathing Dr. Weil"';
+
+  static const String _boxBreathingDescription = 'Equal-timing breathing pattern: inhale, hold, exhale, hold - all for the same duration. Perfect for focus and mental clarity.\n\n'
+      'HOW TO USE:\n'
+      'Sit comfortably with straight spine. Start with 4-second intervals. Visualize drawing a box while breathing. Maintain steady, controlled pace.\n\n'
+      'PROGRESSION:\n'
+      'Week 1-2: 4 seconds × 8 cycles\n'
+      'Week 3-4: 5 seconds × 8 cycles\n'
+      'Week 5+: Up to 6-8 seconds per side\n\n'
+      'Learn more: Search "box breathing Navy SEALs technique"';
+
   /// Creates Molchanov exercise breathing phases
   List<BreathPhase> createMolchanovPhases( ) {
  
@@ -140,22 +176,7 @@ class InitialTrainingService {
     return BreathingExercise(
       id: _uuid.v4(),
       name: name ?? 'Molchanov Method',
-      description: description ?? 'Aleksey Molchanov\'s daily exercise for breath-hold development. Used by the world champion during competitions. Builds CO₂ tolerance through cyclical holds without rest.\n\n'
-          'TECHNIQUE:\n'
-          '1. Inhale 5 seconds through pursed lips\n'
-          '2. Hold breath on full inhale (main phase)\n'
-          '3. Exhale 5-10 seconds with resistance\n'
-          '4. Hold on empty lungs (optional for beginners)\n\n'
-          'KEY PRINCIPLE:\n'
-          'No rest between cycles. This accumulates CO₂ and helps body adapt to higher carbon dioxide levels.\n\n'
-          'PROGRESSION:\n'
-          'Start: 5 minutes with 30-second cycles\n'
-          'Advance: Gradually increase to 15 minutes total\n'
-          'Cycles: 30s → 35s → 40s → 45s → 50s...\n'
-          'Focus: Extend mainly the hold after inhale\n\n'
-          'SAFETY:\n'
-          'Always sit or lie down. Never practice in water as beginner. Take rest days when needed.\n\n'
-          'Learn more: Search "Molchanov breath hold training"',
+      description: description ?? _molchanovDescription,
       createdAt: DateTime.now(),
       minCycles: TrainingConstants.minCycles,
       maxCycles: TrainingConstants.maxCycles,
@@ -166,74 +187,62 @@ class InitialTrainingService {
     );
   }
 
+  /// Creates a 4-7-8 breathing exercise
+  BreathingExercise _create478Exercise() {
+    return BreathingExercise(
+      id: '478_breathing',
+      name: '4-7-8 Breathing',
+      description: _breathing478Description,
+      minCycles: TrainingConstants.minCycles,
+      maxCycles: TrainingConstants.maxCycles,
+      cycleDurationStep: 1,
+      cycles: 8,
+      cycleDuration: 19,
+      phases: create478BreathingPhases(),
+      createdAt: DateTime.now(),
+    );
+  }
+
+  /// Creates a box breathing exercise
+  BreathingExercise _createBoxExercise() {
+    return BreathingExercise(
+      id: 'box_breathing',
+      name: 'Box Breathing',
+      description: _boxBreathingDescription,
+      minCycles: TrainingConstants.minCycles,
+      maxCycles: TrainingConstants.maxCycles,
+      cycleDurationStep: 4, // Must be divisible by 4
+      cycles: 8,
+      cycleDuration: 16, // 4 seconds each phase
+      phases: createBoxBreathingPhases(duration: 4),
+      createdAt: DateTime.now(),
+    );
+  }
+
   /// Creates a complete set of default exercises for new users
   List<BreathingExercise> createInitialTrainingSet() {
+    final molchanovExercise = createDefaultExercise(
+      cycles: 4,
+      cycleDuration: 30,
+    );
+    // Override the ID to maintain consistency
+    final molchanovWithId = BreathingExercise(
+      id: 'molchanov_method',
+      name: molchanovExercise.name,
+      description: molchanovExercise.description,
+      minCycles: molchanovExercise.minCycles,
+      maxCycles: molchanovExercise.maxCycles,
+      cycleDurationStep: 5,
+      cycles: molchanovExercise.cycles,
+      cycleDuration: molchanovExercise.cycleDuration,
+      phases: molchanovExercise.phases,
+      createdAt: molchanovExercise.createdAt,
+    );
+
     return [
-      BreathingExercise(
-        id: 'molchanov_method',
-        name: 'Molchanov Method',
-        description: 'Aleksey Molchanov\'s daily exercise for breath-hold development. Used by the world champion during competitions. Builds CO₂ tolerance through cyclical holds without rest.\n\n'
-            'TECHNIQUE:\n'
-            '1. Inhale 5 seconds through pursed lips\n'
-            '2. Hold breath on full inhale (main phase)\n'
-            '3. Exhale 5-10 seconds with resistance\n'
-            '4. Hold on empty lungs (optional for beginners)\n\n'
-            'KEY PRINCIPLE:\n'
-            'No rest between cycles. This accumulates CO₂ and helps body adapt to higher carbon dioxide levels.\n\n'
-            'PROGRESSION:\n'
-            'Start: 5 minutes with 30-second cycles\n'
-            'Advance: Gradually increase to 15 minutes total\n'
-            'Cycles: 30s → 35s → 40s → 45s → 50s...\n'
-            'Focus: Extend mainly the hold after inhale\n\n'
-            'SAFETY:\n'
-            'Always sit or lie down. Never practice in water as beginner. Take rest days when needed.\n\n'
-            'Learn more: Search "Molchanov breath hold training"',
-        minCycles: TrainingConstants.minCycles,
-        maxCycles: TrainingConstants.maxCycles,
-        cycleDurationStep: 5,
-        cycles: 4,
-        cycleDuration: 30,
-        phases: createMolchanovPhases( ),
-        createdAt: DateTime.now(),
-      ),
-      BreathingExercise(
-        id: '478_breathing',
-        name: '4-7-8 Breathing',
-        description: 'Relaxing breathing pattern: inhale for 4, hold for 7, exhale for 8. Great for stress relief and better sleep.\n\n'
-            'HOW TO USE:\n'
-            'Best used before sleep or when stressed. Exhale completely before starting. Use tongue position: tip behind front teeth. Count steadily and consistently.\n\n'
-            'PROGRESSION:\n'
-            'Week 1: 4 cycles before bed\n'
-            'Week 2-3: 6 cycles, twice daily\n'
-            'Week 4+: 8 cycles, anytime for calm\n\n'
-            'Learn more: Search "4-7-8 breathing Dr. Weil"',
-        minCycles: TrainingConstants.minCycles,
-        maxCycles: TrainingConstants.maxCycles,
-        cycleDurationStep: 1,
-        cycles: 8,
-        cycleDuration: 19,
-        phases: create478BreathingPhases(),
-        createdAt: DateTime.now(),
-      ),
-      BreathingExercise(
-        id: 'box_breathing',
-        name: 'Box Breathing',
-        description: 'Equal-timing breathing pattern: inhale, hold, exhale, hold - all for the same duration. Perfect for focus and mental clarity.\n\n'
-            'HOW TO USE:\n'
-            'Sit comfortably with straight spine. Start with 4-second intervals. Visualize drawing a box while breathing. Maintain steady, controlled pace.\n\n'
-            'PROGRESSION:\n'
-            'Week 1-2: 4 seconds × 8 cycles\n'
-            'Week 3-4: 5 seconds × 8 cycles\n'
-            'Week 5+: Up to 6-8 seconds per side\n\n'
-            'Learn more: Search "box breathing Navy SEALs technique"',
-        minCycles: TrainingConstants.minCycles,
-        maxCycles: TrainingConstants.maxCycles,
-        cycleDurationStep: 4, // Must be divisible by 4
-        cycles: 8,
-        cycleDuration: 16, // 4 seconds each phase
-        phases: createBoxBreathingPhases(duration: 4),
-        createdAt: DateTime.now(),
-      ),
+      molchanovWithId,
+      _create478Exercise(),
+      _createBoxExercise(),
     ];
   }
  
