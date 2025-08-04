@@ -334,7 +334,7 @@ class ExerciseService extends ChangeNotifier {
     if (_currentExercise?.phases != null && index < _currentExercise!.phases.length) {
       final phases = List<BreathPhase>.from(_currentExercise!.phases);
       phases[index] = phases[index].copyWith(name: name);
-      _currentExercise = _currentExercise!.copyWith(phases: phases);
+      _updatePhasesAndSyncDuration(phases);
       validatePhases();
     }
   }
@@ -344,7 +344,7 @@ class ExerciseService extends ChangeNotifier {
     if (_currentExercise?.phases != null && index < _currentExercise!.phases.length) {
       final phases = List<BreathPhase>.from(_currentExercise!.phases);
       phases[index] = phases[index].copyWith(color: color);
-      _currentExercise = _currentExercise!.copyWith(phases: phases);
+      _updatePhasesAndSyncDuration(phases);
       notifyListeners();
     }
   }
@@ -354,7 +354,7 @@ class ExerciseService extends ChangeNotifier {
     if (_currentExercise?.phases != null && index < _currentExercise!.phases.length && claps >= 1 && claps <= 3) {
       final phases = List<BreathPhase>.from(_currentExercise!.phases);
       phases[index] = phases[index].copyWith(claps: claps);
-      _currentExercise = _currentExercise!.copyWith(phases: phases);
+      _updatePhasesAndSyncDuration(phases);
       notifyListeners();
     }
   }

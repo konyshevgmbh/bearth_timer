@@ -266,7 +266,10 @@ class SessionService extends ChangeNotifier {
     final exercise = _currentExercise;
     if (exercise != null) {
       try {
-        await _storageService.saveExercise(exercise);
+        // Ensure phases and duration are synced before saving
+        final syncedExercise = _exerciseService.updateCycleDuration(exercise, exercise.cycleDuration) ?? exercise;
+        _currentExercise = syncedExercise;
+        await _storageService.saveExercise(syncedExercise);
       } catch (e) {
         debugPrint('Error saving current settings: $e');
       }
@@ -529,12 +532,14 @@ class SessionService extends ChangeNotifier {
   /// Update exercise settings and save
   Future<bool> updateExerciseSettings(BreathingExercise updatedExercise) async {
     try {
-      setExercise(updatedExercise);
+      // Ensure phases and duration are synced before setting and saving
+      final syncedExercise = _exerciseService.updateCycleDuration(updatedExercise, updatedExercise.cycleDuration) ?? updatedExercise;
+      setExercise(syncedExercise);
       await saveCurrentSettings();
       await SyncService().saveUserSettings(
         UserSettings(
-          totalCycles: updatedExercise.cycles,
-          cycleDuration: updatedExercise.cycleDuration,
+          totalCycles: syncedExercise.cycles,
+          cycleDuration: syncedExercise.cycleDuration,
         ),
       );
       return true;
