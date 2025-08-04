@@ -363,7 +363,9 @@ class ExerciseService extends ChangeNotifier {
   void updatePhaseMinDuration(int index, int duration) {
     if (_currentExercise?.phases != null && index < _currentExercise!.phases.length && duration >= 0) {
       final phases = List<BreathPhase>.from(_currentExercise!.phases);
-      phases[index] = phases[index].copyWith(minDuration: duration);
+      final currentPhase = phases[index];
+      final newDuration = currentPhase.duration < duration ? duration : currentPhase.duration;
+      phases[index] = phases[index].copyWith(minDuration: duration, duration: newDuration);
       _updatePhasesAndSyncDuration(phases);
       validatePhases();
     }
@@ -373,7 +375,9 @@ class ExerciseService extends ChangeNotifier {
   void updatePhaseMaxDuration(int index, int duration) {
     if (_currentExercise?.phases != null && index < _currentExercise!.phases.length && duration >= 0) {
       final phases = List<BreathPhase>.from(_currentExercise!.phases);
-      phases[index] = phases[index].copyWith(maxDuration: duration);
+      final currentPhase = phases[index];
+      final newDuration = currentPhase.duration > duration ? duration : currentPhase.duration;
+      phases[index] = phases[index].copyWith(maxDuration: duration, duration: newDuration);
       _updatePhasesAndSyncDuration(phases);
       validatePhases();
     }
