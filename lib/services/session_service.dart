@@ -330,6 +330,9 @@ class SessionService extends ChangeNotifier {
   Future<void> stop() async {
     debugPrint('Stopping session: wasRunning=$isRunning, isDone=$isDone');
     
+    // Check if we should save a partial result before stopping
+    await _savePartialResultIfApplicable();
+    
     // Stop the timer
     _timer?.cancel();
     _timer = null;
@@ -509,6 +512,51 @@ class SessionService extends ChangeNotifier {
       );
     }
     return null;
+  }
+
+  /// Create a partial result based on actual completed cycles
+  TrainingResult? createPartialResult() {
+    if (_startTime != null && _currentExercise != null) {
+      final completedCycles = _getCompletedCycles();
+      if (completedCycles > 0) {
+        return TrainingResult(
+          date: _startTime!,
+          duration: _currentExercise!.cycleDuration,
+          cycles: completedCycles,
+          exerciseId: _currentExercise!.id,
+        );
+      }
+    }
+    return null;
+  }
+
+  /// Get the number of fully completed cycles (not including current partial cycle)
+  int _getCompletedCycles() {
+    if (_currentExercise == null || _startTime == null || isInWaitPhase) return 0;
+    
+    // currentCycle is 1-based and includes the current in-progress cycle
+    // So completed cycles = currentCycle - 1
+    return (currentCycle - 1).clamp(0, _currentExercise!.cycles);
+  }
+
+  /// Save a partial result if at least one cycle has been completed
+  Future<void> _savePartialResultIfApplicable() async {
+    if (!isRunning || _startTime == null || _currentExercise == null) return;
+    
+    final completedCycles = _getCompletedCycles();
+    debugPrint('Checking for partial result: completedCycles=$completedCycles');
+    
+    if (completedCycles > 0) {
+      final partialResult = createPartialResult();
+      if (partialResult != null) {
+        try {
+          await SyncService().saveTrainingResult(partialResult);
+          debugPrint('Saved partial result: ${partialResult.cycles} cycles completed');
+        } catch (e) {
+          debugPrint('Error saving partial result: $e');
+        }
+      }
+    }
   }
 
   /// Complete the current session and save the result

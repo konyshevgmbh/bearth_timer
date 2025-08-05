@@ -757,7 +757,6 @@ class _TimerPageState extends State<TimerPage> {
     );
   }
 
-
   Widget _buildControlsRow({
     required int value,
     bool showButtons = true,
@@ -785,7 +784,7 @@ class _TimerPageState extends State<TimerPage> {
             '$value',
             style: TextStyle(
                 color: AppColors.textPrimary,
-              fontSize: AppLayout.fontSizeMedium,
+              fontSize: AppLayout.fontSizeMedium * (value >= 100 ? 0.8 : 1.0),
               fontWeight: FontWeight.w600,
             ),
           ),
