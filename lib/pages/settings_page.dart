@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 // Import business logic modules
 import '../core/constants.dart';
@@ -27,6 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late Stream<SyncStatus> _syncStatusStream;
   StreamSubscription<SyncStatus>? _syncStatusSubscription;
   bool _soundEnabled = true;
+  String _version = '';
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     });
     _loadSoundSetting();
+    _loadAppVersion();
   }
 
   Future<void> _loadSoundSetting() async {
@@ -47,6 +50,20 @@ class _SettingsPageState extends State<SettingsPage> {
       });
     } catch (e) {
       debugPrint('Error loading sound setting: $e');
+    }
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _version = packageInfo.version;
+      });
+    } catch (e) {
+      debugPrint('Error loading app version: $e');
+      setState(() {
+        _version = '0.9.0'; // Fallback to pubspec version
+      });
     }
   }
 
@@ -200,7 +217,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     subtitle: Text(
-                      'Version 1.0.0',
+                      _version.isEmpty ? 'Loading...' : 'Version $_version',
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: AppLayout.fontSizeSmall,

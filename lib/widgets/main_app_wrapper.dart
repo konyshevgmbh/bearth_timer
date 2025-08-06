@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/constants.dart';
 import '../pages/exercises_page.dart';
@@ -9,8 +10,14 @@ import '../pages/settings_page.dart';
 import '../models/breathing_exercise.dart';
 import '../services/session_service.dart';
 
-class MainAppWrapper extends StatelessWidget {
+class MainAppWrapper extends StatefulWidget {
   const MainAppWrapper({super.key});
+
+  @override
+  State<MainAppWrapper> createState() => _MainAppWrapperState();
+}
+
+class _MainAppWrapperState extends State<MainAppWrapper> {
 
   // Material Design breakpoints
   static const double mobileBreakpoint = 600;
@@ -53,11 +60,27 @@ class ResponsiveHomePage extends StatefulWidget {
 class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
   int _currentIndex = 0;
   late PageController _pageController;
+  String _version = '';
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _version = packageInfo.version;
+      });
+    } catch (e) {
+      debugPrint('Error loading app version: $e');
+      setState(() {
+        _version = '0.9.0'; // Fallback to pubspec version
+      });
+    }
   }
 
   @override
@@ -261,6 +284,16 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                     fontSize: AppLayout.fontSizeMedium,
                   ),
                 ),
+                if (_version.isNotEmpty) ...[
+                  SizedBox(height: 4),
+                  Text(
+                    'v$_version',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: AppLayout.fontSizeSmall - 2,
+                    ),
+                  ),
+                ],
                 if (isLoggedIn) ...[
                   SizedBox(height: 8),
                   Text(
