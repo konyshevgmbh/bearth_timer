@@ -43,7 +43,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
 
 
   Future<void> _addNewExercise() async {
-    final newExercise = _exerciseService.createCustomExercise();
+    final newExercise = _exerciseService.createCustomExercise(context);
     _storageService.saveExercise(newExercise);
     await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
@@ -74,17 +74,17 @@ class _ExercisesPageState extends State<ExercisesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Exercises'),
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: FutureBuilder<List<BreathingExercise>>(
         future: _exercisesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+              child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
             );
           }
           
@@ -92,7 +92,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             return Center(
               child: Text(
                 'Error loading exercises: ${snapshot.error}',
-                style: TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             );
           }
@@ -109,8 +109,8 @@ class _ExercisesPageState extends State<ExercisesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addNewExercise,
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.surface,
         tooltip: 'Add Exercise',
         shape: CircleBorder(),
         child: Icon(Icons.add),
@@ -126,13 +126,13 @@ class _ExercisesPageState extends State<ExercisesPage> {
           Icon(
             Icons.fitness_center,
             size: 80,
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           SizedBox(height: 16),
           Text(
             'No exercises yet',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeMedium,
             ),
           ),
@@ -140,7 +140,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
           Text(
             'Create your first exercise',
             style: TextStyle(
-              color: AppColors.textSecondary.withValues(alpha: 0.7),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: AppLayout.fontSizeSmall,
             ),
           ),
@@ -153,7 +153,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
     return ListView.separated(
       itemCount: exercises.length,
       separatorBuilder: (context, index) => Divider(
-        color: AppColors.textSecondary.withValues(alpha: 0.2),
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
         height: 1,
       ),
       itemBuilder: (context, index) {
@@ -163,16 +163,16 @@ class _ExercisesPageState extends State<ExercisesPage> {
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           dense: false,
           selected: isCurrentExercise,
-          selectedTileColor: AppColors.selected.withValues(alpha: 0.1),
+          selectedTileColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           leading: Icon(
             isCurrentExercise ? Icons.timer : Icons.list_alt,
-            color: isCurrentExercise ? AppColors.selected : AppColors.textPrimary,
+            color: isCurrentExercise ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
             size: 28,
           ),
           title: Text(
             exercise.name,
             style: TextStyle(
-              color: isCurrentExercise ? AppColors.selected : AppColors.textPrimary,
+              color: isCurrentExercise ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: isCurrentExercise ? FontWeight.w600 : FontWeight.w500,
             ),
@@ -180,17 +180,17 @@ class _ExercisesPageState extends State<ExercisesPage> {
           subtitle: Text(
             '${exercise.cycles} cycles • ${exercise.cycleDuration}s duration',
             style: TextStyle(
-              color: isCurrentExercise ? AppColors.selected.withValues(alpha: 0.8) : AppColors.textSecondary,
+              color: isCurrentExercise ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.8) : Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall - 2,
             ),
           ),
           trailing: PopupMenuButton<String>(
             icon: Icon(
               Icons.more_vert,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               size: 20,
             ),
-            color: AppColors.cardBackground,
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
             onSelected: (value) {
               switch (value) {
                 case 'edit':
@@ -209,9 +209,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 value: 'edit',
                 child: Row(
                   children: [
-                    Icon(Icons.edit, color: AppColors.textPrimary, size: 20),
+                    Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurface, size: 20),
                     SizedBox(width: 8),
-                    Text('Edit', style: TextStyle(color: AppColors.textPrimary)),
+                    Text('Edit', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -219,9 +219,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 value: 'duplicate',
                 child: Row(
                   children: [
-                    Icon(Icons.copy, color: AppColors.textPrimary, size: 20),
+                    Icon(Icons.copy, color: Theme.of(context).colorScheme.onSurface, size: 20),
                     SizedBox(width: 8),
-                    Text('Duplicate', style: TextStyle(color: AppColors.textPrimary)),
+                    Text('Duplicate', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -230,9 +230,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete, color: AppColors.error, size: 20),
+                    Icon(Icons.delete, color: Theme.of(context).colorScheme.error, size: 20),
                     SizedBox(width: 8),
-                    Text('Delete', style: TextStyle(color: AppColors.error)),
+                    Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                   ],
                 ),
               ),
@@ -262,20 +262,20 @@ class _ExercisesPageState extends State<ExercisesPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.cardBackground,
-        title: Text("Delete Exercise", style: TextStyle(color: AppColors.textPrimary)),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+        title: Text("Delete Exercise", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         content: Text(
           "Are you sure you want to delete \"${exercise.name}\"?",
-          style: TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text("Cancel", style: TextStyle(color: AppColors.textSecondary)),
+            child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text("Delete", style: TextStyle(color: AppColors.error)),
+            child: Text("Delete", style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
         ],
       ),

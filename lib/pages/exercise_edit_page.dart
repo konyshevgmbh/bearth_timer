@@ -92,15 +92,15 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
       child: Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
-            backgroundColor: AppColors.background,
-            foregroundColor: AppColors.textPrimary,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: _handleBackNavigation,
             ),
             actions: [],
           ),
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(AppLayout.maxScreenPadding),
@@ -137,15 +137,15 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _exerciseService.canAddPhase() ? () {
-            _exerciseService.addPhase();
+            _exerciseService.addPhase(context);
             if (_exerciseService.currentExercise != null) {
               _storageService.saveExercise(_exerciseService.currentExercise!);
             }
           } : null,
           backgroundColor: _exerciseService.canAddPhase()
-              ? AppColors.primary 
-              : AppColors.textSecondary.withValues(alpha: 0.3),
-          foregroundColor: AppColors.background,
+              ? Theme.of(context).colorScheme.primary 
+              : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          foregroundColor: Theme.of(context).colorScheme.surface,
           tooltip: 'Add Phase',
           shape: CircleBorder(),
           child: Icon(Icons.add),
@@ -158,23 +158,23 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
     return Container(
       padding: EdgeInsets.all(AppLayout.spacingMedium),
       decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.1),
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
         border: Border(
-          left: BorderSide(color: AppColors.error, width: 3),
-          top: BorderSide(color: AppColors.error.withValues(alpha: 0.3), width: 1),
-          right: BorderSide(color: AppColors.error.withValues(alpha: 0.3), width: 1),
-          bottom: BorderSide(color: AppColors.error.withValues(alpha: 0.3), width: 1),
+          left: BorderSide(color: Theme.of(context).colorScheme.error, width: 3),
+          top: BorderSide(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3), width: 1),
+          right: BorderSide(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3), width: 1),
+          bottom: BorderSide(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3), width: 1),
         ),
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline, color: AppColors.error, size: 20),
+          Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 20),
           SizedBox(width: AppLayout.spacingMedium),
           Expanded(
             child: Text(
               error,
               style: TextStyle(
-                color: AppColors.error,
+                color: Theme.of(context).colorScheme.error,
                 fontSize: AppLayout.fontSizeSmall,
                 fontWeight: FontWeight.w500,
               ),
@@ -196,10 +196,10 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -208,14 +208,14 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             children: [
               Icon(
                 Icons.edit_note,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppLayout.iconSizeSmall,
               ),
               SizedBox(width: AppLayout.spacingSmall),
               Text(
                 'Information',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -231,22 +231,22 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
               // Exercise name field
               TextFormField(
                 controller: _nameController,
-                style: TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: 'Name',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
+                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                   ),
-                  prefixIcon: Icon(Icons.fitness_center, color: AppColors.textSecondary),
+                  prefixIcon: Icon(Icons.fitness_center, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 onChanged: (value) {
                   _exerciseService.updateExerciseName(value);
@@ -261,23 +261,23 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
               // Exercise description field
               TextFormField(
                 controller: _descriptionController,
-                style: TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 maxLines: 2,
                 decoration: InputDecoration(
                   labelText: 'Description',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
+                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                   ),
-                  prefixIcon: Icon(Icons.description, color: AppColors.textSecondary),
+                  prefixIcon: Icon(Icons.description, color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 onChanged: (value) {
                   _exerciseService.updateExerciseDescription(value);
@@ -322,10 +322,10 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -334,14 +334,14 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             children: [
               Icon(
                 Icons.tune,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppLayout.iconSizeSmall,
               ),
               SizedBox(width: AppLayout.spacingSmall),
               Text(
                 'Configuration',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -360,7 +360,7 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             Text(
               'Cycles',
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: AppLayout.fontSizeMedium,
               ),
             ),
@@ -374,20 +374,20 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
                     controller: _minCyclesController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: TextStyle(color: AppColors.textPrimary),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
                       labelText: 'Min',
-                      labelStyle: TextStyle(color: AppColors.textSecondary),
+                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                        borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                        borderSide: BorderSide(color: AppColors.primary),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                       ),
                       contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       isDense: true,
@@ -408,20 +408,20 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
                     controller: _maxCyclesController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    style: TextStyle(color: AppColors.textPrimary),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
                       labelText: 'Max',
-                      labelStyle: TextStyle(color: AppColors.textSecondary),
+                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                        borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                        borderSide: BorderSide(color: AppColors.primary),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                       ),
                       contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       isDense: true,
@@ -442,7 +442,7 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             Text(
               'Cycles: $minCycles-$maxCycles',
               style: TextStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: AppLayout.fontSizeSmall,
               ),
             ),
@@ -452,7 +452,7 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
               Text(
                 'Step',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeMedium,
                   ),
               ),
@@ -461,20 +461,20 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
                 controller: _cycleDurationStepController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: 'Step',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
+                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
@@ -491,7 +491,7 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
               Text(
                 'Step: ${cycleDurationStep}s (${minCycleDuration}s-${maxCycleDuration}s)',
                 style: TextStyle(
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: AppLayout.fontSizeSmall,
                 ),
               ),
@@ -515,10 +515,10 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -527,14 +527,14 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
             children: [
               Icon(
                 Icons.timeline,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppLayout.iconSizeSmall,
               ),
               SizedBox(width: AppLayout.spacingSmall),
               Text(
                 'Phases',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -571,12 +571,12 @@ Widget _buildPhaseCard(int index) {
     decoration: BoxDecoration(
       border: Border(
         top: BorderSide(
-          color: hasError ? AppColors.error : AppColors.textSecondary.withValues(alpha: 0.2),
+          color: hasError ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
           width: hasError ? 2 : 1,
         ),
-        left: hasError ? BorderSide(color: AppColors.error, width: 3) : BorderSide.none,
+        left: hasError ? BorderSide(color: Theme.of(context).colorScheme.error, width: 3) : BorderSide.none,
       ),
-      color: hasError ? AppColors.error.withValues(alpha: 0.05) : null,
+      color: hasError ? Theme.of(context).colorScheme.error.withValues(alpha: 0.05) : null,
     ),
     child: Padding(
       padding: EdgeInsets.all(AppLayout.spacingMedium),
@@ -607,26 +607,26 @@ Widget _buildPhaseCard(int index) {
                     TextFormField(
                       initialValue: phase.name,
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: AppLayout.fontSizeSmall,
                           ),
                       decoration: InputDecoration(
                         labelText: 'Name',
-                        labelStyle: TextStyle(color: AppColors.textSecondary),
+                        labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                          borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                          borderSide: BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                         ),
                         errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                          borderSide: BorderSide(color: AppColors.error),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
                         ),
                         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         isDense: true,
@@ -654,7 +654,7 @@ Widget _buildPhaseCard(int index) {
               Column(
                 children: [
                   PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: AppColors.textSecondary),
+                    icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     onSelected: (value) {
                       switch (value) {
                         case 'duplicate':
@@ -681,14 +681,14 @@ Widget _buildPhaseCard(int index) {
                           children: [
                             Icon(Icons.content_copy, 
                                  color: _exerciseService.canAddPhase() 
-                                     ? AppColors.textPrimary 
-                                     : AppColors.textSecondary.withValues(alpha: 0.5)),
+                                     ? Theme.of(context).colorScheme.onSurface 
+                                     : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                             SizedBox(width: 8),
                             Text('Duplicate',
                                  style: TextStyle(
                                    color: _exerciseService.canAddPhase() 
-                                       ? AppColors.textPrimary 
-                                       : AppColors.textSecondary.withValues(alpha: 0.5))),
+                                       ? Theme.of(context).colorScheme.onSurface 
+                                       : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5))),
                           ],
                         ),
                       ),
@@ -699,14 +699,14 @@ Widget _buildPhaseCard(int index) {
                           children: [
                             Icon(Icons.delete_outline, 
                                  color: _exerciseService.canRemovePhase() 
-                                     ? AppColors.error 
-                                     : AppColors.textSecondary.withValues(alpha: 0.5)),
+                                     ? Theme.of(context).colorScheme.error 
+                                     : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
                             SizedBox(width: 8),
                             Text('Delete',
                                  style: TextStyle(
                                    color: _exerciseService.canRemovePhase() 
-                                       ? AppColors.error 
-                                       : AppColors.textSecondary.withValues(alpha: 0.5))),
+                                       ? Theme.of(context).colorScheme.error 
+                                       : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5))),
                           ],
                         ),
                       ),
@@ -723,7 +723,7 @@ Widget _buildPhaseCard(int index) {
             Text(
               _exerciseService.phaseErrors[index]!,
               style: TextStyle(
-                color: AppColors.error,
+                color: Theme.of(context).colorScheme.error,
                 fontSize: AppLayout.fontSizeSmall,
               ),
             ),
@@ -735,7 +735,7 @@ Widget _buildPhaseCard(int index) {
 }
 
   Widget _buildColorPicker(int index, Color currentColor) {
-    final availableColors = _exerciseService.getAvailableColors();
+    final availableColors = _exerciseService.getAvailableColors(context);
     final currentPhases = _exerciseService.currentPhases;
     
     return PopupMenuButton<Color>(
@@ -756,7 +756,7 @@ Widget _buildPhaseCard(int index) {
               ),
               if (currentPhases != null && index < currentPhases.length && color == currentPhases[index].color) ...[
                 SizedBox(width: 8),
-                Icon(Icons.check, color: AppColors.textPrimary, size: 16),
+                Icon(Icons.check, color: Theme.of(context).colorScheme.onSurface, size: 16),
               ],
             ],
           ),
@@ -776,11 +776,11 @@ Widget _buildPhaseCard(int index) {
       icon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.music_note, color: AppColors.textSecondary, size: 16),
+          Icon(Icons.music_note, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 16),
           Text(
             '$currentClaps',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.w600,
             ),
@@ -793,15 +793,15 @@ Widget _buildPhaseCard(int index) {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.music_note, color: AppColors.textSecondary, size: 16),
+              Icon(Icons.music_note, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 16),
               SizedBox(width: 8),
               Text(
                 '$claps clap${claps > 1 ? 's' : ''}',
-                style: TextStyle(color: AppColors.textPrimary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
               if (claps == currentClaps) ...[
                 SizedBox(width: 8),
-                Icon(Icons.check, color: AppColors.primary, size: 16),
+                Icon(Icons.check, color: Theme.of(context).colorScheme.primary, size: 16),
               ],
             ],
           ),
@@ -835,22 +835,22 @@ Widget _buildPhaseCard(int index) {
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                 ),
                 decoration: InputDecoration(
                   labelText: 'Min',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
+                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
@@ -873,24 +873,24 @@ Widget _buildPhaseCard(int index) {
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                 ),
                 decoration: InputDecoration(
                   labelText: 'Max',
                   hintText: phase.maxDuration.toString().isEmpty ? phase.minDuration.toString() : null,
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                  hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.7)),
+                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                    borderSide: BorderSide(color: AppColors.primary),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
@@ -932,10 +932,10 @@ Widget _buildPhaseCard(int index) {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -944,14 +944,14 @@ Widget _buildPhaseCard(int index) {
             children: [
               Icon(
                 Icons.timer,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppLayout.iconSizeSmall,
               ),
               SizedBox(width: AppLayout.spacingSmall),
               Text(
                 'Cycle Duration',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -966,13 +966,13 @@ Widget _buildPhaseCard(int index) {
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildDurationInfo('Minimum', minTotal, AppColors.textSecondary),
-                    _buildDurationInfo('Current', currentTotal, AppColors.primary),
-                    _buildDurationInfo('Maximum', maxTotal, AppColors.textSecondary),
+                    _buildDurationInfo('Minimum', minTotal, Theme.of(context).colorScheme.onSurfaceVariant),
+                    _buildDurationInfo('Current', currentTotal, Theme.of(context).colorScheme.primary),
+                    _buildDurationInfo('Maximum', maxTotal, Theme.of(context).colorScheme.onSurfaceVariant),
                   ],
                 )
               : Center(
-                  child: _buildDurationInfo('Total', currentTotal, AppColors.primary),
+                  child: _buildDurationInfo('Total', currentTotal, Theme.of(context).colorScheme.primary),
                 ),
         ),
       ],
@@ -985,7 +985,7 @@ Widget _buildPhaseCard(int index) {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: AppLayout.fontSizeSmall,
           ),
         ),

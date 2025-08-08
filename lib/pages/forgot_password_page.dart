@@ -70,10 +70,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         title: Text('Reset Password'),
         elevation: 0,
       ),
@@ -85,7 +85,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               padding: EdgeInsets.all(AppLayout.authFormPadding),
               child: Card(
                 elevation: AppLayout.cardElevation,
-                color: AppColors.cardBackground,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
                 ),
@@ -100,7 +100,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Icon(
                           Icons.lock_reset,
                           size: 64,
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
@@ -108,7 +108,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeMedium,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
@@ -116,7 +116,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           'Enter email to get reset code',
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeSmall,
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -127,21 +127,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           controller: _emailController,
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            labelStyle: TextStyle(color: AppColors.textSecondary),
+                            labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.textSecondary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.primary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                             ),
-                            prefixIcon: Icon(Icons.email, color: AppColors.textSecondary),
+                            prefixIcon: Icon(Icons.email, color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
-                          style: TextStyle(color: AppColors.textPrimary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -161,14 +161,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             width: double.infinity,
                             padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                              border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
                             ),
                             child: Text(
                               _successMessage!,
                               style: TextStyle(
-                                color: AppColors.primary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontSize: AppLayout.fontSizeSmall,
                               ),
                               textAlign: TextAlign.center,
@@ -183,14 +183,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             width: double.infinity,
                             padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                              border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
                             ),
                             child: Text(
                               _errorMessage!,
                               style: TextStyle(
-                                color: AppColors.error,
+                                color: Theme.of(context).colorScheme.error,
                                 fontSize: AppLayout.fontSizeSmall,
                               ),
                               textAlign: TextAlign.center,
@@ -206,16 +206,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           child: ElevatedButton(
                             onPressed: (_isLoading || !SupabaseConstants.isConfigured) ? null : _sendResetOTP,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.background,
-                              disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              foregroundColor: Theme.of(context).colorScheme.surface,
+                              disabledBackgroundColor: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                               ),
                             ),
                             child: _isLoading
                                 ? CircularProgressIndicator(
-                                    color: AppColors.background,
+                                    color: Theme.of(context).colorScheme.surface,
                                     strokeWidth: 2,
                                   )
                                 : Text(
@@ -237,7 +237,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           child: Text(
                             'Back',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: AppLayout.fontSizeSmall,
                             ),
                           ),
@@ -249,18 +249,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           Container(
                             padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                              border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
                             ),
                             child: Column(
                               children: [
-                                Icon(Icons.warning, color: AppColors.error, size: 20),
+                                Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
                                 SizedBox(height: 4),
                                 Text(
                                   'Supabase Not Configured',
                                   style: TextStyle(
-                                    color: AppColors.error,
+                                    color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -268,7 +268,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 Text(
                                   'Please update SupabaseConstants with your project URL and anon key',
                                   style: TextStyle(
-                                    color: AppColors.error,
+                                    color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                   ),
                                   textAlign: TextAlign.center,

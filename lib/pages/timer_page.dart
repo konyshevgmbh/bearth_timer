@@ -69,7 +69,7 @@ class _TimerPageState extends State<TimerPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: AppColors.cardBackground,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
           ),
@@ -77,7 +77,7 @@ class _TimerPageState extends State<TimerPage> {
             children: [
               Icon(
                 Icons.info_outline,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: 24,
               ),
               SizedBox(width: 8),
@@ -85,7 +85,7 @@ class _TimerPageState extends State<TimerPage> {
                 child: Text(
                   exercise.name,
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: AppLayout.fontSizeMedium,
                     fontWeight: FontWeight.bold,
                   ),
@@ -103,7 +103,7 @@ class _TimerPageState extends State<TimerPage> {
                       ? exercise.description 
                       : 'No description available for this exercise.',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: AppLayout.fontSizeSmall,
                     height: 1.5,
                   ),
@@ -113,7 +113,7 @@ class _TimerPageState extends State<TimerPage> {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -122,7 +122,7 @@ class _TimerPageState extends State<TimerPage> {
                       Text(
                         'Exercise Details:',
                         style: TextStyle(
-                          color: AppColors.textPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: AppLayout.fontSizeSmall,
                           fontWeight: FontWeight.bold,
                         ),
@@ -144,7 +144,7 @@ class _TimerPageState extends State<TimerPage> {
               child: Text(
                 'Close',
                 style: TextStyle(
-                  color: AppColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: AppLayout.fontSizeSmall,
                 ),
               ),
@@ -164,14 +164,14 @@ class _TimerPageState extends State<TimerPage> {
           Text(
             label,
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.bold,
             ),
@@ -265,8 +265,8 @@ class _TimerPageState extends State<TimerPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_sessionService.currentExercise?.name ?? 'Exercise'),
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -281,7 +281,7 @@ class _TimerPageState extends State<TimerPage> {
           ),
         ],
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -302,10 +302,10 @@ class _TimerPageState extends State<TimerPage> {
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: Theme.of(context).colorScheme.surface,
                   border: Border(
                     top: BorderSide(
-                      color: AppColors.textSecondary.withValues(alpha: 0.2),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -325,7 +325,7 @@ class _TimerPageState extends State<TimerPage> {
             await _startSession();
           }
         },
-        backgroundColor: _sessionService.isRunning ? AppColors.error : AppColors.primary,
+        backgroundColor: _sessionService.isRunning ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
         icon: Icon(
           _sessionService.isRunning ? Icons.stop : Icons.play_arrow,
           color: Colors.black,
@@ -401,7 +401,7 @@ class _TimerPageState extends State<TimerPage> {
                   await _startSession();
                 }
               },
-              backgroundColor: _sessionService.isRunning ? AppColors.error : AppColors.primary,
+              backgroundColor: _sessionService.isRunning ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
               icon: Icon(
                 _sessionService.isRunning ? Icons.stop : Icons.play_arrow,
                 color: Colors.black,
@@ -589,7 +589,7 @@ class _TimerPageState extends State<TimerPage> {
     return ListView.separated(
       itemCount: phases.length,
       separatorBuilder: (context, index) => Divider(
-        color: AppColors.textSecondary.withValues(alpha: 0.2),
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
         height: 1,
       ),
       itemBuilder: (context, index) {
@@ -609,7 +609,7 @@ class _TimerPageState extends State<TimerPage> {
           title: Text(
             phase.name,
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.w500,
             ),
@@ -617,20 +617,20 @@ class _TimerPageState extends State<TimerPage> {
           subtitle: hasRange ? Text(
             '$clapsText • Range: $rangeText',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall - 2,
             ),
           ) : Text(
             clapsText,
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall - 2,
             ),
           ),
           trailing: Text(
             '${phase.duration}s',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.w600,
             ),
@@ -656,7 +656,7 @@ class _TimerPageState extends State<TimerPage> {
             Text(
               _sessionService.phaseLabel,
               style: TextStyle(
-                color: _sessionService.phaseColor,
+                color: _sessionService.phaseColor(context),
                 fontSize: AppLayout.fontSizeMedium,
               ),
             ),
@@ -666,7 +666,7 @@ class _TimerPageState extends State<TimerPage> {
                   ? _sessionService.timerDisplay
                   : _sessionService.defaultTimerDisplay,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: AppLayout.fontSizeLarge,
                 letterSpacing: 2,
               ),
@@ -675,7 +675,7 @@ class _TimerPageState extends State<TimerPage> {
             Text(
               'Cycle ${_sessionService.currentCycle} / ${_sessionService.currentExercise?.cycles ?? 0}',
               style: TextStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: AppLayout.fontSizeSmall,
               ),
             ),
@@ -750,7 +750,7 @@ class _TimerPageState extends State<TimerPage> {
       innerStrokeWidth: AppLayout.progressStrokeWidth - 2,
       innerProgress: phaseProgress,
       innerColor: singleCycleSegmentColors[currentPhaseIndex],
-      innerBackgroundColor: AppColors.progressBackground,
+      innerBackgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       currentPhaseIndex: currentPhaseIndex,
       singleCycleColors: singleCycleSegmentColors,
       animationDuration: const Duration(milliseconds: 150),
@@ -772,8 +772,8 @@ class _TimerPageState extends State<TimerPage> {
           icon: Icon(
             Icons.remove_circle,
             color: canDecrease && !_sessionService.isRunning
-                ? AppColors.textSecondary 
-                : AppColors.textSecondary.withValues(alpha: 0.3),
+                ? Theme.of(context).colorScheme.onSurfaceVariant 
+                : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           ),
           onPressed: (canDecrease && !_sessionService.isRunning) ? onDec : null,
         ) : SizedBox(width: 48),
@@ -783,7 +783,7 @@ class _TimerPageState extends State<TimerPage> {
           child: Text(
             '$value',
             style: TextStyle(
-                color: AppColors.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeMedium * (value >= 100 ? 0.8 : 1.0),
               fontWeight: FontWeight.w600,
             ),
@@ -793,8 +793,8 @@ class _TimerPageState extends State<TimerPage> {
           icon: Icon(
             Icons.add_circle,
             color: canIncrease && !_sessionService.isRunning
-                ? AppColors.textSecondary 
-                : AppColors.textSecondary.withValues(alpha: 0.3),
+                ? Theme.of(context).colorScheme.onSurfaceVariant 
+                : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           ),
           onPressed: (canIncrease && !_sessionService.isRunning) ? onInc : null,
         ) : SizedBox(width: 48),
@@ -811,7 +811,7 @@ class _TimerPageState extends State<TimerPage> {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: AppLayout.fontSizeSmall,
           ),
         ),
@@ -832,7 +832,7 @@ class _TimerPageState extends State<TimerPage> {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: AppLayout.fontSizeSmall,
           ),
         ),

@@ -76,103 +76,39 @@ void main() async {
 }
 
 /// Main application widget that sets up the app theme and initial route
-class BreathHoldApp extends StatelessWidget {
+class BreathHoldApp extends StatefulWidget {
   const BreathHoldApp({super.key});
+
+  @override
+  State<BreathHoldApp> createState() => _BreathHoldAppState();
+}
+
+class _BreathHoldAppState extends State<BreathHoldApp> {
+  final AppState _appState = AppState();
+
+  @override
+  void initState() {
+    super.initState();
+    _appState.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    _appState.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bearth Timer',
-      theme: ThemeData.dark(
-        useMaterial3: true,
-      ).copyWith(
-        scaffoldBackgroundColor: AppColors.background,
-        cardColor: AppColors.cardBackground,
-        // Customize app bar theme
-        appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.background,
-          foregroundColor: AppColors.textPrimary,
-          elevation: 0,
-          centerTitle: false,
-        ),
-        // Customize card theme
-        cardTheme: CardThemeData(
-          color: AppColors.cardBackground,
-          elevation: AppLayout.cardElevation,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
-          ),
-        ),
-        // Customize elevated button theme
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.background,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-            ),
-          ),
-        ),
-        // Customize text button theme
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.primary,
-          ),
-        ),
-        // Customize input decoration theme
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-            borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 0.3)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-            borderSide: BorderSide(color: AppColors.primary),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-            borderSide: BorderSide(color: AppColors.error),
-          ),
-          labelStyle: TextStyle(color: AppColors.textSecondary),
-          hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.7)),
-        ),
-        // Customize drawer theme
-        drawerTheme: DrawerThemeData(
-          backgroundColor: AppColors.cardBackground,
-        ),
-        // Customize list tile theme
-        listTileTheme: ListTileThemeData(
-          textColor: AppColors.textPrimary,
-          iconColor: AppColors.textPrimary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-          ),
-        ),
-        // Customize dialog theme
-        dialogTheme: DialogThemeData(
-          backgroundColor: AppColors.cardBackground,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
-          ),
-          titleTextStyle: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: AppLayout.fontSizeMedium,
-          ),
-          contentTextStyle: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: AppLayout.fontSizeSmall,
-          ),
-        ),
-        // Customize progress indicator theme
-        progressIndicatorTheme: ProgressIndicatorThemeData(
-          color: AppColors.primary,
-          linearTrackColor: AppColors.progressBackground,
-          circularTrackColor: AppColors.progressBackground,
-        ),
-      ),
+      theme: _createLightTheme(),
+      darkTheme: _createDarkTheme(),
+      themeMode: _appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
       // Define named routes for better navigation
@@ -181,6 +117,106 @@ class BreathHoldApp extends StatelessWidget {
         '/settings': (context) => SettingsPage(),
         '/exercises': (context) => ExercisesPage(),
       },
+    );
+  }
+
+  /// Creates the light theme configuration
+  ThemeData _createLightTheme() {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF80DEEA), // Cyan color similar to original primary
+      brightness: Brightness.light,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      cardTheme: CardThemeData(
+        elevation: AppLayout.cardElevation,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+      ),
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
+        ),
+      ),
+    );
+  }
+
+  /// Creates the dark theme configuration  
+  ThemeData _createDarkTheme() {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF80DEEA), // Cyan color similar to original primary
+      brightness: Brightness.dark,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      cardTheme: CardThemeData(
+        elevation: AppLayout.cardElevation,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+      ),
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
+        ),
+      ),
     );
   }
 }
@@ -244,7 +280,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Widget build(BuildContext context) {
     if (!_isInitialized) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -258,13 +294,13 @@ class _AuthWrapperState extends State<AuthWrapper> {
               Text(
                 'Bearth Timer',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeMedium,
                       ),
               ),
               SizedBox(height: AppLayout.sectionSpacingMedium),
               CircularProgressIndicator(
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 strokeWidth: 3,
               ),
             ],

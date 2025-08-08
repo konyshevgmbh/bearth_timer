@@ -483,15 +483,15 @@ class SessionService extends ChangeNotifier {
   }
 
   /// Get color for current phase
-  Color get phaseColor {
-    if (_currentExercise == null) return AppColors.textPrimary;
+  Color phaseColor(BuildContext context) {
+    if (_currentExercise == null) return Theme.of(context).colorScheme.onSurface;
     
     if (isInWaitPhase) {
-      return AppColors.phaseWait;
+      return Theme.of(context).colorScheme.onSurface;
     } else if (currentPhaseIndex < _currentExercise!.phases.length) {
       return _currentExercise!.phases[currentPhaseIndex].color;
     } else {
-      return AppColors.textPrimary;
+      return Theme.of(context).colorScheme.onSurface;
     }
   }
 

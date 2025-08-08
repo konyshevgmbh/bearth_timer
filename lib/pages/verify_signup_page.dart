@@ -142,10 +142,10 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         title: Text('Verify Email'),
         elevation: 0,
       ),
@@ -157,7 +157,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
               padding: EdgeInsets.all(AppLayout.authFormPadding),
               child: Card(
                 elevation: AppLayout.cardElevation,
-                color: AppColors.cardBackground,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
                 ),
@@ -170,7 +170,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                       Icon(
                         Icons.mark_email_read,
                         size: 64,
-                        color: AppColors.primary,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(height: AppLayout.authFieldSpacing),
                       Text(
@@ -178,7 +178,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                         style: TextStyle(
                           fontSize: AppLayout.fontSizeMedium,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       SizedBox(height: AppLayout.authFieldSpacing),
@@ -186,7 +186,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                         'Code sent to ${widget.email}',
                         style: TextStyle(
                           fontSize: AppLayout.fontSizeSmall,
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -198,14 +198,14 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                           width: double.infinity,
                           padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                            border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             _successMessage!,
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: AppLayout.fontSizeSmall,
                             ),
                             textAlign: TextAlign.center,
@@ -220,14 +220,14 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                           width: double.infinity,
                           padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                           decoration: BoxDecoration(
-                            color: AppColors.error.withValues(alpha: 0.1),
+                            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                            border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                            border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             _errorMessage!,
                             style: TextStyle(
-                              color: AppColors.error,
+                              color: Theme.of(context).colorScheme.error,
                               fontSize: AppLayout.fontSizeSmall,
                             ),
                             textAlign: TextAlign.center,
@@ -241,21 +241,21 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                         controller: _otpController,
                         decoration: InputDecoration(
                           labelText: 'Verification Code',
-                          labelStyle: TextStyle(color: AppColors.textSecondary),
+                          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                            borderSide: BorderSide(color: AppColors.textSecondary),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                            borderSide: BorderSide(color: AppColors.primary),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                           ),
-                          prefixIcon: Icon(Icons.security, color: AppColors.textSecondary),
+                          prefixIcon: Icon(Icons.security, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
-                        style: TextStyle(color: AppColors.textPrimary),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         maxLength: 6,
@@ -269,16 +269,16 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                         child: ElevatedButton(
                           onPressed: (_isLoading || _currentOTPStatus == OTPStatus.verifying) ? null : _verifyOTPAndSignup,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: AppColors.background,
-                            disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.surface,
+                            disabledBackgroundColor: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                             ),
                           ),
                           child: _isLoading || _currentOTPStatus == OTPStatus.verifying
                               ? CircularProgressIndicator(
-                                  color: AppColors.background,
+                                  color: Theme.of(context).colorScheme.surface,
                                   strokeWidth: 2,
                                 )
                               : Text(
@@ -301,8 +301,8 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                               : 'Resend Code',
                           style: TextStyle(
                             color: _resendCountdown > 0 
-                                ? AppColors.textSecondary 
-                                : AppColors.primary,
+                                ? Theme.of(context).colorScheme.onSurfaceVariant 
+                                : Theme.of(context).colorScheme.primary,
                             fontSize: AppLayout.fontSizeSmall,
                           ),
                         ),
@@ -317,7 +317,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
                         child: Text(
                           'Back',
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: AppLayout.fontSizeSmall,
                           ),
                         ),

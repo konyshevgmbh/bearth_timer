@@ -148,7 +148,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Account data cleared. You have been signed out.'),
-            backgroundColor: AppColors.primary,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
         
@@ -214,10 +214,10 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         title: Text('Delete Account'),
         elevation: 0,
       ),
@@ -229,7 +229,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
               padding: EdgeInsets.all(AppLayout.authFormPadding),
               child: Card(
                 elevation: AppLayout.cardElevation,
-                color: AppColors.cardBackground,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
                 ),
@@ -242,7 +242,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                       Icon(
                         Icons.delete_forever,
                         size: 64,
-                        color: AppColors.error,
+                        color: Theme.of(context).colorScheme.error,
                       ),
                       SizedBox(height: AppLayout.authFieldSpacing),
                       Text(
@@ -250,7 +250,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         style: TextStyle(
                           fontSize: AppLayout.fontSizeMedium,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       SizedBox(height: AppLayout.authFieldSpacing),
@@ -262,7 +262,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             'This will permanently delete your account and all data.',
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
-                              color: AppColors.error,
+                              color: Theme.of(context).colorScheme.error,
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
@@ -272,7 +272,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             '• All training data will be lost\n• Sync settings will be cleared\n• This action cannot be undone',
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.left,
                           ),
@@ -285,8 +285,8 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             child: ElevatedButton(
                               onPressed: _showDeleteConfirmation,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.error,
-                                foregroundColor: AppColors.background,
+                                backgroundColor: Theme.of(context).colorScheme.error,
+                                foregroundColor: Theme.of(context).colorScheme.surface,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                                 ),
@@ -306,7 +306,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             'Account: $_userEmail',
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -316,7 +316,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             'We\'ll send a verification code to confirm this action.',
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -329,16 +329,16 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _sendDeleteOTP,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.error,
-                                foregroundColor: AppColors.background,
-                                disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                                backgroundColor: Theme.of(context).colorScheme.error,
+                                foregroundColor: Theme.of(context).colorScheme.surface,
+                                disabledBackgroundColor: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                                 ),
                               ),
                               child: _isLoading
                                   ? CircularProgressIndicator(
-                                      color: AppColors.background,
+                                      color: Theme.of(context).colorScheme.surface,
                                       strokeWidth: 2,
                                     )
                                   : Text(
@@ -357,7 +357,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           'Code sent to $_userEmail',
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeSmall,
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -369,14 +369,14 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                             width: double.infinity,
                             padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                              border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
                             ),
                             child: Text(
                               _successMessage!,
                               style: TextStyle(
-                                color: AppColors.primary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontSize: AppLayout.fontSizeSmall,
                               ),
                               textAlign: TextAlign.center,
@@ -390,21 +390,21 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           controller: _otpController,
                           decoration: InputDecoration(
                             labelText: 'Verification Code',
-                            labelStyle: TextStyle(color: AppColors.textSecondary),
+                            labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.textSecondary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.primary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                             ),
-                            prefixIcon: Icon(Icons.security, color: AppColors.textSecondary),
+                            prefixIcon: Icon(Icons.security, color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
-                          style: TextStyle(color: AppColors.textPrimary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           maxLength: 6,
@@ -418,16 +418,16 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           child: ElevatedButton(
                             onPressed: (_isLoading || _currentOTPStatus == OTPStatus.verifying) ? null : _verifyOTPAndDelete,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.error,
-                              foregroundColor: AppColors.background,
-                              disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                              backgroundColor: Theme.of(context).colorScheme.error,
+                              foregroundColor: Theme.of(context).colorScheme.surface,
+                              disabledBackgroundColor: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                               ),
                             ),
                             child: _isLoading || _currentOTPStatus == OTPStatus.verifying
                                 ? CircularProgressIndicator(
-                                    color: AppColors.background,
+                                    color: Theme.of(context).colorScheme.surface,
                                     strokeWidth: 2,
                                   )
                                 : Text(
@@ -450,8 +450,8 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                 : 'Resend Code',
                             style: TextStyle(
                               color: _resendCountdown > 0 
-                                  ? AppColors.textSecondary 
-                                  : AppColors.primary,
+                                  ? Theme.of(context).colorScheme.onSurfaceVariant 
+                                  : Theme.of(context).colorScheme.primary,
                               fontSize: AppLayout.fontSizeSmall,
                             ),
                           ),
@@ -465,14 +465,14 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           width: double.infinity,
                           padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                           decoration: BoxDecoration(
-                            color: AppColors.error.withValues(alpha: 0.1),
+                            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                            border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                            border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             _errorMessage!,
                             style: TextStyle(
-                              color: AppColors.error,
+                              color: Theme.of(context).colorScheme.error,
                               fontSize: AppLayout.fontSizeSmall,
                             ),
                             textAlign: TextAlign.center,
@@ -490,7 +490,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: AppLayout.fontSizeSmall,
                           ),
                         ),

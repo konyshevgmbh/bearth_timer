@@ -45,14 +45,14 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('History'),
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: _historyService.isLoading
           ? Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+              child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
             )
           : SingleChildScrollView(
               padding: EdgeInsets.all(16),
@@ -86,10 +86,10 @@ class _HistoryPageState extends State<HistoryPage> {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -97,7 +97,7 @@ class _HistoryPageState extends State<HistoryPage> {
           child: Text(
             'Overview',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
@@ -122,7 +122,7 @@ class _HistoryPageState extends State<HistoryPage> {
         Text(
           value,
           style: TextStyle(
-            color: AppColors.primary,
+            color: Theme.of(context).colorScheme.primary,
             fontSize: AppLayout.fontSizeMedium,
           ),
         ),
@@ -130,7 +130,7 @@ class _HistoryPageState extends State<HistoryPage> {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: AppLayout.fontSizeSmall,
           ),
         ),
@@ -146,13 +146,13 @@ class _HistoryPageState extends State<HistoryPage> {
           Icon(
             Icons.history,
             size: 80,
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           SizedBox(height: 16),
           Text(
             'No history yet',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeMedium,
             ),
           ),
@@ -160,7 +160,7 @@ class _HistoryPageState extends State<HistoryPage> {
           Text(
             'Complete a session to see progress',
             style: TextStyle(
-              color: AppColors.textSecondary.withValues(alpha: 0.7),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: AppLayout.fontSizeSmall,
             ),
             textAlign: TextAlign.center,
@@ -184,7 +184,7 @@ class _HistoryPageState extends State<HistoryPage> {
         final exerciseId = entry.key;
         final results = entry.value;
         final exerciseName = _historyService.getExerciseDisplayName(exerciseId);
-        final exerciseColor = _historyService.getExerciseColor(exerciseId, AppColors.primary);
+        final exerciseColor = _historyService.getExerciseColor(exerciseId, Theme.of(context).colorScheme.primary);
 
         return Column(
           children: [
@@ -207,10 +207,10 @@ class _HistoryPageState extends State<HistoryPage> {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -229,7 +229,7 @@ class _HistoryPageState extends State<HistoryPage> {
               Text(
                 exerciseName,
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -239,7 +239,7 @@ class _HistoryPageState extends State<HistoryPage> {
               Text(
                 '${results.length} sessions',
                 style: TextStyle(
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: AppLayout.fontSizeSmall - 2,
                 ),
               ),
@@ -315,7 +315,7 @@ class _HistoryPageState extends State<HistoryPage> {
           title: Text(
             '${result.cycles} cycles • ${result.duration}s',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.w500,
             ),
@@ -323,14 +323,14 @@ class _HistoryPageState extends State<HistoryPage> {
           subtitle: Text(
             _formatDate(result.date),
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall - 2,
             ),
           ),
           trailing: Text(
             '${result.score.toInt()}s',
             style: TextStyle(
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               fontSize: AppLayout.fontSizeSmall,
               fontWeight: FontWeight.w600,
             ),
@@ -414,24 +414,24 @@ class _ExerciseLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LineChart(
-      chartDataConfig,
+      chartDataConfig(context),
       duration: const Duration(milliseconds: 250),
     );
   }
 
-  LineChartData get chartDataConfig => LineChartData(
-        lineTouchData: touchData,
-        gridData: gridData,
-        titlesData: titlesData,
-        borderData: borderData,
-        lineBarsData: lineBarsData,
+  LineChartData chartDataConfig(BuildContext context) => LineChartData(
+        lineTouchData: touchData(context),
+        gridData: gridData(context),
+        titlesData: titlesData(context),
+        borderData: borderData(context),
+        lineBarsData: lineBarsData(context),
         minX: 0,
         maxX: (chartData.length - 1).toDouble(),
         minY: 0,
         maxY: _getMaxYValue(),
       );
 
-  LineTouchData get touchData => LineTouchData(
+  LineTouchData touchData(BuildContext context) => LineTouchData(
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
           getTooltipItems: (touchedSpots) {
@@ -443,7 +443,7 @@ class _ExerciseLineChart extends StatelessWidget {
                   return LineTooltipItem(
                     '${DateFormat('MMM d').format(result.date)}\n${result.duration}s, ${result.cycles} cycles',
                     TextStyle(
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: AppLayout.fontSizeSmall,
                     ),
                   );
@@ -451,7 +451,7 @@ class _ExerciseLineChart extends StatelessWidget {
                   return LineTooltipItem(
                     '${DateFormat('MMM d').format(chartData[index].key)}\nNo training',
                     TextStyle(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: AppLayout.fontSizeSmall,
                     ),
                   );
@@ -463,27 +463,27 @@ class _ExerciseLineChart extends StatelessWidget {
         ),
       );
 
-  FlTitlesData get titlesData => FlTitlesData(
+  FlTitlesData titlesData(BuildContext context) => FlTitlesData(
         bottomTitles: AxisTitles(
-          sideTitles: bottomTitles,
+          sideTitles: bottomTitles(context),
         ),
         rightTitles: AxisTitles(
-          sideTitles: rightTitles,
+          sideTitles: rightTitles(context),
         ),
         topTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
         leftTitles: AxisTitles(
-          sideTitles: leftTitles,
+          sideTitles: leftTitles(context),
         ),
       );
 
-  List<LineChartBarData> get lineBarsData => [
-        durationLineData,
-        cyclesLineData,
+  List<LineChartBarData> lineBarsData(BuildContext context) => [
+        durationLineData(context),
+        cyclesLineData(context),
       ];
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgets(double value, TitleMeta meta, BuildContext context) {
     final index = value.toInt();
     if (index >= 0 && index < chartData.length) {
       final date = chartData[index].key;
@@ -511,7 +511,7 @@ class _ExerciseLineChart extends StatelessWidget {
         child: Text(
           dateText,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: AppLayout.fontSizeSmall - 1,
           ),
         ),
@@ -520,11 +520,11 @@ class _ExerciseLineChart extends StatelessWidget {
     return const SizedBox();
   }
 
-  SideTitles get bottomTitles => SideTitles(
+  SideTitles bottomTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 30,
         interval: _calculateInterval(),
-        getTitlesWidget: bottomTitleWidgets,
+        getTitlesWidget: (value, meta) => bottomTitleWidgets(value, meta, context),
       );
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
@@ -540,57 +540,57 @@ class _ExerciseLineChart extends StatelessWidget {
     );
   }
 
-  SideTitles get leftTitles => SideTitles(
+  SideTitles leftTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 45,
         getTitlesWidget: leftTitleWidgets,
       );
 
-  Widget rightTitleWidgets(double value, TitleMeta meta) {
+  Widget rightTitleWidgets(double value, TitleMeta meta, BuildContext context) {
     final cyclesValue = (value / _getMaxYValue() * _getMaxCyclesValue()).round();
     return SideTitleWidget(
       meta: meta,
       child: Text(
         '${cyclesValue}c',
         style: TextStyle(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall - 1,
         ),
       ),
     );
   }
 
-  SideTitles get rightTitles => SideTitles(
+  SideTitles rightTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 40,
-        getTitlesWidget: rightTitleWidgets,
+        getTitlesWidget: (value, meta) => rightTitleWidgets(value, meta, context),
       );
 
-  FlGridData get gridData => FlGridData(
+  FlGridData gridData(BuildContext context) => FlGridData(
         show: true,
         drawVerticalLine: true,
         drawHorizontalLine: true,
         horizontalInterval: 25,
         verticalInterval: _calculateInterval(),
         getDrawingHorizontalLine: (value) => FlLine(
-          color: AppColors.chartGrid,
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           strokeWidth: 1,
         ),
         getDrawingVerticalLine: (value) => FlLine(
-          color: AppColors.chartGrid,
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           strokeWidth: 1,
         ),
       );
 
-  FlBorderData get borderData => FlBorderData(
+  FlBorderData borderData(BuildContext context) => FlBorderData(
         show: true,
         border: Border.all(
-          color: AppColors.chartGrid,
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           width: 1,
         ),
       );
 
-  LineChartBarData get durationLineData => LineChartBarData(
+  LineChartBarData durationLineData(BuildContext context) => LineChartBarData(
         spots: _getDurationSpots(),
         isCurved: true,
         curveSmoothness: 0.3,
@@ -604,7 +604,7 @@ class _ExerciseLineChart extends StatelessWidget {
               radius: 4,
               color: exerciseColor,
               strokeWidth: 2,
-              strokeColor: AppColors.background,
+              strokeColor: Theme.of(context).colorScheme.surface,
             );
           },
         ),
@@ -614,7 +614,7 @@ class _ExerciseLineChart extends StatelessWidget {
         ),
       );
 
-  LineChartBarData get cyclesLineData => LineChartBarData(
+  LineChartBarData cyclesLineData(BuildContext context) => LineChartBarData(
         spots: _getCyclesSpots().map((spot) {
           if (spot.y.isNaN) return spot;
           final scaledY = spot.y / _getMaxCyclesValue() * _getMaxYValue();
@@ -622,7 +622,7 @@ class _ExerciseLineChart extends StatelessWidget {
         }).toList(),
         isCurved: true,
         curveSmoothness: 0.3,
-        color: AppColors.textSecondary,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(
@@ -630,9 +630,9 @@ class _ExerciseLineChart extends StatelessWidget {
           getDotPainter: (spot, percent, barData, index) {
             return FlDotCirclePainter(
               radius: 3,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               strokeWidth: 1,
-              strokeColor: AppColors.background,
+              strokeColor: Theme.of(context).colorScheme.surface,
             );
           },
         ),

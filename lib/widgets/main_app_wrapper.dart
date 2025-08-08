@@ -142,9 +142,9 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.cardBackground,
-        selectedItemColor: AppColors.selected,
-        unselectedItemColor: AppColors.textSecondary,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
         selectedFontSize: 12,
         unselectedFontSize: 12,
         onTap: _onItemTapped,
@@ -160,11 +160,11 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
           NavigationRail(
             selectedIndex: _currentIndex,
             onDestinationSelected: _onItemTapped,
-            backgroundColor: AppColors.cardBackground,
-            selectedIconTheme: IconThemeData(color: AppColors.selected),
-            unselectedIconTheme: IconThemeData(color: AppColors.textSecondary),
-            selectedLabelTextStyle: TextStyle(color: AppColors.selected),
-            unselectedLabelTextStyle: TextStyle(color: AppColors.textSecondary),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+            selectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+            unselectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            selectedLabelTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+            unselectedLabelTextStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             labelType: NavigationRailLabelType.all,
             destinations: [
               NavigationRailDestination(
@@ -185,7 +185,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
               ),
             ],
           ),
-          VerticalDivider(thickness: 1, width: 1, color: AppColors.textSecondary.withValues(alpha: 0.2)),
+          VerticalDivider(thickness: 1, width: 1, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2)),
           Expanded(child: _buildPageView()),
         ],
       ),
@@ -200,7 +200,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
             width: 256,
             child: _buildNavigationDrawer(),
           ),
-          VerticalDivider(thickness: 1, width: 1, color: AppColors.textSecondary.withValues(alpha: 0.2)),
+          VerticalDivider(thickness: 1, width: 1, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2)),
           Expanded(child: _buildPageView()),
         ],
       ),
@@ -256,7 +256,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
     final isLoggedIn = user != null;
 
     return Container(
-      color: AppColors.cardBackground,
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
       child: Column(
         children: [
           // Header
@@ -265,7 +265,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
             width: double.infinity,
             padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.headerBackground.withValues(alpha: 0.5),
+              color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +280,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                 Text(
                   'Breath Training',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: AppLayout.fontSizeMedium,
                   ),
                 ),
@@ -289,7 +289,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                   Text(
                     'v$_version',
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: AppLayout.fontSizeSmall - 2,
                     ),
                   ),
@@ -299,7 +299,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                   Text(
                     user.email ?? 'Unknown',
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: AppLayout.fontSizeSmall,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -356,16 +356,16 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
       child: ListTile(
         leading: Icon(
           icon,
-          color: isSelected ? AppColors.selected : AppColors.textPrimary,
+          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
         ),
         title: Text(
           title,
           style: TextStyle(
-            color: isSelected ? AppColors.selected : AppColors.textPrimary,
+            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
           ),
         ),
         selected: isSelected,
-        selectedTileColor: AppColors.selected.withValues(alpha: 0.1),
+        selectedTileColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

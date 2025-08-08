@@ -156,7 +156,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -165,7 +165,7 @@ class _AuthPageState extends State<AuthPage> {
               padding: EdgeInsets.all(AppLayout.authFormPadding),
               child: Card(
                 elevation: AppLayout.cardElevation,
-                color: AppColors.cardBackground,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppLayout.cardBorderRadius),
                 ),
@@ -187,7 +187,7 @@ class _AuthPageState extends State<AuthPage> {
                           'Bearth Timer',
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeMedium,
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         SizedBox(height: AppLayout.authFormPadding),
@@ -197,21 +197,21 @@ class _AuthPageState extends State<AuthPage> {
                           controller: _emailController,
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            labelStyle: TextStyle(color: AppColors.textSecondary),
+                            labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.textSecondary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.primary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                             ),
-                            prefixIcon: Icon(Icons.email, color: AppColors.textSecondary),
+                            prefixIcon: Icon(Icons.email, color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
-                          style: TextStyle(color: AppColors.textPrimary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -232,21 +232,21 @@ class _AuthPageState extends State<AuthPage> {
                           controller: _passwordController,
                           decoration: InputDecoration(
                             labelText: 'Password',
-                            labelStyle: TextStyle(color: AppColors.textSecondary),
+                            labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.textSecondary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              borderSide: BorderSide(color: AppColors.primary),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                             ),
-                            prefixIcon: Icon(Icons.lock, color: AppColors.textSecondary),
+                            prefixIcon: Icon(Icons.lock, color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
-                          style: TextStyle(color: AppColors.textPrimary),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -268,7 +268,7 @@ class _AuthPageState extends State<AuthPage> {
                                 ? 'Sync data across devices'
                                 : 'Access your data anywhere',
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: AppLayout.fontSizeSmall,
                             ),
                             textAlign: TextAlign.center,
@@ -281,25 +281,25 @@ class _AuthPageState extends State<AuthPage> {
                           Container(
                             padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
-                              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                              border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3)),
                             ),
                             child: Column(
                               children: [
-                                Icon(Icons.warning, color: AppColors.error, size: 20),
+                                Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
                                 SizedBox(height: 4),
                                 Text(
                                   'Supabase Not Configured',
                                   style: TextStyle(
-                                    color: AppColors.error,
+                                    color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                           ),
                                 ),
                                 Text(
                                   'Please update SupabaseConstants with your project URL and anon key',
                                   style: TextStyle(
-                                    color: AppColors.error,
+                                    color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                   ),
                                   textAlign: TextAlign.center,
@@ -318,16 +318,16 @@ class _AuthPageState extends State<AuthPage> {
                           child: ElevatedButton(
                             onPressed: (_isLoading || !SupabaseConstants.isConfigured) ? null : _handleAuth,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.background,
-                              disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              foregroundColor: Theme.of(context).colorScheme.surface,
+                              disabledBackgroundColor: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                               ),
                             ),
                             child: _isLoading
                                 ? CircularProgressIndicator(
-                                    color: AppColors.background,
+                                    color: Theme.of(context).colorScheme.surface,
                                     strokeWidth: 2,
                                   )
                                 : Text(
@@ -347,13 +347,13 @@ class _AuthPageState extends State<AuthPage> {
                             padding: EdgeInsets.all(AppLayout.authFieldSpacing),
                             decoration: BoxDecoration(
                               color: _errorMessage!.contains('sent!') 
-                                  ? AppColors.primary.withValues(alpha: 0.1)
-                                  : AppColors.error.withValues(alpha: 0.1),
+                                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                                  : Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
                               border: Border.all(
                                 color: _errorMessage!.contains('sent!')
-                                    ? AppColors.primary.withValues(alpha: 0.3)
-                                    : AppColors.error.withValues(alpha: 0.3)
+                                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                                    : Theme.of(context).colorScheme.error.withValues(alpha: 0.3)
                               ),
                             ),
                             child: Column(
@@ -362,8 +362,8 @@ class _AuthPageState extends State<AuthPage> {
                                   _errorMessage!,
                                   style: TextStyle(
                                     color: _errorMessage!.contains('sent!') 
-                                        ? AppColors.primary 
-                                        : AppColors.error,
+                                        ? Theme.of(context).colorScheme.primary 
+                                        : Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                   ),
                                   textAlign: TextAlign.center,
@@ -375,7 +375,7 @@ class _AuthPageState extends State<AuthPage> {
                                     child: Text(
                                       'Resend Email',
                                       style: TextStyle(
-                                        color: AppColors.primary,
+                                        color: Theme.of(context).colorScheme.primary,
                                         fontSize: AppLayout.fontSizeSmall,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -404,8 +404,8 @@ class _AuthPageState extends State<AuthPage> {
                                 'Forgot?',
                                 style: TextStyle(
                                   color: SupabaseConstants.isConfigured 
-                                      ? AppColors.primary 
-                                      : AppColors.textSecondary.withValues(alpha: 0.5),
+                                      ? Theme.of(context).colorScheme.primary 
+                                      : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                                   fontSize: AppLayout.fontSizeSmall,
                                 ),
                               ),
@@ -427,8 +427,8 @@ class _AuthPageState extends State<AuthPage> {
                                 : 'Need account? Sign Up',
                             style: TextStyle(
                               color: SupabaseConstants.isConfigured 
-                                  ? AppColors.primary 
-                                  : AppColors.textSecondary.withValues(alpha: 0.5),
+                                  ? Theme.of(context).colorScheme.primary 
+                                  : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -444,7 +444,7 @@ class _AuthPageState extends State<AuthPage> {
                           },
                           child: Text(
                             'Skip',
-                            style: TextStyle(color: AppColors.textSecondary),
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                         ),
                       ],

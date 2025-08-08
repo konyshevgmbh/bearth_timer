@@ -96,7 +96,7 @@ class ExerciseService extends ChangeNotifier {
   }
 
   /// Creates a new custom exercise for the exercise page
-  BreathingExercise createCustomExercise() {
+  BreathingExercise createCustomExercise(BuildContext context) {
     return BreathingExercise(
       id: _uuid.v4(),
       name: 'New Exercise',
@@ -107,19 +107,19 @@ class ExerciseService extends ChangeNotifier {
       cycleDurationStep: 5,
       cycles: 5,
       cycleDuration: 30,
-      phases: createDefaultPhases(),
+      phases: createDefaultPhases(context),
     );
   }
 
   /// Creates default phases for custom exercises
-  List<BreathPhase> createDefaultPhases() {
+  List<BreathPhase> createDefaultPhases(BuildContext context) {
     return [
       BreathPhase(
         name: 'Breathe In',
         duration: 4,
         minDuration: 2,
         maxDuration: 8,
-        color: AppColors.primary,
+        color: Theme.of(context).colorScheme.primary,
         claps: 1,
       ),
       BreathPhase(
@@ -127,7 +127,7 @@ class ExerciseService extends ChangeNotifier {
         duration: 4,
         minDuration: 2,
         maxDuration: 8,
-        color: AppColors.phaseHold,
+        color: Theme.of(context).colorScheme.secondary,
         claps: 2,
       ),
       BreathPhase(
@@ -135,7 +135,7 @@ class ExerciseService extends ChangeNotifier {
         duration: 6,
         minDuration: 3,
         maxDuration: 10,
-        color: AppColors.phaseOut,
+        color: Theme.of(context).colorScheme.tertiary,
         claps: 3,
       ),
       BreathPhase(
@@ -143,7 +143,7 @@ class ExerciseService extends ChangeNotifier {
         duration: 2,
         minDuration: 1,
         maxDuration: 5,
-        color: AppColors.phaseRest,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         claps: 1,
       ),
     ];
@@ -384,15 +384,16 @@ class ExerciseService extends ChangeNotifier {
   }
 
   /// Adds a new phase
-  void addPhase() {
+  void addPhase(BuildContext context) {
     if (_currentExercise?.phases != null && _currentExercise!.phases.length < 8) {
       final phases = List<BreathPhase>.from(_currentExercise!.phases);
+      final availableColors = _getAvailableColors(context);
       final newPhase = BreathPhase(
         name: 'Phase ${phases.length + 1}',
         duration: 5,
         minDuration: 1,
         maxDuration: 30,
-        color: _getAvailableColors()[phases.length % _getAvailableColors().length],
+        color: availableColors[phases.length % availableColors.length],
         claps: 1,
       );
       
@@ -445,21 +446,21 @@ class ExerciseService extends ChangeNotifier {
  
 
   /// Gets available colors for phases
-  List<Color> _getAvailableColors() {
+  List<Color> _getAvailableColors(BuildContext context) {
     return [
-      AppColors.primary,
-      AppColors.phaseHold,
-      AppColors.phaseOut,
-      AppColors.phaseRest,
-      Color(0xFF81C784),
-      Color(0xFFBA68C8),
-      Color(0xFF64B5F6),
-      Color(0xFFFFB74D),
+      Theme.of(context).colorScheme.primary,
+      Theme.of(context).colorScheme.secondary,
+      Theme.of(context).colorScheme.tertiary,
+      Theme.of(context).colorScheme.secondaryContainer,
+      const Color(0xFF81C784),
+      const Color(0xFFBA68C8),
+      const Color(0xFF64B5F6),
+      const Color(0xFFFFB74D),
     ];
   }
 
   /// Gets available colors for UI
-  List<Color> getAvailableColors() => _getAvailableColors();
+  List<Color> getAvailableColors(BuildContext context) => _getAvailableColors(context);
 
   /// Helper methods for common UI patterns
   bool canAddPhase() => (currentPhases?.length ?? 0) < 8;

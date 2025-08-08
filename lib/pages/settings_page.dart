@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 // Import business logic modules
 import '../core/constants.dart';
+import '../main.dart'; // For AppState access
 import '../services/sync_service.dart';
 import '../services/sound_service.dart';
 import '../services/export_import_service.dart';
@@ -81,11 +82,11 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
  
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(AppLayout.maxScreenPadding),
@@ -107,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icons.logout,
                       title: 'Sign Out',
                       subtitle: 'Sign out and work offline',
-                      color: AppColors.error,
+                      color: Theme.of(context).colorScheme.error,
                       onTap: _handleSignOut,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
@@ -115,7 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icons.delete_forever,
                       title: 'Delete Account',
                       subtitle: 'Permanently delete account and data',
-                      color: AppColors.error,
+                      color: Theme.of(context).colorScheme.error,
                       onTap: _handleDeleteAccount,
                     ),
                   ] else ...[
@@ -129,7 +130,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       icon: Icons.login,
                       title: 'Sign In',
                       subtitle: 'Access data anywhere',
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: _handleSignIn,
                     ),
                   ],
@@ -190,8 +191,29 @@ class _SettingsPageState extends State<SettingsPage> {
                     icon: Icons.delete_forever,
                     title: 'Clear All Data',
                     subtitle: 'Delete all data permanently',
-                    color: AppColors.error,
+                    color: Theme.of(context).colorScheme.error,
                     onTap: _handleClearAllData,
+                  ),
+                ],
+              ),
+
+              SizedBox(height: AppLayout.sectionSpacingLarge),
+
+              // Appearance Section
+              _buildSection(
+                title: 'Appearance',
+                icon: Icons.palette,
+                children: [
+                  SwitchListTile(
+                    title: const Text('Dark Mode'),
+                    subtitle: const Text('Use dark theme'),
+                    value: AppState().isDarkMode,
+                    onChanged: (value) {
+                      AppState().toggleTheme();
+                    },
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: AppLayout.spacingSmall,
+                    ),
                   ),
                 ],
               ),
@@ -212,14 +234,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text(
                       'Bearth Timer',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: AppLayout.fontSizeSmall,
                       ),
                     ),
                     subtitle: Text(
                       _version.isEmpty ? 'Loading...' : 'Version $_version',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: AppLayout.fontSizeSmall,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -255,10 +277,10 @@ class _SettingsPageState extends State<SettingsPage> {
             vertical: AppLayout.spacingSmall,
           ),
           decoration: BoxDecoration(
-            color: AppColors.textSecondary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.05),
             border: Border(
               bottom: BorderSide(
-                color: AppColors.textSecondary.withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -267,14 +289,14 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Icon(
                 icon,
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
                 size: AppLayout.iconSizeSmall,
               ),
               SizedBox(width: AppLayout.spacingSmall),
               Text(
                 title,
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: AppLayout.fontSizeSmall,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -298,20 +320,20 @@ class _SettingsPageState extends State<SettingsPage> {
     return ListTile(
       leading: Icon(
         icon,
-        color: color ?? AppColors.textPrimary,
+        color: color ?? Theme.of(context).colorScheme.onSurface,
         size: AppLayout.iconSizeMedium,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: color ?? AppColors.textPrimary,
+          color: color ?? Theme.of(context).colorScheme.onSurface,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: TextStyle(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
@@ -329,12 +351,12 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             )
           : Icon(
               Icons.arrow_forward_ios,
-              color: AppColors.textSecondary.withValues(alpha: 0.5),
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               size: 16,
             ),
     );
@@ -348,20 +370,20 @@ class _SettingsPageState extends State<SettingsPage> {
     return ListTile(
       leading: Icon(
         icon,
-        color: AppColors.textSecondary,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
         size: AppLayout.iconSizeMedium,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: AppColors.textPrimary,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: TextStyle(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall,
         ),
         overflow: TextOverflow.ellipsis,
@@ -483,21 +505,21 @@ class _SettingsPageState extends State<SettingsPage> {
     return await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.cardBackground,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         title: Text(
           title,
-          style: TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         content: Text(
           message,
-          style: TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               'Cancel',
-              style: TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
           TextButton(
@@ -505,7 +527,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Text(
               confirmText,
               style: TextStyle(
-                color: isDestructive ? AppColors.error : AppColors.primary,
+                color: isDestructive ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -519,20 +541,20 @@ class _SettingsPageState extends State<SettingsPage> {
       title: Text(
         'Transition Sound',
         style: TextStyle(
-          color: AppColors.textPrimary,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
       subtitle: Text(
         'Play sound when phases change',
         style: TextStyle(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
       value: _soundEnabled,
       onChanged: _handleSoundToggle,
-      activeColor: AppColors.primary,
+      activeColor: Theme.of(context).colorScheme.primary,
       contentPadding: EdgeInsets.symmetric(
         horizontal: AppLayout.spacingSmall,
         vertical: 4,

@@ -70,14 +70,17 @@ void main() {
       expect(exerciseService.currentExercise!.phases.length, equals(2));
     });
 
-    test('cycleDuration should update when adding a phase', () {
+    testWidgets('cycleDuration should update when adding a phase', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: Container())));
+      final context = tester.element(find.byType(Container));
+      
       // Initial state: 3 phases with durations 5+5+10 = 20 seconds
       expect(exerciseService.currentExercise!.cycleDuration, equals(20));
       expect(exerciseService.currentExercise!.totalPhaseDuration, equals(20));
       expect(exerciseService.currentExercise!.phases.length, equals(3));
 
       // Add a new phase (default duration is 5 seconds)
-      exerciseService.addPhase();
+      exerciseService.addPhase(context);
 
       // Now should have 4 phases with durations 5+5+10+5 = 25 seconds
       expect(exerciseService.currentExercise!.cycleDuration, equals(25));
@@ -115,7 +118,10 @@ void main() {
       expect(exerciseService.currentExercise!.totalPhaseDuration, equals(20));
     });
 
-    test('cycleDuration and totalPhaseDuration should always be in sync', () {
+    testWidgets('cycleDuration and totalPhaseDuration should always be in sync', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: Scaffold(body: Container())));
+      final context = tester.element(find.byType(Container));
+      
       final initialExercise = exerciseService.currentExercise!;
       
       // Both should start equal
@@ -127,7 +133,7 @@ void main() {
       expect(updatedExercise.cycleDuration, equals(updatedExercise.totalPhaseDuration));
 
       // After adding a phase
-      exerciseService.addPhase();
+      exerciseService.addPhase(context);
       updatedExercise = exerciseService.currentExercise!;
       expect(updatedExercise.cycleDuration, equals(updatedExercise.totalPhaseDuration));
 

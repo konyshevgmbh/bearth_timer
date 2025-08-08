@@ -28,51 +28,6 @@ class ChartConstants {
   static const int tooltipFontSize = 12;
 }
 
-/// App color scheme
-class AppColors {
-  // Base colors
-  static const Color background = Color(0xFF121212);
-  static const Color cardBackground = Color(0xFF1E1E2F);
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFB0B0B0);
-  static const Color progressBackground = Color(0xFF2D2D2D);
-  static const Color headerBackground = Color(0xFF3D2C54);
-  static const double headerBackgroundOpacity = 0.3;
-  static const double headerTextOpacity = 0.85;
-
-  // Primary/Accent colors (for main interactions)
-  static const Color primary = Color(0xFF80DEEA);
-  static const Color primaryVariant = Color(0xFF4FB3CF);
-  
-  // Interactive states
-  static const Color selected = Color(0xFF80DEEA);
-  static const Color active = Color(0xFF80DEEA);
-  static const Color highlight = Color(0xFF80DEEA);
-  
-  // Action colors
-  static const Color success = Color(0xFF4CAF50);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color error = Color(0xFFF44336);
-  static const Color info = Color(0xFF80DEEA);
-
-  // Breathing phase colors
-  static const Color phaseIn = Color(0xFF80DEEA);
-  static const Color phaseOut = Color(0xFFFFD59E);
-  static const Color phaseHold = Color(0xFFCBBBEF);
-  static const Color phaseRest = Color(0xFFD8C9F9);
-  static const Color phaseWait = Color(0xFFFFFFFF);
-
-  // Chart colors
-  static const Color chartLine = Color(0xFF80DEEA);
-  static const Color chartGrid = Color(0xFF2D2D2D);
-
-  // Sync status colors (legacy - use action colors instead)
-  static const Color syncSuccess = Color(0xFF4CAF50);
-  static const Color syncPending = Color(0xFFFF9800);
-  static const Color syncError = Color(0xFFF44336);
-  static const Color syncOffline = Color(0xFF9E9E9E);
-  
-}
 
 class SupabaseConstants {
   // Replace these with your actual Supabase URL and anon key
