@@ -452,10 +452,10 @@ class ExerciseService extends ChangeNotifier {
       Theme.of(context).colorScheme.secondary,
       Theme.of(context).colorScheme.tertiary,
       Theme.of(context).colorScheme.secondaryContainer,
-      const Color(0xFF81C784),
-      const Color(0xFFBA68C8),
-      const Color(0xFF64B5F6),
-      const Color(0xFFFFB74D),
+      Theme.of(context).colorScheme.primaryContainer,
+      Theme.of(context).colorScheme.tertiaryContainer,
+      Theme.of(context).colorScheme.error,
+      Theme.of(context).colorScheme.errorContainer,
     ];
   }
 
