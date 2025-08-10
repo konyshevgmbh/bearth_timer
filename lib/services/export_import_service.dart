@@ -177,6 +177,183 @@ class ExportImportService {
     }
     return result;
   }
+
+  /// Export single exercise to JSON format
+  Map<String, dynamic> exportExercise(BreathingExercise exercise) {
+    return {
+      'version': '1.0',
+      'type': 'single_exercise',
+      'exported_at': DateTime.now().toIso8601String(),
+      'exercise': exercise.toJson(),
+    };
+  }
+
+  /// Export single exercise to file using platform-specific file picker
+  Future<bool> exportExerciseToFile(BreathingExercise exercise) async {
+    try {
+      final data = exportExercise(exercise);
+      final jsonString = const JsonEncoder.withIndent('  ').convert(data);
+      final bytes = Uint8List.fromList(utf8.encode(jsonString));
+      
+      final fileName = 'exercise_${exercise.name.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_')}_${_uuid.v4().substring(0, 8)}.json';
+      
+      // Use file picker to save the file
+      final result = await FilePicker.platform.saveFile(
+        dialogTitle: 'Export Exercise',
+        fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        bytes: bytes,
+      );
+      
+      return result != null && result.isNotEmpty;
+    } catch (e) {
+      debugPrint('Error exporting exercise: $e');
+      rethrow;
+    }
+  }
+
+  /// Import exercise from JSON string
+  Future<ExerciseImportResult> importExerciseFromJson(String jsonString) async {
+    try {
+      final data = jsonDecode(jsonString) as Map<String, dynamic>;
+      
+      // Validate version
+      final version = data['version'] as String?;
+      if (version != '1.0') {
+        return ExerciseImportResult(
+          success: false,
+          error: 'Unsupported export version: $version',
+        );
+      }
+
+      // Validate type
+      final type = data['type'] as String?;
+      if (type != 'single_exercise') {
+        return ExerciseImportResult(
+          success: false,
+          error: 'Invalid file type. Expected single exercise export.',
+        );
+      }
+
+      // Import exercise
+      if (data['exercise'] == null) {
+        return ExerciseImportResult(
+          success: false,
+          error: 'No exercise data found in file',
+        );
+      }
+
+      final exerciseData = data['exercise'] as Map<String, dynamic>;
+      final exercise = BreathingExercise.fromJson(exerciseData);
+
+      return ExerciseImportResult(
+        success: true,
+        exercise: exercise,
+      );
+    } catch (e) {
+      debugPrint('Error importing exercise: $e');
+      return ExerciseImportResult(
+        success: false,
+        error: 'Failed to parse exercise data: $e',
+      );
+    }
+  }
+
+  /// Import exercise from file
+  Future<ExerciseImportResult> importExerciseFromFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        withData: true, // Ensure bytes are loaded for web compatibility
+      );
+
+      if (result == null || result.files.isEmpty) {
+        return ExerciseImportResult(
+          success: false,
+          error: 'No file selected',
+        );
+      }
+
+      final file = result.files.first;
+      String jsonString;
+      
+      if (file.bytes != null) {
+        // Web and mobile platforms - use bytes
+        jsonString = utf8.decode(file.bytes!);
+      } else {
+        // Fallback for platforms that don't support bytes
+        return ExerciseImportResult(
+          success: false,
+          error: 'Could not read file',
+        );
+      }
+
+      return await importExerciseFromJson(jsonString);
+    } catch (e) {
+      debugPrint('Error importing exercise from file: $e');
+      return ExerciseImportResult(
+        success: false,
+        error: 'Failed to import file: $e',
+      );
+    }
+  }
+
+  /// Add imported exercise to storage with new ID to avoid conflicts
+  Future<BreathingExercise> addImportedExercise(BreathingExercise exercise) async {
+    try {
+      // Generate new ID to avoid conflicts
+      final newExercise = exercise.copyWith(
+        id: _uuid.v4(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      // Load existing exercises
+      final existingExercises = await _storage.loadExercises();
+      
+      // Check for name conflicts and adjust if necessary
+      String newName = newExercise.name;
+      int suffix = 1;
+      while (existingExercises.any((e) => e.name == newName)) {
+        newName = '${newExercise.name} (${suffix++})';
+      }
+      
+      final finalExercise = newName != newExercise.name 
+          ? newExercise.copyWith(name: newName)
+          : newExercise;
+
+      // Add to existing exercises
+      final updatedExercises = [...existingExercises, finalExercise];
+      await _storage.saveExercises(updatedExercises);
+
+      return finalExercise;
+    } catch (e) {
+      debugPrint('Error adding imported exercise: $e');
+      rethrow;
+    }
+  }
+
+  /// Import exercise from file and add it to storage
+  Future<ExerciseImportResult> importAndAddExercise() async {
+    final result = await importExerciseFromFile();
+    if (result.success && result.exercise != null) {
+      try {
+        final addedExercise = await addImportedExercise(result.exercise!);
+        return ExerciseImportResult(
+          success: true,
+          exercise: addedExercise,
+        );
+      } catch (e) {
+        return ExerciseImportResult(
+          success: false,
+          error: 'Failed to add exercise to storage: $e',
+        );
+      }
+    }
+    return result;
+  }
 }
 
 /// Result of import operation
@@ -204,5 +381,26 @@ class ImportResult {
     if (userSettings != null) parts.add('user settings');
     
     return 'Imported: ${parts.join(', ')}';
+  }
+}
+
+/// Result of exercise import operation
+class ExerciseImportResult {
+  final bool success;
+  final String? error;
+  final BreathingExercise? exercise;
+
+  ExerciseImportResult({
+    required this.success,
+    this.error,
+    this.exercise,
+  });
+
+  String get summary {
+    if (!success) return error ?? 'Import failed';
+    
+    return exercise != null 
+        ? 'Imported exercise: ${exercise!.name}'
+        : 'Import successful';
   }
 }
