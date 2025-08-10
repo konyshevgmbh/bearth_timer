@@ -284,16 +284,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                     fontSize: AppLayout.fontSizeMedium,
                   ),
                 ),
-                if (_version.isNotEmpty) ...[
-                  SizedBox(height: 4),
-                  Text(
-                    'v$_version',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: AppLayout.fontSizeSmall - 2,
-                    ),
-                  ),
-                ],
+
                 if (isLoggedIn) ...[
                   SizedBox(height: 8),
                   Text(
