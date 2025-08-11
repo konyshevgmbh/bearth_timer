@@ -6,6 +6,7 @@ import '../models/breathing_exercise.dart';
 import '../models/training_result.dart';
 import '../models/user_settings.dart';
 import 'storage_service.dart';
+import '../i18n/translations.g.dart';
 
 class ExportImportService {
   static final ExportImportService _instance = ExportImportService._internal();
@@ -223,7 +224,7 @@ class ExportImportService {
       if (version != '1.0') {
         return ExerciseImportResult(
           success: false,
-          error: 'Unsupported export version: $version',
+          error: t.importExport.unsupportedVersion(version: version ?? 'unknown'),
         );
       }
 
@@ -232,7 +233,7 @@ class ExportImportService {
       if (type != 'single_exercise') {
         return ExerciseImportResult(
           success: false,
-          error: 'Invalid file type. Expected single exercise export.',
+          error: t.importExport.invalidFileType,
         );
       }
 
@@ -240,7 +241,7 @@ class ExportImportService {
       if (data['exercise'] == null) {
         return ExerciseImportResult(
           success: false,
-          error: 'No exercise data found in file',
+          error: t.importExport.noExerciseData,
         );
       }
 
@@ -255,7 +256,7 @@ class ExportImportService {
       debugPrint('Error importing exercise: $e');
       return ExerciseImportResult(
         success: false,
-        error: 'Failed to parse exercise data: $e',
+        error: '${t.importExport.failedToParse}: $e',
       );
     }
   }
@@ -272,7 +273,7 @@ class ExportImportService {
       if (result == null || result.files.isEmpty) {
         return ExerciseImportResult(
           success: false,
-          error: 'No file selected',
+          error: t.importExport.noFileSelected,
         );
       }
 
@@ -286,7 +287,7 @@ class ExportImportService {
         // Fallback for platforms that don't support bytes
         return ExerciseImportResult(
           success: false,
-          error: 'Could not read file',
+          error: t.importExport.couldNotReadFile,
         );
       }
 
@@ -295,7 +296,7 @@ class ExportImportService {
       debugPrint('Error importing exercise from file: $e');
       return ExerciseImportResult(
         success: false,
-        error: 'Failed to import file: $e',
+        error: '${t.importExport.failedToImport}: $e',
       );
     }
   }
@@ -348,7 +349,7 @@ class ExportImportService {
       } catch (e) {
         return ExerciseImportResult(
           success: false,
-          error: 'Failed to add exercise to storage: $e',
+          error: '${t.importExport.failedToAdd}: $e',
         );
       }
     }
@@ -397,10 +398,10 @@ class ExerciseImportResult {
   });
 
   String get summary {
-    if (!success) return error ?? 'Import failed';
+    if (!success) return error ?? t.importExport.failedToImport;
     
     return exercise != null 
-        ? 'Imported exercise: ${exercise!.name}'
-        : 'Import successful';
+        ? t.importExport.importedExercise(exerciseName: exercise!.name)
+        : t.importExport.importSuccessful;
   }
 }

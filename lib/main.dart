@@ -19,6 +19,7 @@ import 'services/storage_service.dart';
 import 'services/exercise_service.dart';
 import 'services/sound_service.dart';
 import 'services/session_service.dart';
+import 'i18n/translations.g.dart';
 
 // =============================================================================
 // MAIN APPLICATION ENTRY POINT
@@ -34,6 +35,9 @@ void main() async {
       };
       
       WidgetsFlutterBinding.ensureInitialized();
+
+      // Initialize localization
+      LocaleSettings.useDeviceLocale();
   
       // Initialize Hive for local storage
       await Hive.initFlutter();
@@ -104,19 +108,25 @@ class _BreathHoldAppState extends State<BreathHoldApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Bearth Timer',
-      theme: _createLightTheme(),
-      darkTheme: _createDarkTheme(),
-      themeMode: _appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const AuthWrapper(),
-      debugShowCheckedModeBanner: false,
-      // Define named routes for better navigation
-      routes: {
-        '/auth': (context) => AuthPage(),
-        '/settings': (context) => SettingsPage(),
-        '/exercises': (context) => ExercisesPage(),
-      },
+    return TranslationProvider(
+      child: MaterialApp(
+        title: 'Bearth Timer',
+        theme: _createLightTheme(),
+        darkTheme: _createDarkTheme(),
+        themeMode: _appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        home: const AuthWrapper(),
+        debugShowCheckedModeBanner: false,
+        // Define named routes for better navigation
+        routes: {
+          '/auth': (context) => AuthPage(),
+          '/settings': (context) => SettingsPage(),
+          '/exercises': (context) => ExercisesPage(),
+        },
+        // Localization support
+        locale: TranslationProvider.of(context).flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: const [],
+      ),
     );
   }
 
