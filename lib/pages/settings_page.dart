@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 // Import business logic modules
 import '../core/constants.dart';
+import '../i18n/translations.g.dart';
 import '../main.dart'; // For AppState access
 import '../services/sync_service.dart';
 import '../services/sound_service.dart';
@@ -81,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(t.settings.title),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
  
@@ -94,42 +95,42 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               // Account Section
               _buildSection(
-                title: 'Account',
+                title: t.settings.account,
                 icon: Icons.account_circle,
                 children: [
                   if (isLoggedIn) ...[
                     _buildInfoTile(
                       icon: Icons.email,
-                      title: 'Signed in as',
-                      subtitle: user.email ?? 'Unknown email',
+                      title: t.settings.signedInAs,
+                      subtitle: user.email ?? t.app.unknownEmail,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
                     _buildActionTile(
                       icon: Icons.logout,
-                      title: 'Sign Out',
-                      subtitle: 'Sign out and work offline',
+                      title: t.settings.signOut,
+                      subtitle: t.settings.signOutAndWork,
                       color: Theme.of(context).colorScheme.error,
                       onTap: _handleSignOut,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
                     _buildActionTile(
                       icon: Icons.delete_forever,
-                      title: 'Delete Account',
-                      subtitle: 'Permanently delete account and data',
+                      title: t.settings.deleteAccount,
+                      subtitle: t.settings.permanentlyDelete,
                       color: Theme.of(context).colorScheme.error,
                       onTap: _handleDeleteAccount,
                     ),
                   ] else ...[
                     _buildInfoTile(
                       icon: Icons.cloud_off,
-                      title: 'Working Offline',
-                      subtitle: 'Sign in to sync across devices',
+                      title: t.settings.workingOffline,
+                      subtitle: t.settings.signInToSync,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
                     _buildActionTile(
                       icon: Icons.login,
-                      title: 'Sign In',
-                      subtitle: 'Access data anywhere',
+                      title: t.settings.signIn,
+                      subtitle: t.settings.accessDataAnywhere,
                       color: Theme.of(context).colorScheme.primary,
                       onTap: _handleSignIn,
                     ),
@@ -143,13 +144,13 @@ class _SettingsPageState extends State<SettingsPage> {
               // Sync Section
               if (isLoggedIn) ...[
                 _buildSection(
-                  title: 'Sync',
+                  title: t.settings.sync,
                   icon: Icons.sync,
                   children: [
                     _buildActionTile(
                       icon: Icons.refresh,
-                      title: 'Retry Sync',
-                      subtitle: 'Sync with cloud',
+                      title: t.settings.retrySync,
+                      subtitle: t.settings.syncWithCloud,
                       onTap: _handleRetrySync,
                     ),
                   ],
@@ -159,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // Sound Settings Section
               _buildSection(
-                title: 'Sound',
+                title: t.settings.sound,
                 icon: Icons.volume_up,
                 children: [
                   _buildSoundToggle(),
@@ -170,27 +171,27 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // Data Management Section
               _buildSection(
-                title: 'Data Management',
+                title: t.settings.dataManagement,
                 icon: Icons.storage,
                 children: [
                   _buildActionTile(
                     icon: Icons.file_download,
-                    title: 'Export Data',
-                    subtitle: 'Save data to file',
+                    title: t.settings.exportData,
+                    subtitle: t.settings.saveDataToFile,
                     onTap: _handleExportData,
                   ),
                   SizedBox(height: AppLayout.sectionSpacingSmall),
                   _buildActionTile(
                     icon: Icons.file_upload,
-                    title: 'Import Data',
-                    subtitle: 'Load data from file',
+                    title: t.settings.importData,
+                    subtitle: t.settings.loadDataFromFile,
                     onTap: _handleImportData,
                   ),
                   SizedBox(height: AppLayout.sectionSpacingSmall),
                   _buildActionTile(
                     icon: Icons.delete_forever,
-                    title: 'Clear All Data',
-                    subtitle: 'Delete all data permanently',
+                    title: t.settings.clearAllData,
+                    subtitle: t.settings.deleteAllData,
                     color: Theme.of(context).colorScheme.error,
                     onTap: _handleClearAllData,
                   ),
@@ -201,12 +202,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // Appearance Section
               _buildSection(
-                title: 'Appearance',
+                title: t.settings.appearance,
                 icon: Icons.palette,
                 children: [
                   SwitchListTile(
-                    title: const Text('Dark Mode'),
-                    subtitle: const Text('Use dark theme'),
+                    title: Text(t.settings.darkMode),
+                    subtitle: Text(t.settings.useDarkTheme),
                     value: AppState().isDarkMode,
                     onChanged: (value) {
                       AppState().toggleTheme();
@@ -215,6 +216,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       horizontal: AppLayout.spacingSmall,
                     ),
                   ),
+                  SizedBox(height: AppLayout.sectionSpacingSmall),
+                  _buildLanguageSelector(),
                 ],
               ),
 
@@ -222,7 +225,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // About Section
               _buildSection(
-                title: 'About',
+                title: t.settings.about,
                 icon: Icons.info,
                 children: [
                   ListTile(
@@ -232,14 +235,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       height: AppLayout.iconSizeMedium,
                     ),
                     title: Text(
-                      'Bearth Timer',
+                      t.app.title,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: AppLayout.fontSizeSmall,
                       ),
                     ),
                     subtitle: Text(
-                      _version.isEmpty ? 'Loading...' : 'Version $_version',
+                      _version.isEmpty ? t.app.loading : 'Version $_version',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: AppLayout.fontSizeSmall,
@@ -398,9 +401,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _handleSignOut() async {
     final confirmed = await _showConfirmDialog(
-      title: 'Sign Out',
+      title: t.settings.signOut,
       message: 'Are you sure you want to sign out? Your data will remain on this device.',
-      confirmText: 'Sign Out',
+      confirmText: t.settings.signOut,
       isDestructive: false,
     );
 
@@ -450,7 +453,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _handleExportData() async {
     setState(() => _isLoading = true);
     try {
-      final success = await ExportImportService().exportToFile();
+      await ExportImportService().exportToFile();
     } catch (e) {
       // Export failed
     } finally {
@@ -477,9 +480,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _handleClearAllData() async {
     final confirmed = await _showConfirmDialog(
-      title: 'Clear All Data',
-      message: 'Are you sure you want to delete all training results? This action cannot be undone and will clear data from all your devices.',
-      confirmText: 'Clear All',
+      title: t.settings.clearAllData,
+      message: t.settings.confirmClearData,
+      confirmText: 'Clear All', // TODO: Add to translations
       isDestructive: true,
     );
 
@@ -518,7 +521,7 @@ class _SettingsPageState extends State<SettingsPage> {
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              'Cancel',
+              t.dialogs.cancel,
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
@@ -539,14 +542,14 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildSoundToggle() {
     return SwitchListTile(
       title: Text(
-        'Transition Sound',
+        t.settings.transitionSound,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
       subtitle: Text(
-        'Play sound when phases change',
+        t.settings.playSoundWhenPhases,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall,
@@ -575,5 +578,36 @@ class _SettingsPageState extends State<SettingsPage> {
       // Failed to update sound setting
     }
   }
+
+  Widget _buildLanguageSelector() {
+    // For now, just show current language since only English is working
+    return ListTile(
+      leading: Icon(
+        Icons.language,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      title: Text(
+        'Language', // TODO: Add to translations
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: AppLayout.fontSizeSmall,
+        ),
+      ),
+      subtitle: Text(
+        'English (more languages coming soon)',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontSize: AppLayout.fontSizeSmall,
+        ),
+      ),
+      onTap: null, // Disabled for now
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: AppLayout.spacingSmall,
+        vertical: 4,
+      ),
+    );
+  }
+
+
 
 }

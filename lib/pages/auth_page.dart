@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Import business logic modules
 import '../core/constants.dart';
+import '../i18n/translations.g.dart';
 import '../services/sync_service.dart';
 import '../services/otp_service.dart';
 import '../widgets/main_app_wrapper.dart';
@@ -50,7 +51,7 @@ class _AuthPageState extends State<AuthPage> {
       
       if (mounted) {
         setState(() {
-          _errorMessage = 'Email sent! Check your inbox.';
+          _errorMessage = t.auth.resendEmail;
           _showResendEmail = false;
         });
       }
@@ -58,7 +59,7 @@ class _AuthPageState extends State<AuthPage> {
       if (mounted) {
         setState(() {
           // If resend fails, try signup which will send confirmation email
-          _errorMessage = 'Sending email...';
+          _errorMessage = 'Sending email...'; // TODO: Add to translations
         });
         
         try {
@@ -70,13 +71,13 @@ class _AuthPageState extends State<AuthPage> {
           
           if (mounted) {
             setState(() {
-              _errorMessage = 'Signup email sent! Check your inbox and set your password.';
+              _errorMessage = 'Signup email sent! Check your inbox and set your password.'; // TODO: Add to translations
             });
           }
         } catch (signupError) {
           if (mounted) {
             setState(() {
-              _errorMessage = 'Failed to send email. Check email format.';
+              _errorMessage = 'Failed to send email. Check email format.'; // TODO: Add to translations
             });
           }
         }
@@ -184,7 +185,7 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
-                          'Bearth Timer',
+                          t.app.title,
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeMedium,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -196,7 +197,7 @@ class _AuthPageState extends State<AuthPage> {
                         TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(
-                            labelText: 'Email',
+                            labelText: t.auth.email,
                             labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -215,12 +216,12 @@ class _AuthPageState extends State<AuthPage> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter email';
+                              return t.auth.enterEmail;
                             }
                             // More strict email validation
                             final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
                             if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Invalid email format';
+                              return t.auth.invalidEmail;
                             }
                             return null;
                           },
@@ -231,7 +232,7 @@ class _AuthPageState extends State<AuthPage> {
                         TextFormField(
                           controller: _passwordController,
                           decoration: InputDecoration(
-                            labelText: 'Password',
+                            labelText: t.auth.password,
                             labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -250,10 +251,10 @@ class _AuthPageState extends State<AuthPage> {
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter password';
+                              return t.auth.enterPassword;
                             }
                             if (_isSignUp && value.length < 6) {
-                              return 'Min 6 characters';
+                              return t.auth.minCharacters;
                             }
                             return null;
                           },
@@ -265,8 +266,8 @@ class _AuthPageState extends State<AuthPage> {
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
                             _isSignUp 
-                                ? 'Sync data across devices'
-                                : 'Access your data anywhere',
+                                ? t.auth.syncDataAcross
+                                : t.auth.accessYourData,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: AppLayout.fontSizeSmall,
@@ -290,14 +291,14 @@ class _AuthPageState extends State<AuthPage> {
                                 Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
                                 SizedBox(height: 4),
                                 Text(
-                                  'Supabase Not Configured',
+                                  t.auth.supabaseNotConfigured,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                           ),
                                 ),
                                 Text(
-                                  'Please update SupabaseConstants with your project URL and anon key',
+                                  'Please update SupabaseConstants with your project URL and anon key', // TODO: Add to translations
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
@@ -331,7 +332,7 @@ class _AuthPageState extends State<AuthPage> {
                                     strokeWidth: 2,
                                   )
                                 : Text(
-                                    _isSignUp ? 'Sign Up' : 'Sign In',
+                                    _isSignUp ? t.auth.signUp : t.auth.signIn,
                                     style: TextStyle(
                                       fontSize: AppLayout.fontSizeMedium,
                                               ),
@@ -373,7 +374,7 @@ class _AuthPageState extends State<AuthPage> {
                                   TextButton(
                                     onPressed: _isLoading ? null : _resendConfirmationEmail,
                                     child: Text(
-                                      'Resend Email',
+                                      t.auth.resendEmail,
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary,
                                         fontSize: AppLayout.fontSizeSmall,
@@ -401,7 +402,7 @@ class _AuthPageState extends State<AuthPage> {
                                 );
                               } : null,
                               child: Text(
-                                'Forgot?',
+                                t.auth.forgot,
                                 style: TextStyle(
                                   color: SupabaseConstants.isConfigured 
                                       ? Theme.of(context).colorScheme.primary 
@@ -423,8 +424,8 @@ class _AuthPageState extends State<AuthPage> {
                           } : null,
                           child: Text(
                             _isSignUp
-                                ? 'Have account? Sign In'
-                                : 'Need account? Sign Up',
+                                ? t.auth.haveAccount
+                                : t.auth.needAccount,
                             style: TextStyle(
                               color: SupabaseConstants.isConfigured 
                                   ? Theme.of(context).colorScheme.primary 
@@ -443,7 +444,7 @@ class _AuthPageState extends State<AuthPage> {
                             );
                           },
                           child: Text(
-                            'Skip',
+                            t.auth.skip,
                             style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                         ),

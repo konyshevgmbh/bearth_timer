@@ -31,7 +31,16 @@
       "Bash(tree:*)",
       "Bash(sudo apt:*)",
       "Bash(sudo apt install:*)",
-      "Bash(zenity:*)"
+      "Bash(zenity:*)",
+      "Bash(dart run:*)",
+      "Bash(for file in *.i18n.json)",
+      "Bash(do mv \"$file\" \"$file%.i18n.json.json\")",
+      "Bash(done)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(head:*)",
+      "Bash(echo)",
+      "Bash(python3:*)"
     ],
     "deny": []
   }

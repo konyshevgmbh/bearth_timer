@@ -224,7 +224,7 @@ class ExportImportService {
       if (version != '1.0') {
         return ExerciseImportResult(
           success: false,
-          error: t.importExport.unsupportedVersion(version: version ?? 'unknown'),
+          error: 'Unsupported version: ${version ?? 'unknown'}', // TODO: Use proper translation
         );
       }
 
@@ -401,7 +401,7 @@ class ExerciseImportResult {
     if (!success) return error ?? t.importExport.failedToImport;
     
     return exercise != null 
-        ? t.importExport.importedExercise(exerciseName: exercise!.name)
+        ? 'Imported exercise: ${exercise!.name}' // TODO: Use proper translation
         : t.importExport.importSuccessful;
   }
 }

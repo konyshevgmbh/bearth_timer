@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants.dart';
+import '../i18n/translations.g.dart';
 import 'exercise_edit_page.dart';
 import '../models/breathing_exercise.dart';
 import '../services/session_service.dart';
@@ -193,7 +194,7 @@ class _TimerPageState extends State<TimerPage> {
         MaterialPageRoute(
           builder: (context) => ExerciseEditPage(
             initialExercise: _sessionService.currentExercise!,
-            title: 'Customize',
+            title: t.timer.customize,
              
           ),
         ),
@@ -277,7 +278,7 @@ class _TimerPageState extends State<TimerPage> {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: _sessionService.isRunning ? null : _navigateToEditExercise,
-            tooltip: 'Customize',
+            tooltip: t.timer.customize,
           ),
         ],
       ),
@@ -332,7 +333,7 @@ class _TimerPageState extends State<TimerPage> {
           size: 36,
         ),
         label: Text(
-          _sessionService.isRunning ? 'Stop' : 'Start',
+          _sessionService.isRunning ? t.timer.stop : t.timer.start,
           style: TextStyle(
             color: Colors.black,
             fontSize: AppLayout.fontSizeMedium,
@@ -408,7 +409,7 @@ class _TimerPageState extends State<TimerPage> {
                 size: 36,
               ),
               label: Text(
-                _sessionService.isRunning ? 'Stop' : 'Start',
+                _sessionService.isRunning ? t.timer.stop : t.timer.start,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: AppLayout.fontSizeMedium,
@@ -434,7 +435,7 @@ class _TimerPageState extends State<TimerPage> {
           children: [
             if (currentExercise.canEditCyclesCountCalculated)
               _buildStepper(
-                label: "Cycles",
+                label: t.timer.cycles,
                 value: currentExercise.cycles,
                 canDecrease: _sessionService.canDecreaseCycles(),
                 canIncrease: _sessionService.canIncreaseCycles(),
@@ -461,13 +462,13 @@ class _TimerPageState extends State<TimerPage> {
               )
             else
               _buildFixedValue(
-                label: "Cycles",
+                label: t.timer.cycles,
                 value: currentExercise.cycles,
               ),
             
             if (currentExercise.canEditCycleDurationCalculated)
               _buildStepper(
-                label: "Time",
+                label: t.timer.time,
                 value: currentExercise.cycleDuration,
                 canDecrease: _sessionService.canDecreaseCycleDuration(),
                 canIncrease: _sessionService.canIncreaseCycleDuration(),
@@ -494,7 +495,7 @@ class _TimerPageState extends State<TimerPage> {
               )
             else
               _buildFixedValue(
-                label: "Time",
+                label: t.timer.time,
                 value: currentExercise.cycleDuration,
               ),
           ],
@@ -513,7 +514,7 @@ class _TimerPageState extends State<TimerPage> {
       children: [
         if (currentExercise.canEditCyclesCountCalculated)
           _buildHorizontalStepper(
-            label: "Cycles",
+            label: t.timer.cycles,
             value: currentExercise.cycles,
             canDecrease: _sessionService.canDecreaseCycles(),
             canIncrease: _sessionService.canIncreaseCycles(),
@@ -540,13 +541,13 @@ class _TimerPageState extends State<TimerPage> {
           )
         else
           _buildHorizontalFixedValue(
-            label: "Cycles",
+            label: t.timer.cycles,
             value: currentExercise.cycles,
           ),
         SizedBox(height: AppLayout.sectionSpacingLarge),
         if (currentExercise.canEditCycleDurationCalculated)
           _buildHorizontalStepper(
-            label: "Time",
+            label: t.timer.time,
             value: currentExercise.cycleDuration,
             canDecrease: _sessionService.canDecreaseCycleDuration(),
             canIncrease: _sessionService.canIncreaseCycleDuration(),
@@ -573,7 +574,7 @@ class _TimerPageState extends State<TimerPage> {
           )
         else
           _buildHorizontalFixedValue(
-            label: "Time",
+            label: t.timer.time,
             value: currentExercise.cycleDuration,
           ),
       ],

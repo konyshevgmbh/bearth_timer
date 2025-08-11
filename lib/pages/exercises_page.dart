@@ -52,7 +52,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
       MaterialPageRoute(
         builder: (context) => ExerciseEditPage(
           initialExercise: newExercise,
-          title: 'New Exercise',
+          title: t.exercises.newExercise,
         ),
       ),
     );
@@ -64,7 +64,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
       MaterialPageRoute(
         builder: (context) => ExerciseEditPage(
           initialExercise: exercise,
-          title: 'Edit',
+          title: t.exercises.edit,
         ),
       ),
     );
@@ -121,7 +121,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
         onPressed: _addNewExercise,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.surface,
-        tooltip: 'Add Exercise',
+        tooltip: t.exercises.addExercise,
         shape: CircleBorder(),
         child: Icon(Icons.add),
       ),
@@ -319,7 +319,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
               backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
               title: Text(t.importExport.importSuccessful, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
               content: Text(
-                t.importExport.importedExercise(exerciseName: result.exercise?.name ?? ''),
+                'Imported exercise: ${result.exercise?.name ?? 'Unknown'}', // TODO: Use proper translation
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               actions: [
@@ -380,7 +380,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         title: Text(t.dialogs.deleteExercise, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         content: Text(
-          t.dialogs.deleteConfirmation(exerciseName: exercise.name),
+          'Are you sure you want to delete "${exercise.name}"? This cannot be undone.', // TODO: Use proper translation
           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         actions: [

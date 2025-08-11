@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/constants.dart';
+import '../i18n/translations.g.dart';
 import '../pages/exercises_page.dart';
 import '../pages/timer_page.dart';
 import '../pages/history_page.dart';
@@ -169,19 +170,19 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
             destinations: [
               NavigationRailDestination(
                 icon: Icon(Icons.list),
-                label: Text('Exercises'),
+                label: Text(t.navigation.exercises),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.timer),
-                label: Text('Timer'),
+                label: Text(t.navigation.timer),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.history),
-                label: Text('History'),
+                label: Text(t.navigation.history),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.settings),
-                label: Text('Settings'),
+                label: Text(t.navigation.settings),
               ),
             ],
           ),
@@ -234,19 +235,19 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
     return [
       BottomNavigationBarItem(
         icon: Icon(Icons.list),
-        label: 'Exercises',
+        label: t.navigation.exercises,
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.timer),
-        label: 'Timer',
+        label: t.navigation.timer,
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.history),
-        label: 'History',
+        label: t.navigation.history,
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.settings),
-        label: 'Settings',
+        label: t.navigation.settings,
       ),
     ];
   }
@@ -278,7 +279,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Breath Training',
+                  t.navigation.breathTraining,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: AppLayout.fontSizeMedium,
@@ -288,7 +289,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                 if (isLoggedIn) ...[
                   SizedBox(height: 8),
                   Text(
-                    user.email ?? 'Unknown',
+                    user.email ?? t.app.unknown,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: AppLayout.fontSizeSmall,
@@ -308,22 +309,22 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
               children: [
                 _buildDrawerItem(
                   icon: Icons.list,
-                  title: 'Exercises',
+                  title: t.navigation.exercises,
                   index: 0,
                 ),
                 _buildDrawerItem(
                   icon: Icons.timer,
-                  title: 'Timer', 
+                  title: t.navigation.timer, 
                   index: 1,
                 ),
                 _buildDrawerItem(
                   icon: Icons.history,
-                  title: 'History',
+                  title: t.navigation.history,
                   index: 2,
                 ),
                 _buildDrawerItem(
                   icon: Icons.settings,
-                  title: 'Settings',
+                  title: t.navigation.settings,
                   index: 3,
                 ),
                 

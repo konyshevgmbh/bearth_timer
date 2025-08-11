@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../core/constants.dart';
 import '../models/training_result.dart';
 import '../services/history_service.dart';
+import '../i18n/translations.g.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -44,7 +45,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('History'),
+        title: Text(t.history.title),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
@@ -95,7 +96,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
           child: Text(
-            'Overview',
+            t.history.overview,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
@@ -150,7 +151,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           SizedBox(height: 16),
           Text(
-            'No history yet',
+            t.history.noHistoryYet,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeMedium,
@@ -158,7 +159,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           SizedBox(height: 8),
           Text(
-            'Complete a session to see progress',
+            t.history.completeSessionToSee,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: AppLayout.fontSizeSmall,
