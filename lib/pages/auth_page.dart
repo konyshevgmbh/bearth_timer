@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../generated/l10n/app_localizations.dart';
+
 // Import business logic modules
 import '../core/constants.dart';
 import '../services/sync_service.dart';
@@ -50,7 +52,7 @@ class _AuthPageState extends State<AuthPage> {
       
       if (mounted) {
         setState(() {
-          _errorMessage = 'Email sent! Check your inbox.';
+          _errorMessage = AppLocalizations.of(context)!.emailSent;
           _showResendEmail = false;
         });
       }
@@ -58,7 +60,7 @@ class _AuthPageState extends State<AuthPage> {
       if (mounted) {
         setState(() {
           // If resend fails, try signup which will send confirmation email
-          _errorMessage = 'Sending email...';
+          _errorMessage = AppLocalizations.of(context)!.sendingEmail;
         });
         
         try {
@@ -70,13 +72,13 @@ class _AuthPageState extends State<AuthPage> {
           
           if (mounted) {
             setState(() {
-              _errorMessage = 'Signup email sent! Check your inbox and set your password.';
+              _errorMessage = AppLocalizations.of(context)!.signupEmailSent;
             });
           }
         } catch (signupError) {
           if (mounted) {
             setState(() {
-              _errorMessage = 'Failed to send email. Check email format.';
+              _errorMessage = AppLocalizations.of(context)!.failedToSendEmail;
             });
           }
         }
@@ -184,7 +186,7 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
-                          'Bearth Timer',
+                          AppLocalizations.of(context)!.appTitle,
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeMedium,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -196,7 +198,7 @@ class _AuthPageState extends State<AuthPage> {
                         TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(
-                            labelText: 'Email',
+                            labelText: AppLocalizations.of(context)!.email,
                             labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -215,12 +217,12 @@ class _AuthPageState extends State<AuthPage> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter email';
+                              return AppLocalizations.of(context)!.enterEmail;
                             }
                             // More strict email validation
                             final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
                             if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Invalid email format';
+                              return AppLocalizations.of(context)!.invalidEmailFormat;
                             }
                             return null;
                           },
@@ -231,7 +233,7 @@ class _AuthPageState extends State<AuthPage> {
                         TextFormField(
                           controller: _passwordController,
                           decoration: InputDecoration(
-                            labelText: 'Password',
+                            labelText: AppLocalizations.of(context)!.password,
                             labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -250,10 +252,10 @@ class _AuthPageState extends State<AuthPage> {
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter password';
+                              return AppLocalizations.of(context)!.enterPassword;
                             }
                             if (_isSignUp && value.length < 6) {
-                              return 'Min 6 characters';
+                              return AppLocalizations.of(context)!.minCharacters;
                             }
                             return null;
                           },
@@ -265,8 +267,8 @@ class _AuthPageState extends State<AuthPage> {
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
                             _isSignUp 
-                                ? 'Sync data across devices'
-                                : 'Access your data anywhere',
+                                ? AppLocalizations.of(context)!.syncDataAcrossDevices
+                                : AppLocalizations.of(context)!.accessDataAnywhere,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: AppLayout.fontSizeSmall,
@@ -290,14 +292,14 @@ class _AuthPageState extends State<AuthPage> {
                                 Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
                                 SizedBox(height: 4),
                                 Text(
-                                  'Supabase Not Configured',
+                                  AppLocalizations.of(context)!.supabaseNotConfigured,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
                                           ),
                                 ),
                                 Text(
-                                  'Please update SupabaseConstants with your project URL and anon key',
+                                  AppLocalizations.of(context)!.updateSupabaseConstants,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
@@ -331,7 +333,7 @@ class _AuthPageState extends State<AuthPage> {
                                     strokeWidth: 2,
                                   )
                                 : Text(
-                                    _isSignUp ? 'Sign Up' : 'Sign In',
+                                    _isSignUp ? AppLocalizations.of(context)!.signUp : AppLocalizations.of(context)!.signIn,
                                     style: TextStyle(
                                       fontSize: AppLayout.fontSizeMedium,
                                               ),
@@ -373,7 +375,7 @@ class _AuthPageState extends State<AuthPage> {
                                   TextButton(
                                     onPressed: _isLoading ? null : _resendConfirmationEmail,
                                     child: Text(
-                                      'Resend Email',
+                                      AppLocalizations.of(context)!.resendCode,
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary,
                                         fontSize: AppLayout.fontSizeSmall,
@@ -401,7 +403,7 @@ class _AuthPageState extends State<AuthPage> {
                                 );
                               } : null,
                               child: Text(
-                                'Forgot?',
+                                AppLocalizations.of(context)!.forgot,
                                 style: TextStyle(
                                   color: SupabaseConstants.isConfigured 
                                       ? Theme.of(context).colorScheme.primary 
@@ -423,8 +425,8 @@ class _AuthPageState extends State<AuthPage> {
                           } : null,
                           child: Text(
                             _isSignUp
-                                ? 'Have account? Sign In'
-                                : 'Need account? Sign Up',
+                                ? AppLocalizations.of(context)!.haveAccountSignIn
+                                : AppLocalizations.of(context)!.needAccountSignUp,
                             style: TextStyle(
                               color: SupabaseConstants.isConfigured 
                                   ? Theme.of(context).colorScheme.primary 
@@ -443,7 +445,7 @@ class _AuthPageState extends State<AuthPage> {
                             );
                           },
                           child: Text(
-                            'Skip',
+                            AppLocalizations.of(context)!.skip,
                             style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                         ),

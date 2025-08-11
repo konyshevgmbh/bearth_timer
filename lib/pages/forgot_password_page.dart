@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/constants.dart';
 import '../services/otp_service.dart';
 import 'reset_password_page.dart';
+import '../generated/l10n/app_localizations.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -38,7 +39,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       
       if (success && mounted) {
         setState(() {
-          _successMessage = 'Password reset code sent to your email';
+          _successMessage = AppLocalizations.of(context).passwordResetCodeSent;
         });
         
         // Navigate to OTP verification page after a brief delay
@@ -74,7 +75,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
-        title: Text('Reset Password'),
+        title: Text(AppLocalizations.of(context).resetPassword),
         elevation: 0,
       ),
       body: SafeArea(
@@ -104,7 +105,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
-                          'Reset Password',
+                          AppLocalizations.of(context).resetPassword,
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeMedium,
                             fontWeight: FontWeight.bold,
@@ -113,7 +114,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
-                          'Enter email to get reset code',
+                          AppLocalizations.of(context).enterEmailToGetResetCode,
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeSmall,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -126,7 +127,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(
-                            labelText: 'Email',
+                            labelText: AppLocalizations.of(context).email,
                             labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -145,10 +146,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter email';
+                              return AppLocalizations.of(context).enterEmail;
                             }
                             if (!value.contains('@') || !value.contains('.')) {
-                              return 'Invalid email';
+                              return AppLocalizations.of(context).invalidEmailFormat;
                             }
                             return null;
                           },
@@ -219,7 +220,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     strokeWidth: 2,
                                   )
                                 : Text(
-                                    'Send Code',
+                                    AppLocalizations.of(context).sendCode,
                                     style: TextStyle(
                                       fontSize: AppLayout.fontSizeMedium,
                                       fontWeight: FontWeight.bold,
@@ -235,7 +236,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             Navigator.of(context).pop();
                           },
                           child: Text(
-                            'Back',
+                            AppLocalizations.of(context).back,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: AppLayout.fontSizeSmall,
@@ -258,7 +259,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 Icon(Icons.warning, color: Theme.of(context).colorScheme.error, size: 20),
                                 SizedBox(height: 4),
                                 Text(
-                                  'Supabase Not Configured',
+                                  AppLocalizations.of(context).supabaseNotConfigured,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,
@@ -266,7 +267,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   ),
                                 ),
                                 Text(
-                                  'Please update SupabaseConstants with your project URL and anon key',
+                                  AppLocalizations.of(context).updateSupabaseConstants,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.error,
                                     fontSize: AppLayout.fontSizeSmall,

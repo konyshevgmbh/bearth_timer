@@ -5,6 +5,7 @@ import 'exercise_edit_page.dart';
 import '../models/breathing_exercise.dart';
 import '../services/session_service.dart';
 import '../widgets/unified_progress_ring.dart';
+import '../generated/l10n/app_localizations.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({
@@ -101,7 +102,7 @@ class _TimerPageState extends State<TimerPage> {
                 Text(
                   exercise.description.isNotEmpty 
                       ? exercise.description 
-                      : 'No description available for this exercise.',
+                      : AppLocalizations.of(context).noDescriptionAvailable,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: AppLayout.fontSizeSmall,
@@ -120,7 +121,7 @@ class _TimerPageState extends State<TimerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Exercise Details:',
+                        AppLocalizations.of(context).exerciseDetails,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: AppLayout.fontSizeSmall,
@@ -128,10 +129,10 @@ class _TimerPageState extends State<TimerPage> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      _buildDetailRow('Cycles', '${exercise.cycles}'),
-                      _buildDetailRow('Cycle Duration', '${exercise.cycleDuration}s'),
-                      _buildDetailRow('Total Duration', '${(exercise.cycles * exercise.cycleDuration / 60).toStringAsFixed(1)} min'),
-                      _buildDetailRow('Phases', '${exercise.phases.length}'),
+                      _buildDetailRow(AppLocalizations.of(context).cycles, '${exercise.cycles}'),
+                      _buildDetailRow(AppLocalizations.of(context).cycleDuration, '${exercise.cycleDuration}s'),
+                      _buildDetailRow(AppLocalizations.of(context).totalDuration, '${(exercise.cycles * exercise.cycleDuration / 60).toStringAsFixed(1)} min'),
+                      _buildDetailRow(AppLocalizations.of(context).phases, '${exercise.phases.length}'),
                     ],
                   ),
                 ),
@@ -142,7 +143,7 @@ class _TimerPageState extends State<TimerPage> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Close',
+                AppLocalizations.of(context).close,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: AppLayout.fontSizeSmall,
@@ -193,7 +194,7 @@ class _TimerPageState extends State<TimerPage> {
         MaterialPageRoute(
           builder: (context) => ExerciseEditPage(
             initialExercise: _sessionService.currentExercise!,
-            title: 'Customize',
+            title: AppLocalizations.of(context).customize,
              
           ),
         ),
@@ -264,7 +265,7 @@ class _TimerPageState extends State<TimerPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_sessionService.currentExercise?.name ?? 'Exercise'),
+        title: Text(_sessionService.currentExercise?.name ?? AppLocalizations.of(context).unknown),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
@@ -272,12 +273,12 @@ class _TimerPageState extends State<TimerPage> {
           IconButton(
             icon: Icon(Icons.info_outline),
             onPressed: _showExerciseDescription,
-            tooltip: 'Description',
+            tooltip: AppLocalizations.of(context).description,
           ),
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: _sessionService.isRunning ? null : _navigateToEditExercise,
-            tooltip: 'Customize',
+            tooltip: AppLocalizations.of(context).customize,
           ),
         ],
       ),
@@ -332,7 +333,7 @@ class _TimerPageState extends State<TimerPage> {
           size: 36,
         ),
         label: Text(
-          _sessionService.isRunning ? 'Stop' : 'Start',
+          _sessionService.isRunning ? AppLocalizations.of(context).stop : AppLocalizations.of(context).start,
           style: TextStyle(
             color: Colors.black,
             fontSize: AppLayout.fontSizeMedium,
@@ -408,7 +409,7 @@ class _TimerPageState extends State<TimerPage> {
                 size: 36,
               ),
               label: Text(
-                _sessionService.isRunning ? 'Stop' : 'Start',
+                _sessionService.isRunning ? AppLocalizations.of(context).stop : AppLocalizations.of(context).start,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: AppLayout.fontSizeMedium,
@@ -434,7 +435,7 @@ class _TimerPageState extends State<TimerPage> {
           children: [
             if (currentExercise.canEditCyclesCountCalculated)
               _buildStepper(
-                label: "Cycles",
+                label: AppLocalizations.of(context).cycles,
                 value: currentExercise.cycles,
                 canDecrease: _sessionService.canDecreaseCycles(),
                 canIncrease: _sessionService.canIncreaseCycles(),
@@ -461,13 +462,13 @@ class _TimerPageState extends State<TimerPage> {
               )
             else
               _buildFixedValue(
-                label: "Cycles",
+                label: AppLocalizations.of(context).cycles,
                 value: currentExercise.cycles,
               ),
             
             if (currentExercise.canEditCycleDurationCalculated)
               _buildStepper(
-                label: "Time",
+                label: AppLocalizations.of(context).time,
                 value: currentExercise.cycleDuration,
                 canDecrease: _sessionService.canDecreaseCycleDuration(),
                 canIncrease: _sessionService.canIncreaseCycleDuration(),
@@ -494,7 +495,7 @@ class _TimerPageState extends State<TimerPage> {
               )
             else
               _buildFixedValue(
-                label: "Time",
+                label: AppLocalizations.of(context).time,
                 value: currentExercise.cycleDuration,
               ),
           ],
@@ -513,7 +514,7 @@ class _TimerPageState extends State<TimerPage> {
       children: [
         if (currentExercise.canEditCyclesCountCalculated)
           _buildHorizontalStepper(
-            label: "Cycles",
+            label: AppLocalizations.of(context).cycles,
             value: currentExercise.cycles,
             canDecrease: _sessionService.canDecreaseCycles(),
             canIncrease: _sessionService.canIncreaseCycles(),
@@ -540,13 +541,13 @@ class _TimerPageState extends State<TimerPage> {
           )
         else
           _buildHorizontalFixedValue(
-            label: "Cycles",
+            label: AppLocalizations.of(context).cycles,
             value: currentExercise.cycles,
           ),
         SizedBox(height: AppLayout.sectionSpacingLarge),
         if (currentExercise.canEditCycleDurationCalculated)
           _buildHorizontalStepper(
-            label: "Time",
+            label: AppLocalizations.of(context).time,
             value: currentExercise.cycleDuration,
             canDecrease: _sessionService.canDecreaseCycleDuration(),
             canIncrease: _sessionService.canIncreaseCycleDuration(),
@@ -573,7 +574,7 @@ class _TimerPageState extends State<TimerPage> {
           )
         else
           _buildHorizontalFixedValue(
-            label: "Time",
+            label: AppLocalizations.of(context).time,
             value: currentExercise.cycleDuration,
           ),
       ],
@@ -596,7 +597,7 @@ class _TimerPageState extends State<TimerPage> {
         final phase = phases[index];
         final hasRange = phase.minDuration != phase.maxDuration;
         final rangeText = hasRange ? '${phase.minDuration}s - ${phase.maxDuration}s' : '';
-        final clapsText = phase.claps == 1 ? '1 clap' : '${phase.claps} claps';
+        final clapsText = phase.claps == 1 ? AppLocalizations.of(context).oneClap : AppLocalizations.of(context).clapsCount(phase.claps);
         return ListTile(
           leading: Container(
             width: 20,
@@ -615,7 +616,7 @@ class _TimerPageState extends State<TimerPage> {
             ),
           ),
           subtitle: hasRange ? Text(
-            '$clapsText • Range: $rangeText',
+            '$clapsText • ${AppLocalizations.of(context).range(rangeText)}',
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall - 2,
@@ -673,7 +674,7 @@ class _TimerPageState extends State<TimerPage> {
             ),
             SizedBox(height: AppLayout.spacingMedium),
             Text(
-              'Cycle ${_sessionService.currentCycle} / ${_sessionService.currentExercise?.cycles ?? 0}',
+              AppLocalizations.of(context).cycleProgress(_sessionService.currentCycle, _sessionService.currentExercise?.cycles ?? 0),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: AppLayout.fontSizeSmall,

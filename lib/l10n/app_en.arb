@@ -1,0 +1,359 @@
+{
+  "@@locale": "en",
+  "appTitle": "Bearth Timer",
+  
+  "email": "Email",
+  "password": "Password",
+  "enterEmail": "Enter email",
+  "enterPassword": "Enter password",
+  "invalidEmailFormat": "Invalid email format",
+  "minCharacters": "Min 6 characters",
+  "signUp": "Sign Up",
+  "signIn": "Sign In",
+  "signOut": "Sign Out",
+  "skip": "Skip",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "ok": "OK",
+  "close": "Close",
+  "back": "Back",
+  "loading": "Loading...",
+  
+  "syncDataAcrossDevices": "Sync data across devices",
+  "accessDataAnywhere": "Access your data anywhere",
+  "haveAccountSignIn": "Have account? Sign In",
+  "needAccountSignUp": "Need account? Sign Up",
+  "forgot": "Forgot?",
+  
+  "emailSent": "Email sent! Check your inbox.",
+  "sendingEmail": "Sending email...",
+  "signupEmailSent": "Signup email sent! Check your inbox and set your password.",
+  "failedToSendEmail": "Failed to send email. Check email format.",
+  "supabaseNotConfigured": "Supabase Not Configured",
+  "updateSupabaseConstants": "Please update SupabaseConstants with your project URL and anon key",
+  
+  "settings": "Settings",
+  "account": "Account",
+  "sync": "Sync",
+  "sound": "Sound",
+  "dataManagement": "Data Management",
+  "appearance": "Appearance",
+  "about": "About",
+  "signedInAs": "Signed in as",
+  "unknownEmail": "Unknown email",
+  "signOutDescription": "Sign out and work offline",
+  "deleteAccount": "Delete Account",
+  "deleteAccountDescription": "Permanently delete account and data",
+  "workingOffline": "Working Offline",
+  "signInToSync": "Sign in to sync across devices",
+  "accessDataAnywhereButton": "Access data anywhere",
+  "retrySync": "Retry Sync",
+  "syncWithCloud": "Sync with cloud",
+  "exportData": "Export Data",
+  "saveDataToFile": "Save data to file",
+  "importData": "Import Data",
+  "loadDataFromFile": "Load data from file",
+  "clearAllData": "Clear All Data",
+  "deleteAllDataPermanently": "Delete all data permanently",
+  "transitionSound": "Transition Sound",
+  "playSoundWhenPhasesChange": "Play sound when phases change",
+  "darkMode": "Dark Mode",
+  "useDarkTheme": "Use dark theme",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "signOutConfirmTitle": "Sign Out",
+  "signOutConfirmMessage": "Are you sure you want to sign out? Your data will remain on this device.",
+  "clearAllDataConfirmTitle": "Clear All Data",
+  "clearAllDataConfirmMessage": "Are you sure you want to delete all training results? This action cannot be undone and will clear data from all your devices.",
+  "clearAll": "Clear All",
+  
+  "exercises": "Exercises",
+  "importExercise": "Import Exercise",
+  "addExercise": "Add Exercise",
+  "noExercisesYet": "No exercises yet",
+  "createFirstExercise": "Create your first exercise",
+  "createYourFirstExercise": "Create your first exercise",
+  "cycles": "Cycles",
+  "duration": "Duration",
+  "cycleDurationSeconds": "{cycles} cycles • {duration}s duration",
+  "@cycleDurationSeconds": {
+    "placeholders": {
+      "cycles": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "edit": "Edit",
+  "duplicate": "Duplicate",
+  "export": "Export",
+  "errorLoadingExercises": "Error loading exercises: {error}",
+  "@errorLoadingExercises": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteExercise": "Delete Exercise",
+  "deleteExerciseConfirm": "Are you sure you want to delete \"{name}\"?",
+  "@deleteExerciseConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFailed": "Export Failed",
+  "failedToExport": "Failed to export exercise: {error}",
+  "@failedToExport": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "importSuccessful": "Import Successful",
+  "importFailed": "Import Failed",
+  "failedToImport": "Failed to import exercise: {error}",
+  "@failedToImport": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "exerciseDetails": "Exercise Details:",
+  "cycleDuration": "Cycle Duration",
+  "totalDuration": "Total Duration",
+  "phases": "Phases",
+  "noDescriptionAvailable": "No description available for this exercise.",
+  "description": "Description",
+  "customize": "Customize",
+  "time": "Time",
+  "stop": "Stop",
+  "start": "Start",
+  "cycleProgress": "Cycle {current} / {total}",
+  "@cycleProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "oneClap": "1 clap",
+  "clapsCount": "{count} claps",
+  "@clapsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "range": "Range: {range}",
+  "@range": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "name": "Name",
+  "information": "Information",
+  "configuration": "Configuration",
+  "min": "Min",
+  "max": "Max",
+  "step": "Step",
+  "minimum": "Minimum",
+  "current": "Current",
+  "maximum": "Maximum",
+  "total": "Total",
+  "addPhase": "Add Phase",
+  
+  "history": "History",
+  "overview": "Overview",
+  "sessions": "Sessions",
+  "avg": "Avg",
+  "noHistoryYet": "No history yet",
+  "completeSessionToSeeProgress": "Complete a session to see progress",
+  "today": "Today {time}",
+  "@today": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "yesterday": "Yesterday",
+  "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "cyclesAndDuration": "{cycles} cycles • {duration}s",
+  "@cyclesAndDuration": {
+    "placeholders": {
+      "cycles": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "noTraining": "No training",
+  "secondsUnit": "{value}s",
+  "@secondsUnit": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "cyclesUnit": "{value}c",
+  "@cyclesUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "resetPassword": "Reset Password",
+  "enterEmailToGetResetCode": "Enter email to get reset code",
+  "sendCode": "Send Code",
+  "passwordResetCodeSent": "Password reset code sent to your email",
+  
+  "verifyEmail": "Verify Email",
+  "checkYourEmail": "Check Your Email",
+  "codeSentTo": "Code sent to {email}",
+  "@codeSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verificationCode": "Verification Code",
+  "createAccount": "Create Account",
+  "resendInSeconds": "Resend in {seconds}s",
+  "@resendInSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "resendCode": "Resend Code",
+  "newCodeSentToEmail": "New code sent to your email",
+  "enterVerificationCode": "Enter verification code",
+  
+  "deleteAccountTitle": "Delete Account",
+  "verifyDeletion": "Verify Deletion",
+  "permanentDeleteWarning": "This will permanently delete your account and all data.",
+  "deletionConsequences": "• All training data will be lost\\n• Sync settings will be cleared\\n• This action cannot be undone",
+  "iUnderstandContinue": "I Understand, Continue",
+  "accountEmail": "Account: {email}",
+  "@accountEmail": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "sendVerificationCodeDescription": "We'll send a verification code to confirm this action.",
+  "sendVerificationCode": "Send Verification Code",
+  "noUserEmailFound": "No user email found. Please sign in again.",
+  "verificationCodeSentTo": "Verification code sent to {email}",
+  "@verificationCodeSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "accountDataCleared": "Account data cleared. You have been signed out.",
+  "failedToDeleteAccount": "Failed to delete account. Please try again.",
+  
+  "newPassword": "New Password",
+  "enterCode": "Enter Code",
+  "chooseStrongPassword": "Choose a strong password",
+  "code": "Code",
+  "confirm": "Confirm",
+  "verify": "Verify",
+  "update": "Update",
+  "resendCode2": "Resend code",
+  "pleaseEnterPassword": "Please enter a password",
+  "passwordMinLength": "Password must be at least 6 characters",
+  "passwordUppercase": "Password must contain at least one uppercase letter",
+  "passwordLowercase": "Password must contain at least one lowercase letter",
+  "passwordNumber": "Password must contain at least one number",
+  "pleaseConfirmPassword": "Please confirm your password",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "passwordRequirements": "Password Requirements:",
+  "atLeast6Characters": "At least 6 characters",
+  "oneUppercaseLetter": "One uppercase letter",
+  "oneLowercaseLetter": "One lowercase letter",
+  "oneNumber": "One number",
+  "pleaseEnterVerificationCode": "Please enter the verification code",
+  "codeVerifiedCreatePassword": "Code verified! Now create your new password.",
+  "newVerificationCodeSent": "New verification code sent to your email",
+  
+  "breathTraining": "Breath Training",
+  "unknown": "Unknown",
+  "timer": "Timer",
+  
+  "newExercise": "New Exercise",
+  "exerciseSummary": "{cycles} cycles • {duration}s duration",
+  "@exerciseSummary": {
+    "placeholders": {
+      "cycles": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "int"
+      }
+    }
+  },
+  "failedToExportExercise": "Failed to export exercise: {error}",
+  "@failedToExportExercise": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToImportExercise": "Failed to import exercise: {error}",
+  "@failedToImportExercise": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteExercise": "Are you sure you want to delete \"{name}\"?",
+  "@confirmDeleteExercise": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}
