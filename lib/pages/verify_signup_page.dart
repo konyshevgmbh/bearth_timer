@@ -4,6 +4,7 @@ import '../core/constants.dart';
 import '../services/otp_service.dart';
 import '../services/sync_service.dart';
 import '../widgets/main_app_wrapper.dart';
+import '../generated/l10n/app_localizations.dart';
 
 class VerifySignupPage extends StatefulWidget {
   final String email;
@@ -56,7 +57,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
   Future<void> _verifyOTPAndSignup() async {
     if (_otpController.text.isEmpty) {
       setState(() {
-        _errorMessage = 'Enter verification code';
+        _errorMessage = AppLocalizations.of(context).enterVerificationCode;
       });
       return;
     }
@@ -110,7 +111,7 @@ class _VerifySignupPageState extends State<VerifySignupPage> {
       
       if (success && mounted) {
         setState(() {
-          _successMessage = 'New code sent to your email';
+          _successMessage = AppLocalizations.of(context).newCodeSentToEmail;
         });
         
         _startResendCountdown();

@@ -9,6 +9,7 @@ import '../main.dart'; // For AppState access
 import '../services/sync_service.dart';
 import '../services/sound_service.dart';
 import '../services/export_import_service.dart';
+import '../generated/l10n/app_localizations.dart';
 import 'auth_page.dart';
 import 'delete_account_page.dart';
 
@@ -81,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(AppLocalizations.of(context).settings),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
  
@@ -94,42 +95,42 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               // Account Section
               _buildSection(
-                title: 'Account',
+                title: AppLocalizations.of(context).account,
                 icon: Icons.account_circle,
                 children: [
                   if (isLoggedIn) ...[
                     _buildInfoTile(
                       icon: Icons.email,
-                      title: 'Signed in as',
-                      subtitle: user.email ?? 'Unknown email',
+                      title: AppLocalizations.of(context).signedInAs,
+                      subtitle: user.email ?? AppLocalizations.of(context).unknownEmail,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
                     _buildActionTile(
                       icon: Icons.logout,
-                      title: 'Sign Out',
-                      subtitle: 'Sign out and work offline',
+                      title: AppLocalizations.of(context).signOut,
+                      subtitle: AppLocalizations.of(context).signOutDescription,
                       color: Theme.of(context).colorScheme.error,
                       onTap: _handleSignOut,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
                     _buildActionTile(
                       icon: Icons.delete_forever,
-                      title: 'Delete Account',
-                      subtitle: 'Permanently delete account and data',
+                      title: AppLocalizations.of(context).deleteAccount,
+                      subtitle: AppLocalizations.of(context).deleteAccountDescription,
                       color: Theme.of(context).colorScheme.error,
                       onTap: _handleDeleteAccount,
                     ),
                   ] else ...[
                     _buildInfoTile(
                       icon: Icons.cloud_off,
-                      title: 'Working Offline',
-                      subtitle: 'Sign in to sync across devices',
+                      title: AppLocalizations.of(context).workingOffline,
+                      subtitle: AppLocalizations.of(context).signInToSync,
                     ),
                     SizedBox(height: AppLayout.sectionSpacingSmall),
                     _buildActionTile(
                       icon: Icons.login,
-                      title: 'Sign In',
-                      subtitle: 'Access data anywhere',
+                      title: AppLocalizations.of(context).signIn,
+                      subtitle: AppLocalizations.of(context).accessDataAnywhereButton,
                       color: Theme.of(context).colorScheme.primary,
                       onTap: _handleSignIn,
                     ),
@@ -143,13 +144,13 @@ class _SettingsPageState extends State<SettingsPage> {
               // Sync Section
               if (isLoggedIn) ...[
                 _buildSection(
-                  title: 'Sync',
+                  title: AppLocalizations.of(context).sync,
                   icon: Icons.sync,
                   children: [
                     _buildActionTile(
                       icon: Icons.refresh,
-                      title: 'Retry Sync',
-                      subtitle: 'Sync with cloud',
+                      title: AppLocalizations.of(context).retrySync,
+                      subtitle: AppLocalizations.of(context).syncWithCloud,
                       onTap: _handleRetrySync,
                     ),
                   ],
@@ -159,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // Sound Settings Section
               _buildSection(
-                title: 'Sound',
+                title: AppLocalizations.of(context).sound,
                 icon: Icons.volume_up,
                 children: [
                   _buildSoundToggle(),
@@ -170,27 +171,27 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // Data Management Section
               _buildSection(
-                title: 'Data Management',
+                title: AppLocalizations.of(context).dataManagement,
                 icon: Icons.storage,
                 children: [
                   _buildActionTile(
                     icon: Icons.file_download,
-                    title: 'Export Data',
-                    subtitle: 'Save data to file',
+                    title: AppLocalizations.of(context).exportData,
+                    subtitle: AppLocalizations.of(context).saveDataToFile,
                     onTap: _handleExportData,
                   ),
                   SizedBox(height: AppLayout.sectionSpacingSmall),
                   _buildActionTile(
                     icon: Icons.file_upload,
-                    title: 'Import Data',
-                    subtitle: 'Load data from file',
+                    title: AppLocalizations.of(context).importData,
+                    subtitle: AppLocalizations.of(context).loadDataFromFile,
                     onTap: _handleImportData,
                   ),
                   SizedBox(height: AppLayout.sectionSpacingSmall),
                   _buildActionTile(
                     icon: Icons.delete_forever,
-                    title: 'Clear All Data',
-                    subtitle: 'Delete all data permanently',
+                    title: AppLocalizations.of(context).clearAllData,
+                    subtitle: AppLocalizations.of(context).deleteAllDataPermanently,
                     color: Theme.of(context).colorScheme.error,
                     onTap: _handleClearAllData,
                   ),
@@ -201,12 +202,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // Appearance Section
               _buildSection(
-                title: 'Appearance',
+                title: AppLocalizations.of(context).appearance,
                 icon: Icons.palette,
                 children: [
                   SwitchListTile(
-                    title: const Text('Dark Mode'),
-                    subtitle: const Text('Use dark theme'),
+                    title: Text(AppLocalizations.of(context).darkMode),
+                    subtitle: Text(AppLocalizations.of(context).useDarkTheme),
                     value: AppState().isDarkMode,
                     onChanged: (value) {
                       AppState().toggleTheme();
@@ -222,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
               // About Section
               _buildSection(
-                title: 'About',
+                title: AppLocalizations.of(context).about,
                 icon: Icons.info,
                 children: [
                   ListTile(
@@ -232,14 +233,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       height: AppLayout.iconSizeMedium,
                     ),
                     title: Text(
-                      'Bearth Timer',
+                      AppLocalizations.of(context).appTitle,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: AppLayout.fontSizeSmall,
                       ),
                     ),
                     subtitle: Text(
-                      _version.isEmpty ? 'Loading...' : 'Version $_version',
+                      _version.isEmpty ? AppLocalizations.of(context).loading : AppLocalizations.of(context).version(_version),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: AppLayout.fontSizeSmall,
@@ -398,9 +399,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _handleSignOut() async {
     final confirmed = await _showConfirmDialog(
-      title: 'Sign Out',
-      message: 'Are you sure you want to sign out? Your data will remain on this device.',
-      confirmText: 'Sign Out',
+      title: AppLocalizations.of(context).signOutConfirmTitle,
+      message: AppLocalizations.of(context).signOutConfirmMessage,
+      confirmText: AppLocalizations.of(context).signOut,
       isDestructive: false,
     );
 
@@ -477,9 +478,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _handleClearAllData() async {
     final confirmed = await _showConfirmDialog(
-      title: 'Clear All Data',
-      message: 'Are you sure you want to delete all training results? This action cannot be undone and will clear data from all your devices.',
-      confirmText: 'Clear All',
+      title: AppLocalizations.of(context).clearAllDataConfirmTitle,
+      message: AppLocalizations.of(context).clearAllDataConfirmMessage,
+      confirmText: AppLocalizations.of(context).clearAll,
       isDestructive: true,
     );
 
@@ -518,7 +519,7 @@ class _SettingsPageState extends State<SettingsPage> {
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              'Cancel',
+              AppLocalizations.of(context).cancel,
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
@@ -539,14 +540,14 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildSoundToggle() {
     return SwitchListTile(
       title: Text(
-        'Transition Sound',
+        AppLocalizations.of(context).transitionSound,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
           fontSize: AppLayout.fontSizeSmall,
         ),
       ),
       subtitle: Text(
-        'Play sound when phases change',
+        AppLocalizations.of(context).playSoundWhenPhasesChange,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall,

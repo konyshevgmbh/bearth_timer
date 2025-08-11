@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../generated/l10n/app_localizations.dart';
 import '../core/constants.dart';
 import 'exercise_edit_page.dart';
 import '../models/breathing_exercise.dart';
@@ -51,7 +52,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
       MaterialPageRoute(
         builder: (context) => ExerciseEditPage(
           initialExercise: newExercise,
-          title: 'New Exercise',
+          title: AppLocalizations.of(context)!.newExercise,
         ),
       ),
     );
@@ -63,7 +64,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
       MaterialPageRoute(
         builder: (context) => ExerciseEditPage(
           initialExercise: exercise,
-          title: 'Edit',
+          title: AppLocalizations.of(context)!.edit,
         ),
       ),
     );
@@ -75,7 +76,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Exercises'),
+        title: Text(AppLocalizations.of(context)!.exercises),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
@@ -83,7 +84,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
           IconButton(
             icon: Icon(Icons.file_download),
             onPressed: _importExercise,
-            tooltip: 'Import Exercise',
+            tooltip: AppLocalizations.of(context)!.importExercise,
           ),
         ],
       ),
@@ -100,7 +101,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Error loading exercises: ${snapshot.error}',
+                AppLocalizations.of(context)!.errorLoadingExercises(snapshot.error.toString()),
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             );
@@ -120,7 +121,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
         onPressed: _addNewExercise,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.surface,
-        tooltip: 'Add Exercise',
+        tooltip: AppLocalizations.of(context)!.addExercise,
         shape: CircleBorder(),
         child: Icon(Icons.add),
       ),
@@ -139,7 +140,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
           ),
           SizedBox(height: 16),
           Text(
-            'No exercises yet',
+            AppLocalizations.of(context)!.noExercisesYet,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeMedium,
@@ -147,7 +148,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
           ),
           SizedBox(height: 8),
           Text(
-            'Create your first exercise',
+            AppLocalizations.of(context)!.createYourFirstExercise,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: AppLayout.fontSizeSmall,
@@ -187,7 +188,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             ),
           ),
           subtitle: Text(
-            '${exercise.cycles} cycles • ${exercise.cycleDuration}s duration',
+            AppLocalizations.of(context)!.exerciseSummary(exercise.cycles, exercise.cycleDuration),
             style: TextStyle(
               color: isCurrentExercise ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.8) : Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeSmall - 2,
@@ -223,7 +224,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   children: [
                     Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurface, size: 20),
                     SizedBox(width: 8),
-                    Text('Edit', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                    Text(AppLocalizations.of(context)!.edit, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -233,7 +234,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   children: [
                     Icon(Icons.copy, color: Theme.of(context).colorScheme.onSurface, size: 20),
                     SizedBox(width: 8),
-                    Text('Duplicate', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                    Text(AppLocalizations.of(context)!.duplicate, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -243,7 +244,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   children: [
                     Icon(Icons.file_upload, color: Theme.of(context).colorScheme.onSurface, size: 20),
                     SizedBox(width: 8),
-                    Text('Export', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+                    Text(AppLocalizations.of(context)!.export, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -254,7 +255,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   children: [
                     Icon(Icons.delete, color: Theme.of(context).colorScheme.error, size: 20),
                     SizedBox(width: 8),
-                    Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                    Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                   ],
                 ),
               ),
@@ -289,15 +290,15 @@ class _ExercisesPageState extends State<ExercisesPage> {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-            title: Text("Export Failed", style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            title: Text(AppLocalizations.of(context)!.exportFailed, style: TextStyle(color: Theme.of(context).colorScheme.error)),
             content: Text(
-              'Failed to export exercise: $e',
+              AppLocalizations.of(context)!.failedToExportExercise(e.toString()),
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text("OK", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
               ),
             ],
           ),
@@ -316,7 +317,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             context: context,
             builder: (context) => AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-              title: Text("Import Successful", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+              title: Text(AppLocalizations.of(context)!.importSuccessful, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
               content: Text(
                 result.summary,
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
@@ -324,7 +325,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text("OK", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                  child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                 ),
               ],
             ),
@@ -334,15 +335,15 @@ class _ExercisesPageState extends State<ExercisesPage> {
             context: context,
             builder: (context) => AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-              title: Text("Import Failed", style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              title: Text(AppLocalizations.of(context)!.importFailed, style: TextStyle(color: Theme.of(context).colorScheme.error)),
               content: Text(
-                result.error ?? 'Import failed',
+                result.error ?? AppLocalizations.of(context)!.importFailed,
                 style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text("OK", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                  child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                 ),
               ],
             ),
@@ -355,15 +356,15 @@ class _ExercisesPageState extends State<ExercisesPage> {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-            title: Text("Import Failed", style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            title: Text(AppLocalizations.of(context)!.importFailed, style: TextStyle(color: Theme.of(context).colorScheme.error)),
             content: Text(
-              'Failed to import exercise: $e',
+              AppLocalizations.of(context)!.failedToImportExercise(e.toString()),
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text("OK", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
               ),
             ],
           ),
@@ -377,19 +378,19 @@ class _ExercisesPageState extends State<ExercisesPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-        title: Text("Delete Exercise", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+        title: Text(AppLocalizations.of(context)!.deleteExercise, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         content: Text(
-          "Are you sure you want to delete \"${exercise.name}\"?",
+          AppLocalizations.of(context)!.confirmDeleteExercise(exercise.name),
           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text("Delete", style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
         ],
       ),

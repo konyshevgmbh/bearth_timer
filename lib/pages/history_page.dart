@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../core/constants.dart';
 import '../models/training_result.dart';
 import '../services/history_service.dart';
+import '../generated/l10n/app_localizations.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -44,7 +45,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('History'),
+        title: Text(AppLocalizations.of(context).history),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         automaticallyImplyLeading: false,
@@ -95,7 +96,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
           child: Text(
-            'Overview',
+            AppLocalizations.of(context).overview,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
@@ -106,10 +107,10 @@ class _HistoryPageState extends State<HistoryPage> {
         ),
         Row(
           children: [
-            Expanded(child: _buildStatItem('Sessions', stats.totalSessions.toString())),
-            Expanded(child: _buildStatItem('Time', '${stats.totalDuration}s')),
-            Expanded(child: _buildStatItem('Avg', '${stats.avgDuration}s')),
-            Expanded(child: _buildStatItem('Cycles', stats.totalCycles.toString())),
+            Expanded(child: _buildStatItem(AppLocalizations.of(context).sessions, stats.totalSessions.toString())),
+            Expanded(child: _buildStatItem(AppLocalizations.of(context).time, AppLocalizations.of(context).secondsUnit(stats.totalDuration))),
+            Expanded(child: _buildStatItem(AppLocalizations.of(context).avg, AppLocalizations.of(context).secondsUnit(stats.avgDuration))),
+            Expanded(child: _buildStatItem(AppLocalizations.of(context).cycles, stats.totalCycles.toString())),
           ],
         ),
       ],
@@ -150,7 +151,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           SizedBox(height: 16),
           Text(
-            'No history yet',
+            AppLocalizations.of(context).noHistoryYet,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: AppLayout.fontSizeMedium,
@@ -158,7 +159,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           SizedBox(height: 8),
           Text(
-            'Complete a session to see progress',
+            AppLocalizations.of(context).completeSessionToSeeProgress,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: AppLayout.fontSizeSmall,
@@ -237,7 +238,7 @@ class _HistoryPageState extends State<HistoryPage> {
               ),
               const Spacer(),
               Text(
-                '${results.length} sessions',
+                '${results.length} ${AppLocalizations.of(context).sessions.toLowerCase()}',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: AppLayout.fontSizeSmall - 2,
@@ -313,7 +314,7 @@ class _HistoryPageState extends State<HistoryPage> {
           dense: true,
           contentPadding: EdgeInsets.symmetric(horizontal: AppLayout.spacingMedium, vertical: 4),
           title: Text(
-            '${result.cycles} cycles • ${result.duration}s',
+            AppLocalizations.of(context).cyclesAndDuration(result.cycles, result.duration),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: AppLayout.fontSizeSmall,
@@ -328,7 +329,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
           trailing: Text(
-            '${result.score.toInt()}s',
+            AppLocalizations.of(context).secondsUnit(result.score.toInt()),
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: AppLayout.fontSizeSmall,
@@ -346,11 +347,12 @@ class _HistoryPageState extends State<HistoryPage> {
     final difference = now.difference(date);
     
     if (difference.inDays == 0) {
-      return 'Today ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+      final time = '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+      return AppLocalizations.of(context).today(time);
     } else if (difference.inDays == 1) {
-      return 'Yesterday';
+      return AppLocalizations.of(context).yesterday;
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
+      return AppLocalizations.of(context).daysAgo(difference.inDays);
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
@@ -441,7 +443,7 @@ class _ExerciseLineChart extends StatelessWidget {
                 final result = chartData[index].value;
                 if (result != null) {
                   return LineTooltipItem(
-                    '${DateFormat('MMM d').format(result.date)}\n${result.duration}s, ${result.cycles} cycles',
+                    '${DateFormat('MMM d').format(result.date)}\n${AppLocalizations.of(context).cyclesAndDuration(result.cycles, result.duration)}',
                     TextStyle(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: AppLayout.fontSizeSmall,
@@ -449,7 +451,7 @@ class _ExerciseLineChart extends StatelessWidget {
                   );
                 } else {
                   return LineTooltipItem(
-                    '${DateFormat('MMM d').format(chartData[index].key)}\nNo training',
+                    '${DateFormat('MMM d').format(chartData[index].key)}\n${AppLocalizations.of(context).noTraining}',
                     TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: AppLayout.fontSizeSmall,
@@ -527,11 +529,11 @@ class _ExerciseLineChart extends StatelessWidget {
         getTitlesWidget: (value, meta) => bottomTitleWidgets(value, meta, context),
       );
 
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
+  Widget leftTitleWidgets(double value, TitleMeta meta, BuildContext context) {
     return SideTitleWidget(
       meta: meta,
       child: Text(
-        '${value.toInt()}s',
+        AppLocalizations.of(context).secondsUnit(value.toInt()),
         style: TextStyle(
           color: exerciseColor,
           fontSize: AppLayout.fontSizeSmall - 1,
@@ -543,7 +545,7 @@ class _ExerciseLineChart extends StatelessWidget {
   SideTitles leftTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 45,
-        getTitlesWidget: leftTitleWidgets,
+        getTitlesWidget: (value, meta) => leftTitleWidgets(value, meta, context),
       );
 
   Widget rightTitleWidgets(double value, TitleMeta meta, BuildContext context) {
@@ -551,7 +553,7 @@ class _ExerciseLineChart extends StatelessWidget {
     return SideTitleWidget(
       meta: meta,
       child: Text(
-        '${cyclesValue}c',
+        AppLocalizations.of(context).cyclesUnit(cyclesValue.toString()),
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: AppLayout.fontSizeSmall - 1,

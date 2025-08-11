@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../generated/l10n/app_localizations.dart';
+
 import '../core/constants.dart';
 import '../pages/exercises_page.dart';
 import '../pages/timer_page.dart';
@@ -169,19 +171,19 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
             destinations: [
               NavigationRailDestination(
                 icon: Icon(Icons.list),
-                label: Text('Exercises'),
+                label: Text(AppLocalizations.of(context)!.exercises),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.timer),
-                label: Text('Timer'),
+                label: Text(AppLocalizations.of(context)!.timer),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.history),
-                label: Text('History'),
+                label: Text(AppLocalizations.of(context)!.history),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.settings),
-                label: Text('Settings'),
+                label: Text(AppLocalizations.of(context)!.settings),
               ),
             ],
           ),
@@ -234,19 +236,19 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
     return [
       BottomNavigationBarItem(
         icon: Icon(Icons.list),
-        label: 'Exercises',
+        label: AppLocalizations.of(context)!.exercises,
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.timer),
-        label: 'Timer',
+        label: AppLocalizations.of(context)!.timer,
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.history),
-        label: 'History',
+        label: AppLocalizations.of(context)!.history,
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.settings),
-        label: 'Settings',
+        label: AppLocalizations.of(context)!.settings,
       ),
     ];
   }
@@ -278,7 +280,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Breath Training',
+                  AppLocalizations.of(context)!.breathTraining,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: AppLayout.fontSizeMedium,
@@ -288,7 +290,7 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                 if (isLoggedIn) ...[
                   SizedBox(height: 8),
                   Text(
-                    user.email ?? 'Unknown',
+                    user.email ?? AppLocalizations.of(context)!.unknown,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: AppLayout.fontSizeSmall,
@@ -308,22 +310,22 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
               children: [
                 _buildDrawerItem(
                   icon: Icons.list,
-                  title: 'Exercises',
+                  title: AppLocalizations.of(context)!.exercises,
                   index: 0,
                 ),
                 _buildDrawerItem(
                   icon: Icons.timer,
-                  title: 'Timer', 
+                  title: AppLocalizations.of(context)!.timer, 
                   index: 1,
                 ),
                 _buildDrawerItem(
                   icon: Icons.history,
-                  title: 'History',
+                  title: AppLocalizations.of(context)!.history,
                   index: 2,
                 ),
                 _buildDrawerItem(
                   icon: Icons.settings,
-                  title: 'Settings',
+                  title: AppLocalizations.of(context)!.settings,
                   index: 3,
                 ),
                 

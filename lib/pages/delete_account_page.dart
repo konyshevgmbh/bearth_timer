@@ -5,6 +5,7 @@ import '../core/constants.dart';
 import '../services/otp_service.dart';
 import '../services/sync_service.dart';
 import '../pages/auth_page.dart';
+import '../generated/l10n/app_localizations.dart';
 
 class DeleteAccountPage extends StatefulWidget {
   const DeleteAccountPage({super.key});
@@ -65,7 +66,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
   Future<void> _sendDeleteOTP() async {
     if (_userEmail == null) {
       setState(() {
-        _errorMessage = 'No user email found. Please sign in again.';
+        _errorMessage = AppLocalizations.of(context).noUserEmailFound;
       });
       return;
     }
@@ -82,7 +83,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       if (success && mounted) {
         setState(() {
           _isOTPSent = true;
-          _successMessage = 'Verification code sent to $_userEmail';
+          _successMessage = AppLocalizations.of(context).verificationCodeSentTo(_userEmail!);
         });
         _startResendCountdown();
       }
@@ -102,7 +103,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
   Future<void> _verifyOTPAndDelete() async {
     if (_otpController.text.isEmpty) {
       setState(() {
-        _errorMessage = 'Enter verification code';
+        _errorMessage = AppLocalizations.of(context).enterVerificationCode;
       });
       return;
     }
@@ -147,7 +148,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
         // Show success and navigate to auth page
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Account data cleared. You have been signed out.'),
+            content: Text(AppLocalizations.of(context).accountDataCleared),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
@@ -161,7 +162,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'Failed to delete account. Please try again.';
+          _errorMessage = AppLocalizations.of(context).failedToDeleteAccount;
         });
       }
     }
@@ -177,7 +178,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       
       if (success && mounted) {
         setState(() {
-          _successMessage = 'New code sent to $_userEmail';
+          _successMessage = AppLocalizations.of(context).verificationCodeSentTo(_userEmail!);
         });
         _startResendCountdown();
       }
@@ -218,7 +219,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
-        title: Text('Delete Account'),
+        title: Text(AppLocalizations.of(context).deleteAccountTitle),
         elevation: 0,
       ),
       body: SafeArea(
@@ -246,7 +247,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                       ),
                       SizedBox(height: AppLayout.authFieldSpacing),
                       Text(
-                        _isOTPSent ? 'Verify Deletion' : 'Delete Account',
+                        _isOTPSent ? AppLocalizations.of(context).verifyDeletion : AppLocalizations.of(context).deleteAccountTitle,
                         style: TextStyle(
                           fontSize: AppLayout.fontSizeMedium,
                           fontWeight: FontWeight.bold,
@@ -259,7 +260,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         // Initial warning screen
                         if (!_showConfirmation) ...[
                           Text(
-                            'This will permanently delete your account and all data.',
+                            AppLocalizations.of(context).permanentDeleteWarning,
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
                               color: Theme.of(context).colorScheme.error,
@@ -269,7 +270,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           ),
                           SizedBox(height: AppLayout.authFieldSpacing),
                           Text(
-                            '• All training data will be lost\n• Sync settings will be cleared\n• This action cannot be undone',
+                            AppLocalizations.of(context).deletionConsequences,
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -292,7 +293,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                 ),
                               ),
                               child: Text(
-                                'I Understand, Continue',
+                                AppLocalizations.of(context).iUnderstandContinue,
                                 style: TextStyle(
                                   fontSize: AppLayout.fontSizeSmall,
                                   fontWeight: FontWeight.bold,
@@ -303,7 +304,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         ] else ...[
                           // Confirmation screen
                           Text(
-                            'Account: $_userEmail',
+                            AppLocalizations.of(context).accountEmail(_userEmail ?? ''),
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -313,7 +314,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           SizedBox(height: AppLayout.authFormPadding),
                           
                           Text(
-                            'We\'ll send a verification code to confirm this action.',
+                            AppLocalizations.of(context).sendVerificationCodeDescription,
                             style: TextStyle(
                               fontSize: AppLayout.fontSizeSmall,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -342,7 +343,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                       strokeWidth: 2,
                                     )
                                   : Text(
-                                      'Send Verification Code',
+                                      AppLocalizations.of(context).sendVerificationCode,
                                       style: TextStyle(
                                         fontSize: AppLayout.fontSizeSmall,
                                         fontWeight: FontWeight.bold,
@@ -354,7 +355,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                       ] else ...[
                         // OTP verification screen
                         Text(
-                          'Code sent to $_userEmail',
+                          AppLocalizations.of(context).codeSentTo(_userEmail ?? ''),
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeSmall,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -389,7 +390,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                         TextFormField(
                           controller: _otpController,
                           decoration: InputDecoration(
-                            labelText: 'Verification Code',
+                            labelText: AppLocalizations.of(context).verificationCode,
                             labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -431,7 +432,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                                     strokeWidth: 2,
                                   )
                                 : Text(
-                                    'Delete Account',
+                                    AppLocalizations.of(context).deleteAccountTitle,
                                     style: TextStyle(
                                       fontSize: AppLayout.fontSizeSmall,
                                       fontWeight: FontWeight.bold,
@@ -446,8 +447,8 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           onPressed: _resendCountdown > 0 ? null : _resendOTP,
                           child: Text(
                             _resendCountdown > 0 
-                                ? 'Resend in ${_resendCountdown}s'
-                                : 'Resend Code',
+                                ? AppLocalizations.of(context).resendInSeconds(_resendCountdown)
+                                : AppLocalizations.of(context).resendCode,
                             style: TextStyle(
                               color: _resendCountdown > 0 
                                   ? Theme.of(context).colorScheme.onSurfaceVariant 
@@ -488,7 +489,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context).cancel,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: AppLayout.fontSizeSmall,

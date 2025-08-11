@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -19,6 +20,7 @@ import 'services/storage_service.dart';
 import 'services/exercise_service.dart';
 import 'services/sound_service.dart';
 import 'services/session_service.dart';
+import 'generated/l10n/app_localizations.dart';
 
 // =============================================================================
 // MAIN APPLICATION ENTRY POINT
@@ -111,6 +113,21 @@ class _BreathHoldAppState extends State<BreathHoldApp> {
       themeMode: _appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
+      // Localization configuration
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ru'),
+        Locale('de'),
+        Locale('es'),
+        Locale('fr'),
+        Locale('it'),
+      ],
       // Define named routes for better navigation
       routes: {
         '/auth': (context) => AuthPage(),

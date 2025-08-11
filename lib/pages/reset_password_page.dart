@@ -4,6 +4,7 @@ import '../core/constants.dart';
 import '../services/otp_service.dart';
 import '../services/sync_service.dart';
 import '../widgets/main_app_wrapper.dart';
+import '../generated/l10n/app_localizations.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String email;
@@ -64,7 +65,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Future<void> _verifyOTP() async {
     if (_otpController.text.isEmpty) {
       setState(() {
-        _errorMessage = 'Please enter the verification code';
+        _errorMessage = AppLocalizations.of(context).pleaseEnterVerificationCode;
       });
       return;
     }
@@ -80,7 +81,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       
       if (success && mounted) {
         setState(() {
-          _successMessage = 'Code verified! Now create your new password.';
+          _successMessage = AppLocalizations.of(context).codeVerifiedCreatePassword;
         });
       }
     } catch (e) {
@@ -154,7 +155,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       
       if (success && mounted) {
         setState(() {
-          _successMessage = 'New verification code sent to your email';
+          _successMessage = AppLocalizations.of(context).newVerificationCodeSent;
         });
         
         _startResendCountdown();
@@ -185,29 +186,29 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a password';
+      return AppLocalizations.of(context).pleaseEnterPassword;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+      return AppLocalizations.of(context).passwordMinLength;
     }
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'Password must contain at least one uppercase letter';
+      return AppLocalizations.of(context).passwordUppercase;
     }
     if (!value.contains(RegExp(r'[a-z]'))) {
-      return 'Password must contain at least one lowercase letter';
+      return AppLocalizations.of(context).passwordLowercase;
     }
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'Password must contain at least one number';
+      return AppLocalizations.of(context).passwordNumber;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return AppLocalizations.of(context).pleaseConfirmPassword;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return AppLocalizations.of(context).passwordsDoNotMatch;
     }
     return null;
   }
@@ -219,7 +220,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
-        title: Text('Reset Password'),
+        title: Text(AppLocalizations.of(context).resetPassword),
         elevation: 0,
       ),
       body: SafeArea(
@@ -249,7 +250,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
-                          _isOTPVerified ? 'New Password' : 'Enter Code',
+                          _isOTPVerified ? AppLocalizations.of(context).newPassword : AppLocalizations.of(context).enterCode,
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeMedium,
                             fontWeight: FontWeight.bold,
@@ -259,8 +260,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         SizedBox(height: AppLayout.authFieldSpacing),
                         Text(
                           _isOTPVerified 
-                              ? 'Choose a strong password'
-                              : 'Code sent to ${widget.email}',
+                              ? AppLocalizations.of(context).chooseStrongPassword
+                              : AppLocalizations.of(context).codeSentTo(widget.email),
                           style: TextStyle(
                             fontSize: AppLayout.fontSizeSmall,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -318,7 +319,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           TextFormField(
                             controller: _otpController,
                             decoration: InputDecoration(
-                              labelText: 'Code',
+                              labelText: AppLocalizations.of(context).code,
                               labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -360,7 +361,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       strokeWidth: 2,
                                     )
                                   : Text(
-                                      'Verify',
+                                      AppLocalizations.of(context).verify,
                                       style: TextStyle(
                                         fontSize: AppLayout.fontSizeMedium,
                                         fontWeight: FontWeight.bold,
@@ -375,8 +376,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             onPressed: _resendCountdown > 0 ? null : _resendOTP,
                             child: Text(
                               _resendCountdown > 0 
-                                  ? 'Resend in ${_resendCountdown}s'
-                                  : 'Resend code',
+                                  ? AppLocalizations.of(context).resendInSeconds(_resendCountdown)
+                                  : AppLocalizations.of(context).resendCode2,
                               style: TextStyle(
                                 color: _resendCountdown > 0 
                                     ? Theme.of(context).colorScheme.onSurfaceVariant 
@@ -390,7 +391,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           TextFormField(
                             controller: _passwordController,
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: AppLocalizations.of(context).password,
                               labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -427,7 +428,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           TextFormField(
                             controller: _confirmPasswordController,
                             decoration: InputDecoration(
-                              labelText: 'Confirm',
+                              labelText: AppLocalizations.of(context).confirm,
                               labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(AppLayout.buttonBorderRadius),
@@ -470,7 +471,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Password Requirements:',
+                                  AppLocalizations.of(context).passwordRequirements,
                                   style: TextStyle(
                                     fontSize: AppLayout.fontSizeSmall,
                                     fontWeight: FontWeight.bold,
@@ -478,13 +479,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                   ),
                                 ),
                                 SizedBox(height: 4),
-                                _buildRequirement('At least 6 characters', 
+                                _buildRequirement(AppLocalizations.of(context).atLeast6Characters, 
                                     _passwordController.text.length >= 6),
-                                _buildRequirement('One uppercase letter', 
+                                _buildRequirement(AppLocalizations.of(context).oneUppercaseLetter, 
                                     _passwordController.text.contains(RegExp(r'[A-Z]'))),
-                                _buildRequirement('One lowercase letter', 
+                                _buildRequirement(AppLocalizations.of(context).oneLowercaseLetter, 
                                     _passwordController.text.contains(RegExp(r'[a-z]'))),
-                                _buildRequirement('One number', 
+                                _buildRequirement(AppLocalizations.of(context).oneNumber, 
                                     _passwordController.text.contains(RegExp(r'[0-9]'))),
                               ],
                             ),
@@ -511,7 +512,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       strokeWidth: 2,
                                     )
                                   : Text(
-                                      'Update',
+                                      AppLocalizations.of(context).update,
                                       style: TextStyle(
                                         fontSize: AppLayout.fontSizeMedium,
                                         fontWeight: FontWeight.bold,
