@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "D:/src/konyshevgmbh/bearth_timer/linux"
+    "cmake.sourceDirectory": "${workspaceFolder}/linux",
+    "dart.flutterSdkPath": null,
+    "dart.debugExternalPackageLibraries": true,
+    "dart.debugSdkLibraries": false
 }
