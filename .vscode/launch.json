@@ -1,0 +1,54 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter (Debug)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--debug"
+            ]
+        },
+        {
+            "name": "Flutter (Release)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--release"
+            ]
+        },
+        {
+            "name": "Flutter (Profile)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--profile"
+            ]
+        },
+        {
+            "name": "Generate Exercise Results",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/generate_exercise_results.dart",
+            "args": [
+                "test",
+                "10",
+                "1"
+            ],
+            "console": "terminal"
+        },
+        {
+            "name": "Generate Progress Data",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/generate_progress.dart",
+            "args": [
+                "generated_exercises"
+            ],
+            "console": "terminal"
+        }
+    ]
+}
