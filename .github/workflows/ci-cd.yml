@@ -1,4 +1,4 @@
-name: Build Flutter App
+name: build
 
 on:
   push:
@@ -7,16 +7,18 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy-web:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
 
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.0'
+        flutter-version: '3.35.3'
         channel: 'stable'
 
     - name: Create .env file
@@ -27,20 +29,11 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
 
-    - name: Generate code
-      run: dart run build_runner build
+    - name: Build web
+      run: flutter build web --base-href "/bearth_timer/"
 
-    - name: Analyze code
-      run: flutter analyze
-
-    - name: Run tests
-      run: flutter test
-
-    - name: Build APK
-      run: flutter build apk --release
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
       with:
-        name: app-release.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: build/web

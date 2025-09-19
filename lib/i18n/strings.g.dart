@@ -1234,6 +1234,18 @@ class _StringsFr extends Translations {
 	@override String failedToExportExercise({required Object error}) => 'Échec de l\'exportation de l\'exercice : ${error}';
 	@override String failedToImportExercise({required Object error}) => 'Échec de l\'importation de l\'exercice : ${error}';
 	@override String confirmDeleteExercise({required Object name}) => 'Êtes-vous sûr de vouloir supprimer "${name}" ?';
+	@override String get inhale => 'Inspirer';
+	@override String get exhale => 'Expirer';
+	@override String get hold => 'Retenir';
+	@override String get breathPhaseIn => 'Inspirer';
+	@override String get breathPhaseOut => 'Expirer';
+	@override String get breathPhaseHold => 'Retenir';
+	@override String get molchanovMethod => 'Molchanov';
+	@override String get molchanovDescription => 'Entraînement de tolérance au CO₂. Aucune pause. Technique pro pour l\'apnée.';
+	@override String get breathing478 => '4-7-8 Calme';
+	@override String get breathing478Description => 'Schéma anti-stress. 4 inspirer, 7 retenir, 8 expirer. Améliore le sommeil.';
+	@override String get boxBreathing => 'Carré';
+	@override String get boxBreathingDescription => 'Technique de focus. Toutes les phases égales. Méthode Navy.';
 	@override late final _StringsServicesFr services = _StringsServicesFr._(_root);
 }
 
@@ -1297,6 +1309,8 @@ class _StringsServicesStorageFr extends _StringsServicesStorageEn {
 	@override String get boxNotOpen => 'La boîte de stockage n\'est pas ouverte. Initialisez d\'abord l\'application.';
 	@override String exerciseNotFound({required Object exerciseId}) => 'Exercice non trouvé pour la duplication : ${exerciseId}';
 	@override String get copy => 'Copie';
+	@override String get exerciseNamePlaceholder => 'Nom de l\'exercice';
+	@override String get exerciseDescriptionPlaceholder => 'Description de l\'exercice';
 }
 
 // Path: services.session

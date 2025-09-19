@@ -2,6 +2,8 @@
 
 A simple and customizable breath-hold timer app for freediving and breathwork, built with Flutter.
 
+![About](about.png)
+
 ## Features
 
 * Customizable inhale, hold, exhale, and rest intervals
@@ -31,7 +33,6 @@ Full text instructions in multiple languages can be found in the [docs](./docs) 
 1.  **Prerequisites:**
     *   Flutter SDK installed.
     *   A configured IDE (like VS Code) or command line.
-    *   A microphone connected and enabled on your device/computer.
 
 2.  **Clone the Repository:**
     ```bash
@@ -93,4 +94,8 @@ Open issues or pull requests for suggestions or improvements.
 MIT License
 
 https://play.google.com/store/apps/details?id=com.konyshevgmbh.bearth_timer
+
+https://www.rustore.ru/catalog/app/com.konyshevgmbh.bearth_timer
+
+
 

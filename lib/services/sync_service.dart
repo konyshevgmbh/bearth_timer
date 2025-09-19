@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
 import '../models/training_result.dart';
 import '../models/user_settings.dart';
 import '../models/breathing_exercise.dart';

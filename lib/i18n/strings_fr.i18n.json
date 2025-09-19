@@ -178,6 +178,18 @@
   "failedToExportExercise": "Échec de l'exportation de l'exercice : {error}",
   "failedToImportExercise": "Échec de l'importation de l'exercice : {error}",
   "confirmDeleteExercise": "Êtes-vous sûr de vouloir supprimer \"{name}\" ?",
+  "inhale": "Inspirer",
+  "exhale": "Expirer",
+  "hold": "Retenir",
+  "breathPhaseIn": "Inspirer",
+  "breathPhaseOut": "Expirer",
+  "breathPhaseHold": "Retenir",
+  "molchanovMethod": "Molchanov",
+  "molchanovDescription": "Entraînement de tolérance au CO₂. Aucune pause. Technique pro pour l'apnée.",
+  "breathing478": "4-7-8 Calme",
+  "breathing478Description": "Schéma anti-stress. 4 inspirer, 7 retenir, 8 expirer. Améliore le sommeil.",
+  "boxBreathing": "Carré",
+  "boxBreathingDescription": "Technique de focus. Toutes les phases égales. Méthode Navy.",
   "services": {
     "sync": {
       "supabaseNotConfigured": "Supabase non configuré. Veuillez vérifier les paramètres de votre projet.",
@@ -204,7 +216,9 @@
     "storage": {
       "boxNotOpen": "La boîte de stockage n'est pas ouverte. Initialisez d'abord l'application.",
       "exerciseNotFound": "Exercice non trouvé pour la duplication : {exerciseId}",
-      "copy": "Copie"
+      "copy": "Copie",
+      "exerciseNamePlaceholder": "Nom de l'exercice",
+      "exerciseDescriptionPlaceholder": "Description de l'exercice"
     },
     "session": {
       "ready": "Prêt",

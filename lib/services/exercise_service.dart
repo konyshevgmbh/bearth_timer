@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../models/breathing_exercise.dart';
 import '../models/breath_phase.dart';
-import '../core/constants.dart';
 import 'initial_training_service.dart';
 
 /// Service for managing breathing exercise business logic
