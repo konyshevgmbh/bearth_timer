@@ -212,23 +212,18 @@ class HistoryService extends ChangeNotifier {
     return defaultColor;
   }
 
-  /// Calculate average daily change from the last 2 results
-  double _calculateAverageDailyChange(List<TrainingResult> results, int Function(TrainingResult) getValue) {
+  /// Calculate simple difference from the last 2 results (without dividing by days)
+  double _calculateLastDifference(List<TrainingResult> results, int Function(TrainingResult) getValue) {
     if (results.length < 2) return 0.0;
-    
+
     // Sort results by date and take only the last 2
     final sortedResults = List<TrainingResult>.from(results)
       ..sort((a, b) => a.date.compareTo(b.date));
-    
+
     final last2Results = sortedResults.skip(sortedResults.length - 2).toList();
     final values = last2Results.map(getValue).toList();
-    final days = last2Results.map((r) => r.date.millisecondsSinceEpoch ~/ (1000 * 60 * 60 * 24)).toList();
-    
-    final daysDiff = days[1] - days[0];
-    if (daysDiff > 0) {
-      return (values[1] - values[0]) / daysDiff;
-    }
-    return 0.0;
+
+    return (values[1] - values[0]).toDouble();
   }
 
   /// Calculate statistics for a specific exercise
@@ -240,13 +235,13 @@ class HistoryService extends ChangeNotifier {
 
     final totalSessions = exerciseResults.length;
     final totalScore = exerciseResults.fold<int>(0, (sum, result) => sum + result.score.toInt());
-    
-    // Calculate average daily duration change
-    final dailyDurationDiff = _calculateAverageDailyChange(exerciseResults, (r) => r.duration);
-    
-    // Calculate average daily cycle change
-    final dailyCycleDiff = _calculateAverageDailyChange(exerciseResults, (r) => r.cycles);
-    
+
+    // Calculate last duration change (simple difference)
+    final dailyDurationDiff = _calculateLastDifference(exerciseResults, (r) => r.duration);
+
+    // Calculate last cycle change (simple difference)
+    final dailyCycleDiff = _calculateLastDifference(exerciseResults, (r) => r.cycles);
+
     // Calculate best score (highest score in a single session)
     final bestScore = exerciseResults.isEmpty ? 0 : exerciseResults.map((r) => r.score).reduce((a, b) => a > b ? a : b).toInt();
 
@@ -267,13 +262,13 @@ class HistoryService extends ChangeNotifier {
 
     final totalSessions = _results.length;
     final totalScore = _results.fold<int>(0, (sum, result) => sum + result.score.toInt());
-    
-    // Calculate average daily duration change
-    final dailyDurationDiff = _calculateAverageDailyChange(_results, (r) => r.duration);
-    
-    // Calculate average daily cycle change
-    final dailyCycleDiff = _calculateAverageDailyChange(_results, (r) => r.cycles);
-    
+
+    // Calculate last duration change (simple difference)
+    final dailyDurationDiff = _calculateLastDifference(_results, (r) => r.duration);
+
+    // Calculate last cycle change (simple difference)
+    final dailyCycleDiff = _calculateLastDifference(_results, (r) => r.cycles);
+
     // Calculate best score (highest cycles in a single session)
     final bestScore = _results.isEmpty ? 0 : _results.map((r) => r.cycles).reduce((a, b) => a > b ? a : b);
 
