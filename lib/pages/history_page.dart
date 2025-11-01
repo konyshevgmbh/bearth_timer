@@ -337,7 +337,7 @@ class _HistoryPageState extends State<HistoryPage> {
     // Generate complete date range from start to current date
     final chartData = <MapEntry<DateTime, TrainingResult?>>[];
     DateTime currentDate = DateTime(startDate.year, startDate.month, startDate.day);
-    final endDate = DateTime(now.year, now.month, now.day);
+    final endDate = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
     
     while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
       final dateKey = '${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}';
