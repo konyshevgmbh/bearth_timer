@@ -131,13 +131,31 @@ class SyncService {
   Future<void> _performInitialSync() async {
     try {
       _updateStatus(SyncStatus.syncing);
-      await _syncExercises();
-      await _syncTrainingResults();
-      await _syncUserSettings();
+
+      // Try to sync each data type independently
+      // If one fails, others should still proceed
+      try {
+        await _syncExercises();
+      } catch (e) {
+        debugPrint('⚠️  Exercises sync failed: $e. Continuing with local data.');
+      }
+
+      try {
+        await _syncTrainingResults();
+      } catch (e) {
+        debugPrint('⚠️  Training results sync failed: $e. Continuing with local data.');
+      }
+
+      try {
+        await _syncUserSettings();
+      } catch (e) {
+        debugPrint('⚠️  User settings sync failed: $e. Continuing with local data.');
+      }
+
       _updateStatus(SyncStatus.synced);
     } catch (e) {
       debugPrint('Initial sync error: $e');
-      _updateStatus(SyncStatus.error);
+      _updateStatus(SyncStatus.offline);
     }
   }
 
@@ -158,13 +176,61 @@ class SyncService {
               .map((row) => TrainingResult.fromJson(row))
               .toList();
 
+      // PROTECTION: If cloud is empty but we have local data, only upload to cloud
+      // This prevents data loss when Supabase project is paused/deleted
+      if (cloudResults.isEmpty && localResults.isNotEmpty) {
+        debugPrint('⚠️  Cloud is empty but local has ${localResults.length} results. Uploading local data to cloud.');
+        await _uploadTrainingResultsToCloud(localResults, cloudResults);
+        return;
+      }
+
       final mergedResults = _mergeTrainingResults(localResults, cloudResults);
-      await _storageService.saveAllResults(mergedResults);
+
+      // Only save merged results if they're different from local
+      // This prevents unnecessary writes and potential data loss
+      if (mergedResults.length != localResults.length ||
+          !_areResultListsEqual(mergedResults, localResults)) {
+        await _storageService.saveAllResults(mergedResults);
+      }
+
       await _uploadTrainingResultsToCloud(mergedResults, cloudResults);
     } catch (e) {
       debugPrint('Training results sync error: $e');
       rethrow;
     }
+  }
+
+  bool _areResultListsEqual(List<TrainingResult> list1, List<TrainingResult> list2) {
+    if (list1.length != list2.length) return false;
+
+    // Create maps by date for comparison
+    final map1 = <String, TrainingResult>{};
+    final map2 = <String, TrainingResult>{};
+
+    for (final result in list1) {
+      map1[result.date.toIso8601String()] = result;
+    }
+    for (final result in list2) {
+      map2[result.date.toIso8601String()] = result;
+    }
+
+    // Compare all keys and values
+    if (!map1.keys.toSet().containsAll(map2.keys)) return false;
+    if (!map2.keys.toSet().containsAll(map1.keys)) return false;
+
+    for (final key in map1.keys) {
+      final r1 = map1[key]!;
+      final r2 = map2[key];
+      if (r2 == null ||
+          r1.duration != r2.duration ||
+          r1.cycles != r2.cycles ||
+          r1.exerciseId != r2.exerciseId ||
+          r1.deletedAt != r2.deletedAt) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   List<TrainingResult> _mergeTrainingResults(
@@ -276,9 +342,16 @@ class SyncService {
           .limit(1);
 
       if (response.isNotEmpty) {
-        final cloudSettings = UserSettings.fromJson(response.first);
-        await _storageService.saveUserSettings(cloudSettings);
+        try {
+          final cloudSettings = UserSettings.fromJson(response.first);
+          // Only overwrite local settings if cloud settings are valid
+          await _storageService.saveUserSettings(cloudSettings);
+        } catch (e) {
+          debugPrint('⚠️  Cloud settings corrupted: $e. Keeping local settings and uploading them.');
+          await _uploadUserSettings(localSettings);
+        }
       } else {
+        // Cloud is empty, upload local settings
         await _uploadUserSettings(localSettings);
       }
     } catch (e) {
@@ -326,13 +399,60 @@ class SyncService {
         }
       }
 
+      // PROTECTION: If cloud is empty but we have local data, only upload to cloud
+      // This prevents data loss when Supabase project is paused/deleted
+      if (cloudExercises.isEmpty && localExercises.isNotEmpty) {
+        debugPrint('⚠️  Cloud is empty but local has ${localExercises.length} exercises. Uploading local data to cloud.');
+        await _uploadExercisesToCloud(localExercises, cloudExercises);
+        return;
+      }
+
       final mergedExercises = _mergeExercises(localExercises, cloudExercises);
-      await _storageService.saveAllExercises(mergedExercises);
+
+      // Only save merged exercises if they're different from local
+      if (mergedExercises.length != localExercises.length ||
+          !_areExerciseListsEqual(mergedExercises, localExercises)) {
+        await _storageService.saveAllExercises(mergedExercises);
+      }
+
       await _uploadExercisesToCloud(mergedExercises, cloudExercises);
     } catch (e) {
       debugPrint('Exercise sync error: $e');
       rethrow;
     }
+  }
+
+  bool _areExerciseListsEqual(List<BreathingExercise> list1, List<BreathingExercise> list2) {
+    if (list1.length != list2.length) return false;
+
+    // Create maps by ID for comparison
+    final map1 = <String, BreathingExercise>{};
+    final map2 = <String, BreathingExercise>{};
+
+    for (final exercise in list1) {
+      map1[exercise.id] = exercise;
+    }
+    for (final exercise in list2) {
+      map2[exercise.id] = exercise;
+    }
+
+    // Compare all keys
+    if (!map1.keys.toSet().containsAll(map2.keys)) return false;
+    if (!map2.keys.toSet().containsAll(map1.keys)) return false;
+
+    // Compare updatedAt timestamps to detect changes
+    for (final key in map1.keys) {
+      final e1 = map1[key]!;
+      final e2 = map2[key];
+      if (e2 == null ||
+          e1.updatedAt != e2.updatedAt ||
+          e1.deletedAt != e2.deletedAt ||
+          e1.phases.length != e2.phases.length) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   BreathingExercise _parseExerciseFromCloud(Map<String, dynamic> exerciseRow) {
@@ -532,6 +652,7 @@ class SyncService {
   }
 
   Future<void> saveTrainingResult(TrainingResult result) async {
+    // ALWAYS save locally first - this is our source of truth
     await _storageService.saveResult(result);
 
     if (isLoggedIn) {
@@ -547,7 +668,7 @@ class SyncService {
 
         _updateStatus(SyncStatus.synced);
       } catch (e) {
-        debugPrint('Save training result to cloud error: $e');
+        debugPrint('⚠️  Save training result to cloud failed: $e. Data saved locally.');
         _updateStatus(SyncStatus.pendingChanges);
       }
     } else {
@@ -556,6 +677,7 @@ class SyncService {
   }
 
   Future<void> saveUserSettings(UserSettings settings) async {
+    // ALWAYS save locally first - this is our source of truth
     await _storageService.saveUserSettings(settings);
 
     if (isLoggedIn) {
@@ -563,7 +685,7 @@ class SyncService {
         await _uploadUserSettings(settings);
         _updateStatus(SyncStatus.synced);
       } catch (e) {
-        debugPrint('Save user settings to cloud error: $e');
+        debugPrint('⚠️  Save user settings to cloud failed: $e. Data saved locally.');
         _updateStatus(SyncStatus.pendingChanges);
       }
     } else {
@@ -572,6 +694,7 @@ class SyncService {
   }
 
   Future<void> saveExercise(BreathingExercise exercise) async {
+    // ALWAYS save locally first - this is our source of truth
     await _storageService.saveExercise(exercise);
 
     if (isLoggedIn) {
@@ -611,7 +734,7 @@ class SyncService {
 
         _updateStatus(SyncStatus.synced);
       } catch (e) {
-        debugPrint('Save exercise to cloud error: $e');
+        debugPrint('⚠️  Save exercise to cloud failed: $e. Data saved locally.');
         _updateStatus(SyncStatus.pendingChanges);
       }
     } else {
@@ -620,13 +743,21 @@ class SyncService {
   }
 
   Future<bool> deleteTrainingResult(String resultId) async {
+    // ALWAYS delete locally first - this is our source of truth
+    final localSuccess = await _storageService.deleteTrainingResult(resultId);
+
+    if (!localSuccess) {
+      debugPrint('⚠️  Failed to delete training result locally');
+      return false;
+    }
+
     if (isLoggedIn) {
       try {
         _updateStatus(SyncStatus.syncing);
 
         final now = DateTime.now();
 
-        // Soft delete training result
+        // Soft delete training result in cloud
         await Supabase.instance.client
             .from(SupabaseConstants.trainingResultsTable)
             .update({'deleted_at': now.toIso8601String()})
@@ -634,22 +765,27 @@ class SyncService {
             .eq('user_id', Supabase.instance.client.auth.currentUser!.id);
 
         _updateStatus(SyncStatus.synced);
-        return true;
       } catch (e) {
-        debugPrint('Delete training result from cloud error: $e');
+        debugPrint('⚠️  Delete training result from cloud failed: $e. Deleted locally.');
         _updateStatus(SyncStatus.pendingChanges);
-        return false;
       }
     } else {
       _updateStatus(SyncStatus.offline);
-      return false;
     }
+
+    return true;
   }
 
   Future<bool> deleteExercise(String exerciseId) async {
+    // ALWAYS delete locally first - this is our source of truth
     final success = await _storageService.deleteExercise(exerciseId);
 
-    if (success && isLoggedIn) {
+    if (!success) {
+      debugPrint('⚠️  Failed to delete exercise locally');
+      return false;
+    }
+
+    if (isLoggedIn) {
       try {
         _updateStatus(SyncStatus.syncing);
 
@@ -671,10 +807,10 @@ class SyncService {
 
         _updateStatus(SyncStatus.synced);
       } catch (e) {
-        debugPrint('Delete exercise from cloud error: $e');
+        debugPrint('⚠️  Delete exercise from cloud failed: $e. Deleted locally.');
         _updateStatus(SyncStatus.pendingChanges);
       }
-    } else if (!isLoggedIn) {
+    } else {
       _updateStatus(SyncStatus.offline);
     }
 
