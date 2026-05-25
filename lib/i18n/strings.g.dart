@@ -191,6 +191,8 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get loadDataFromFile => 'Load data from file';
 	String get clearAllData => 'Clear All Data';
 	String get deleteAllDataPermanently => 'Delete all data permanently';
+	String get limitHistory => 'Limit History (30 days)';
+	String get limitHistoryDescription => 'Keep only last 30 days of training data';
 	String get transitionSound => 'Transition Sound';
 	String get playSoundWhenPhasesChange => 'Play sound when phases change';
 	String get darkMode => 'Dark Mode';
@@ -496,6 +498,8 @@ class _StringsDe extends Translations {
 	@override String get loadDataFromFile => 'Daten aus Datei laden';
 	@override String get clearAllData => 'Alle Daten löschen';
 	@override String get deleteAllDataPermanently => 'Alle Daten dauerhaft löschen';
+	@override String get limitHistory => 'Verlauf begrenzen (30 Tage)';
+	@override String get limitHistoryDescription => 'Nur Daten der letzten 30 Tage speichern';
 	@override String get transitionSound => 'Übergangsgeräusch';
 	@override String get playSoundWhenPhasesChange => 'Ton abspielen bei Phasenwechsel';
 	@override String get darkMode => 'Dunkler Modus';
@@ -801,6 +805,8 @@ class _StringsEs extends Translations {
 	@override String get loadDataFromFile => 'Cargar datos desde archivo';
 	@override String get clearAllData => 'Limpiar todos los datos';
 	@override String get deleteAllDataPermanently => 'Eliminar todos los datos permanentemente';
+	@override String get limitHistory => 'Limitar historial (30 días)';
+	@override String get limitHistoryDescription => 'Conservar solo los datos de los últimos 30 días';
 	@override String get transitionSound => 'Sonido de transición';
 	@override String get playSoundWhenPhasesChange => 'Reproducir sonido cuando cambien las fases';
 	@override String get darkMode => 'Modo oscuro';
@@ -1106,6 +1112,8 @@ class _StringsFr extends Translations {
 	@override String get loadDataFromFile => 'Charger les données depuis un fichier';
 	@override String get clearAllData => 'Effacer toutes les données';
 	@override String get deleteAllDataPermanently => 'Supprimer définitivement toutes les données';
+	@override String get limitHistory => 'Limiter l\'historique (30 jours)';
+	@override String get limitHistoryDescription => 'Conserver uniquement les données des 30 derniers jours';
 	@override String get transitionSound => 'Son de transition';
 	@override String get playSoundWhenPhasesChange => 'Jouer un son lors des changements de phase';
 	@override String get darkMode => 'Mode sombre';
@@ -1411,6 +1419,8 @@ class _StringsIt extends Translations {
 	@override String get loadDataFromFile => 'Carica dati da file';
 	@override String get clearAllData => 'Cancella tutti i dati';
 	@override String get deleteAllDataPermanently => 'Elimina definitivamente tutti i dati';
+	@override String get limitHistory => 'Limita cronologia (30 giorni)';
+	@override String get limitHistoryDescription => 'Conserva solo i dati degli ultimi 30 giorni';
 	@override String get transitionSound => 'Suono di transizione';
 	@override String get playSoundWhenPhasesChange => 'Riproduci suono al cambio fase';
 	@override String get darkMode => 'Modalità scura';
@@ -1716,6 +1726,8 @@ class _StringsRu extends Translations {
 	@override String get loadDataFromFile => 'Загрузить из файла';
 	@override String get clearAllData => 'Очистить все';
 	@override String get deleteAllDataPermanently => 'Навсегда удалить все данные';
+	@override String get limitHistory => 'Ограничить историю (30 дней)';
+	@override String get limitHistoryDescription => 'Хранить только данные за последние 30 дней';
 	@override String get transitionSound => 'Звук переходов';
 	@override String get playSoundWhenPhasesChange => 'Воспроизводить звук при смене фаз';
 	@override String get darkMode => 'Темная тема';

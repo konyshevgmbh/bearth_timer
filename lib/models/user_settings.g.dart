@@ -23,13 +23,14 @@ class UserSettingsAdapter extends TypeAdapter<UserSettings> {
       vibrationEnabled: fields[3] as bool,
       defaultDuration: fields[4] as int,
       languageCode: fields[5] as String,
+      limitHistoryDays: fields[6] as bool? ?? true,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserSettings obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.totalCycles)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class UserSettingsAdapter extends TypeAdapter<UserSettings> {
       ..writeByte(4)
       ..write(obj.defaultDuration)
       ..writeByte(5)
-      ..write(obj.languageCode);
+      ..write(obj.languageCode)
+      ..writeByte(6)
+      ..write(obj.limitHistoryDays);
   }
 
   @override

@@ -50,6 +50,8 @@
   "loadDataFromFile": "Load data from file",
   "clearAllData": "Clear All Data",
   "deleteAllDataPermanently": "Delete all data permanently",
+  "limitHistory": "Limit History (30 days)",
+  "limitHistoryDescription": "Keep only last 30 days of training data",
   "transitionSound": "Transition Sound",
   "playSoundWhenPhasesChange": "Play sound when phases change",
   "darkMode": "Dark Mode",

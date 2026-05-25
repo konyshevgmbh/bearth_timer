@@ -15,7 +15,9 @@
       "Bash(git commit:*)",
       "Bash(git reset:*)",
       "Bash(git checkout:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git stash:*)",
+      "Bash(flutter run:*)"
     ],
     "deny": [],
     "ask": [],

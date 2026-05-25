@@ -50,6 +50,8 @@
   "loadDataFromFile": "Загрузить из файла",
   "clearAllData": "Очистить все",
   "deleteAllDataPermanently": "Навсегда удалить все данные",
+  "limitHistory": "Ограничить историю (30 дней)",
+  "limitHistoryDescription": "Хранить только данные за последние 30 дней",
   "transitionSound": "Звук переходов",
   "playSoundWhenPhasesChange": "Воспроизводить звук при смене фаз",
   "darkMode": "Темная тема",

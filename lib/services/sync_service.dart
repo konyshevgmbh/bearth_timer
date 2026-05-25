@@ -184,7 +184,8 @@ class SyncService {
         return;
       }
 
-      final mergedResults = _mergeTrainingResults(localResults, cloudResults);
+      final settings = await _storageService.loadUserSettings();
+      final mergedResults = _mergeTrainingResults(localResults, cloudResults, limitHistory: settings.limitHistoryDays);
 
       // Only save merged results if they're different from local
       // This prevents unnecessary writes and potential data loss
@@ -236,6 +237,7 @@ class SyncService {
   List<TrainingResult> _mergeTrainingResults(
     List<TrainingResult> localResults,
     List<TrainingResult> cloudResults,
+    {bool limitHistory = false}
   ) {
     final Map<String, TrainingResult> resultMap = {};
 
@@ -263,12 +265,12 @@ class SyncService {
       // Otherwise keep the existing (cloud) version
     }
 
-    final cutoffDate = DateTime.now().subtract(
-      Duration(days: StorageConstants.maxDataRetentionDays),
-    );
-
-    final mergedResults =
-        resultMap.values.where((r) => r.date.isAfter(cutoffDate)).toList();
+    final mergedResults = limitHistory
+        ? resultMap.values
+            .where((r) => r.date.isAfter(
+                DateTime.now().subtract(Duration(days: StorageConstants.maxDataRetentionDays))))
+            .toList()
+        : resultMap.values.toList();
 
     mergedResults.sort((a, b) => b.date.compareTo(a.date));
     return mergedResults;

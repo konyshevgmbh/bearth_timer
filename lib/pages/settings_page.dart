@@ -6,8 +6,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 // Import business logic modules
 import '../core/constants.dart';
 import '../main.dart'; // For AppState access
+import '../models/user_settings.dart';
 import '../services/sync_service.dart';
 import '../services/sound_service.dart';
+import '../services/storage_service.dart';
 import '../services/export_import_service.dart';
 import '../i18n/strings.g.dart';
 import 'auth_page.dart';
@@ -30,6 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late Stream<SyncStatus> _syncStatusStream;
   StreamSubscription<SyncStatus>? _syncStatusSubscription;
   bool _soundEnabled = true;
+  bool _limitHistoryDays = true;
   String _version = '';
 
   @override
@@ -42,7 +45,21 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     });
     _loadSoundSetting();
+    _loadSettings();
     _loadAppVersion();
+  }
+
+  Future<void> _loadSettings() async {
+    try {
+      final settings = await StorageService().loadUserSettings();
+      if (mounted) {
+        setState(() {
+          _limitHistoryDays = settings.limitHistoryDays;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading settings: $e');
+    }
   }
 
   Future<void> _loadSoundSetting() async {
@@ -192,6 +209,30 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: t.importData,
                     subtitle: t.loadDataFromFile,
                     onTap: _handleImportData,
+                  ),
+                  SizedBox(height: AppLayout.sectionSpacingSmall),
+                  SwitchListTile(
+                    title: Text(
+                      t.limitHistory,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: AppLayout.fontSizeSmall,
+                      ),
+                    ),
+                    subtitle: Text(
+                      t.limitHistoryDescription,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: AppLayout.fontSizeSmall,
+                      ),
+                    ),
+                    value: _limitHistoryDays,
+                    onChanged: _handleLimitHistoryToggle,
+                    activeThumbColor: Theme.of(context).colorScheme.primary,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: AppLayout.spacingSmall,
+                      vertical: 4,
+                    ),
                   ),
                   SizedBox(height: AppLayout.sectionSpacingSmall),
                   _buildActionTile(
@@ -567,6 +608,16 @@ class _SettingsPageState extends State<SettingsPage> {
         vertical: 4,
       ),
     );
+  }
+
+  Future<void> _handleLimitHistoryToggle(bool value) async {
+    try {
+      if (mounted) setState(() => _limitHistoryDays = value);
+      final current = await StorageService().loadUserSettings();
+      await SyncService().saveUserSettings(current.copyWith(limitHistoryDays: value));
+    } catch (e) {
+      debugPrint('Error updating limitHistoryDays: $e');
+    }
   }
 
   Future<void> _handleSoundToggle(bool value) async {

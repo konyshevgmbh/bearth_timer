@@ -358,6 +358,9 @@ class StorageService {
 
   Future<void> _cleanupOldResults() async {
     try {
+      final settings = _settingsBox.get('user_settings');
+      if (settings == null || !settings.limitHistoryDays) return;
+
       final cutoffDate = DateTime.now().subtract(
         Duration(days: StorageConstants.maxDataRetentionDays),
       );

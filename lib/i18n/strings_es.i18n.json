@@ -50,6 +50,8 @@
   "loadDataFromFile": "Cargar datos desde archivo",
   "clearAllData": "Limpiar todos los datos",
   "deleteAllDataPermanently": "Eliminar todos los datos permanentemente",
+  "limitHistory": "Limitar historial (30 días)",
+  "limitHistoryDescription": "Conservar solo los datos de los últimos 30 días",
   "transitionSound": "Sonido de transición",
   "playSoundWhenPhasesChange": "Reproducir sonido cuando cambien las fases",
   "darkMode": "Modo oscuro",
