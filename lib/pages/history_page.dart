@@ -15,6 +15,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final HistoryService _historyService = HistoryService();
+  DateTime? _selectedMonth;
 
   @override
   void initState() {
@@ -33,6 +34,29 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> _loadResults() async {
     await _historyService.loadResults();
+  }
+
+  List<DateTime> get _availableMonths {
+    final months = <String, DateTime>{};
+    for (final results in _historyService.resultsByExercise.values) {
+      for (final r in results) {
+        final key = '${r.date.year}-${r.date.month.toString().padLeft(2, '0')}';
+        months[key] = DateTime(r.date.year, r.date.month);
+      }
+    }
+    return months.values.toList()..sort();
+  }
+
+  DateTime get _effectiveMonth {
+    final months = _availableMonths;
+    if (months.isEmpty) return DateTime.now();
+    if (_selectedMonth != null) {
+      final match = months.where(
+        (m) => m.year == _selectedMonth!.year && m.month == _selectedMonth!.month,
+      );
+      if (match.isNotEmpty) return match.first;
+    }
+    return months.last;
   }
 
   @override
@@ -203,21 +227,25 @@ class _HistoryPageState extends State<HistoryPage> {
     }
 
     final exerciseEntries = _historyService.resultsByExercise.entries.toList();
-    
-    return Column(
-      children: exerciseEntries.map((entry) {
-        final exerciseId = entry.key;
-        final results = entry.value;
-        final exerciseName = _historyService.getExerciseDisplayName(exerciseId);
-        final exerciseColor = _historyService.getExerciseColor(exerciseId, Theme.of(context).colorScheme.primary);
 
-        return Column(
-          children: [
-            _buildExerciseSection(exerciseName, results, exerciseColor),
-            const SizedBox(height: 24),
-          ],
-        );
-      }).toList(),
+    return Column(
+      children: [
+        _buildMonthSelector(),
+        const SizedBox(height: 8),
+        ...exerciseEntries.map((entry) {
+          final exerciseId = entry.key;
+          final results = entry.value;
+          final exerciseName = _historyService.getExerciseDisplayName(exerciseId);
+          final exerciseColor = _historyService.getExerciseColor(exerciseId, Theme.of(context).colorScheme.primary);
+
+          return Column(
+            children: [
+              _buildExerciseSection(exerciseName, results, exerciseColor),
+              const SizedBox(height: 24),
+            ],
+          );
+        }),
+      ],
     );
   }
 
@@ -316,37 +344,71 @@ class _HistoryPageState extends State<HistoryPage> {
 
   List<MapEntry<DateTime, TrainingResult?>> _prepareChartData(List<TrainingResult> results) {
     if (results.isEmpty) return [];
-    
-    // Find the date range: from earliest data to current date
-    final now = DateTime.now();
-    final sortedResults = List<TrainingResult>.from(results);
-    sortedResults.sort((a, b) => a.date.compareTo(b.date));
-    
-    // Get start date (earliest data, but at least 30 days ago)
-    final earliestData = sortedResults.first.date;
-    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-    final startDate = earliestData.isBefore(thirtyDaysAgo) ? earliestData : thirtyDaysAgo;
-    
-    // Create map of existing results by date
+
+    final month = _effectiveMonth;
+    final filtered = results.where(
+      (r) => r.date.year == month.year && r.date.month == month.month,
+    ).toList();
+
+    if (filtered.isEmpty) return [];
+
     final resultsByDate = <String, TrainingResult>{};
-    for (final result in results) {
+    for (final result in filtered) {
       final dateKey = '${result.date.year}-${result.date.month.toString().padLeft(2, '0')}-${result.date.day.toString().padLeft(2, '0')}';
-      resultsByDate[dateKey] = result;
+      final existing = resultsByDate[dateKey];
+      if (existing == null || result.score > existing.score) {
+        resultsByDate[dateKey] = result;
+      }
     }
-    
-    // Generate complete date range from start to current date
-    final chartData = <MapEntry<DateTime, TrainingResult?>>[];
-    DateTime currentDate = DateTime(startDate.year, startDate.month, startDate.day);
-    final endDate = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
-    
-    while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
-      final dateKey = '${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}';
-      final result = resultsByDate[dateKey];
-      chartData.add(MapEntry(currentDate, result));
-      currentDate = currentDate.add(const Duration(days: 1));
-    }
-    
-    return chartData;
+
+    final sorted = resultsByDate.values.toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+
+    return sorted.map((r) => MapEntry(r.date, r as TrainingResult?)).toList();
+  }
+
+  Widget _buildMonthSelector() {
+    final months = _availableMonths;
+    if (months.isEmpty) return const SizedBox();
+
+    final effective = _effectiveMonth;
+    final idx = months.indexWhere(
+      (m) => m.year == effective.year && m.month == effective.month,
+    );
+    final hasPrev = idx > 0;
+    final hasNext = idx < months.length - 1;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(Icons.chevron_left),
+          color: hasPrev
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          onPressed: hasPrev
+              ? () => setState(() => _selectedMonth = months[idx - 1])
+              : null,
+        ),
+        Text(
+          DateFormat('MMMM yyyy').format(effective),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: AppLayout.fontSizeMedium,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.chevron_right),
+          color: hasNext
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          onPressed: hasNext
+              ? () => setState(() => _selectedMonth = months[idx + 1])
+              : null,
+        ),
+      ],
+    );
   }
 
 
@@ -597,160 +659,122 @@ class _ExerciseLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (chartData.isEmpty) {
+      return Center(
+        child: Text(
+          t.noTraining,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: AppLayout.fontSizeSmall,
+          ),
+        ),
+      );
+    }
     return LineChart(
-      chartDataConfig(context),
+      _chartDataConfig(context),
       duration: const Duration(milliseconds: 250),
     );
   }
 
-  LineChartData chartDataConfig(BuildContext context) => LineChartData(
-        lineTouchData: touchData(context),
-        gridData: gridData(context),
-        titlesData: titlesData(context),
-        borderData: borderData(context),
-        lineBarsData: lineBarsData(context),
+  LineChartData _chartDataConfig(BuildContext context) => LineChartData(
+        lineTouchData: _touchData(context),
+        gridData: _gridData(context),
+        titlesData: _titlesData(context),
+        borderData: _borderData(context),
+        lineBarsData: _lineBarsData(context),
         minX: 0,
         maxX: (chartData.length - 1).toDouble(),
         minY: 0,
         maxY: _getMaxYValue(),
       );
 
-  LineTouchData touchData(BuildContext context) => LineTouchData(
+  LineTouchData _touchData(BuildContext context) => LineTouchData(
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
-          getTooltipItems: (touchedSpots) {
-            return touchedSpots.map((spot) {
-              final index = spot.x.toInt();
-              if (index >= 0 && index < chartData.length) {
-                final result = chartData[index].value;
-                if (result != null) {
-                  return LineTooltipItem(
-                    '${DateFormat('MMM d').format(result.date)}\n${t.cyclesAndDuration(cycles: result.cycles, duration: result.duration)}',
-                    TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: AppLayout.fontSizeSmall,
-                    ),
-                  );
-                } else {
-                  return LineTooltipItem(
-                    '${DateFormat('MMM d').format(chartData[index].key)}\n${t.noTraining}',
-                    TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: AppLayout.fontSizeSmall,
-                    ),
-                  );
-                }
+          getTooltipItems: (touchedSpots) => touchedSpots.map((spot) {
+            final index = spot.x.toInt();
+            if (index >= 0 && index < chartData.length) {
+              final result = chartData[index].value;
+              if (result != null) {
+                return LineTooltipItem(
+                  '${DateFormat('MMM d').format(result.date)}\n${t.cyclesAndDuration(cycles: result.cycles, duration: result.duration)}',
+                  TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: AppLayout.fontSizeSmall,
+                  ),
+                );
               }
-              return null;
-            }).toList();
-          },
+            }
+            return null;
+          }).toList(),
         ),
       );
 
-  FlTitlesData titlesData(BuildContext context) => FlTitlesData(
-        bottomTitles: AxisTitles(
-          sideTitles: bottomTitles(context),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: rightTitles(context),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: leftTitles(context),
-        ),
+  FlTitlesData _titlesData(BuildContext context) => FlTitlesData(
+        bottomTitles: AxisTitles(sideTitles: _bottomTitles(context)),
+        rightTitles: AxisTitles(sideTitles: _rightTitles(context)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        leftTitles: AxisTitles(sideTitles: _leftTitles(context)),
       );
 
-  List<LineChartBarData> lineBarsData(BuildContext context) => [
-        durationLineData(context),
-        cyclesLineData(context),
+  List<LineChartBarData> _lineBarsData(BuildContext context) => [
+        _durationLineData(context),
+        _cyclesLineData(context),
       ];
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta, BuildContext context) {
-    final index = value.toInt();
-    if (index >= 0 && index < chartData.length) {
-      final date = chartData[index].key;
-      
-      // Calculate available width for labels
-      final chartWidth = meta.parentAxisSize;
-      final labelCount = (chartData.length / _calculateInterval()).ceil();
-      final availableWidthPerLabel = chartWidth / labelCount;
-      
-      // Choose format based on available space
-      String dateText;
-      if (availableWidthPerLabel < 50) {
-        // Very tight space - show only day
-        dateText = DateFormat('d').format(date);
-      } else if (availableWidthPerLabel < 70) {
-        // Moderate space - show month/day abbreviated
-        dateText = DateFormat('M/d').format(date);
-      } else {
-        // Enough space - show full format
-        dateText = DateFormat('MMM d').format(date);
-      }
-      
-      return SideTitleWidget(
-        meta: meta,
-        child: Text(
-          dateText,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: AppLayout.fontSizeSmall - 1,
-          ),
-        ),
-      );
-    }
-    return const SizedBox();
-  }
-
-  SideTitles bottomTitles(BuildContext context) => SideTitles(
+  SideTitles _bottomTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 30,
         interval: _calculateInterval(),
-        getTitlesWidget: (value, meta) => bottomTitleWidgets(value, meta, context),
+        getTitlesWidget: (value, meta) {
+          final index = value.toInt();
+          if (index >= 0 && index < chartData.length) {
+            return SideTitleWidget(
+              meta: meta,
+              child: Text(
+                DateFormat('d').format(chartData[index].key),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: AppLayout.fontSizeSmall - 1,
+                ),
+              ),
+            );
+          }
+          return const SizedBox();
+        },
       );
 
-  Widget leftTitleWidgets(double value, TitleMeta meta, BuildContext context) {
-    return SideTitleWidget(
-      meta: meta,
-      child: Text(
-        t.secondsUnit(value: value.toInt()),
-        style: TextStyle(
-          color: exerciseColor,
-          fontSize: AppLayout.fontSizeSmall - 1,
-        ),
-      ),
-    );
-  }
-
-  SideTitles leftTitles(BuildContext context) => SideTitles(
+  SideTitles _leftTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 45,
-        getTitlesWidget: (value, meta) => leftTitleWidgets(value, meta, context),
+        getTitlesWidget: (value, meta) => SideTitleWidget(
+          meta: meta,
+          child: Text(
+            t.secondsUnit(value: value.toInt()),
+            style: TextStyle(color: exerciseColor, fontSize: AppLayout.fontSizeSmall - 1),
+          ),
+        ),
       );
 
-  Widget rightTitleWidgets(double value, TitleMeta meta, BuildContext context) {
-    final cyclesValue = (value / _getMaxYValue() * _getMaxCyclesValue()).round();
-    return SideTitleWidget(
-      meta: meta,
-      child: Text(
-        t.cyclesUnit(value: cyclesValue.toString()),
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: AppLayout.fontSizeSmall - 1,
-        ),
-      ),
-    );
-  }
-
-  SideTitles rightTitles(BuildContext context) => SideTitles(
+  SideTitles _rightTitles(BuildContext context) => SideTitles(
         showTitles: true,
         reservedSize: 40,
-        getTitlesWidget: (value, meta) => rightTitleWidgets(value, meta, context),
+        getTitlesWidget: (value, meta) {
+          final cyclesValue = (value / _getMaxYValue() * _getMaxCyclesValue()).round();
+          return SideTitleWidget(
+            meta: meta,
+            child: Text(
+              t.cyclesUnit(value: cyclesValue.toString()),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: AppLayout.fontSizeSmall - 1,
+              ),
+            ),
+          );
+        },
       );
 
-  FlGridData gridData(BuildContext context) => FlGridData(
+  FlGridData _gridData(BuildContext context) => FlGridData(
         show: true,
         drawVerticalLine: true,
         drawHorizontalLine: true,
@@ -766,7 +790,7 @@ class _ExerciseLineChart extends StatelessWidget {
         ),
       );
 
-  FlBorderData borderData(BuildContext context) => FlBorderData(
+  FlBorderData _borderData(BuildContext context) => FlBorderData(
         show: true,
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -774,107 +798,80 @@ class _ExerciseLineChart extends StatelessWidget {
         ),
       );
 
-  LineChartBarData durationLineData(BuildContext context) => LineChartBarData(
+  LineChartBarData _durationLineData(BuildContext context) => LineChartBarData(
         spots: _getDurationSpots(),
         isCurved: true,
         curveSmoothness: 0.3,
+        preventCurveOverShooting: true,
         color: exerciseColor,
         barWidth: 3,
         isStrokeCapRound: true,
         dotData: FlDotData(
           show: true,
-          getDotPainter: (spot, percent, barData, index) {
-            return FlDotCirclePainter(
-              radius: 4,
-              color: exerciseColor,
-              strokeWidth: 2,
-              strokeColor: Theme.of(context).colorScheme.surface,
-            );
-          },
+          getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+            radius: 4,
+            color: exerciseColor,
+            strokeWidth: 2,
+            strokeColor: Theme.of(context).colorScheme.surface,
+          ),
         ),
-        belowBarData: BarAreaData(
-          show: true,
-          color: exerciseColor.withValues(alpha: 0.1),
-        ),
+        belowBarData: BarAreaData(show: true, color: exerciseColor.withValues(alpha: 0.1)),
       );
 
-  LineChartBarData cyclesLineData(BuildContext context) => LineChartBarData(
+  LineChartBarData _cyclesLineData(BuildContext context) => LineChartBarData(
         spots: _getCyclesSpots().map((spot) {
           if (spot.y.isNaN) return spot;
-          final scaledY = spot.y / _getMaxCyclesValue() * _getMaxYValue();
-          return FlSpot(spot.x, scaledY);
+          return FlSpot(spot.x, spot.y / _getMaxCyclesValue() * _getMaxYValue());
         }).toList(),
         isCurved: true,
         curveSmoothness: 0.3,
+        preventCurveOverShooting: true,
         color: Theme.of(context).colorScheme.onSurfaceVariant,
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(
           show: true,
-          getDotPainter: (spot, percent, barData, index) {
-            return FlDotCirclePainter(
-              radius: 3,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              strokeWidth: 1,
-              strokeColor: Theme.of(context).colorScheme.surface,
-            );
-          },
+          getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+            radius: 3,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            strokeWidth: 1,
+            strokeColor: Theme.of(context).colorScheme.surface,
+          ),
         ),
       );
 
-  List<FlSpot> _getDurationSpots() {
-    final spots = <FlSpot>[];
-    for (int i = 0; i < chartData.length; i++) {
-      final result = chartData[i].value;
-      if (result != null && result.duration > 0) {
-        spots.add(FlSpot(i.toDouble(), result.duration.toDouble()));
-      }
-    }
-    return spots;
-  }
+  List<FlSpot> _getDurationSpots() => chartData
+      .asMap()
+      .entries
+      .where((e) => e.value.value != null && e.value.value!.duration > 0)
+      .map((e) => FlSpot(e.key.toDouble(), e.value.value!.duration.toDouble()))
+      .toList();
 
-  List<FlSpot> _getCyclesSpots() {
-    final spots = <FlSpot>[];
-    for (int i = 0; i < chartData.length; i++) {
-      final result = chartData[i].value;
-      if (result != null && result.cycles > 0) {
-        spots.add(FlSpot(i.toDouble(), result.cycles.toDouble()));
-      }
-    }
-    return spots;
-  }
+  List<FlSpot> _getCyclesSpots() => chartData
+      .asMap()
+      .entries
+      .where((e) => e.value.value != null && e.value.value!.cycles > 0)
+      .map((e) => FlSpot(e.key.toDouble(), e.value.value!.cycles.toDouble()))
+      .toList();
 
   double _getMaxYValue() {
-    double maxDuration = 0;
-    for (final entry in chartData) {
-      if (entry.value != null && entry.value!.duration > maxDuration) {
-        maxDuration = entry.value!.duration.toDouble();
-      }
+    double max = 0;
+    for (final e in chartData) {
+      if (e.value != null && e.value!.duration > max) max = e.value!.duration.toDouble();
     }
-    // Ensure minimum value even if no data
-    return maxDuration > 0 ? (maxDuration * 1.2).clamp(60, 300) : 100;
+    return max > 0 ? (max * 1.2).clamp(60, 300) : 100;
   }
 
   double _getMaxCyclesValue() {
-    double maxCycles = 0;
-    for (final entry in chartData) {
-      if (entry.value != null && entry.value!.cycles > maxCycles) {
-        maxCycles = entry.value!.cycles.toDouble();
-      }
+    double max = 0;
+    for (final e in chartData) {
+      if (e.value != null && e.value!.cycles > max) max = e.value!.cycles.toDouble();
     }
-    // Ensure minimum value even if no data
-    return maxCycles > 0 ? (maxCycles * 1.2).clamp(5, 50) : 10;
+    return max > 0 ? (max * 1.2).clamp(5, 50) : 10;
   }
 
   double _calculateInterval() {
-    if (chartData.length <= 7) {
-      return 1; // Show all labels for small datasets
-    } else if (chartData.length <= 14) {
-      return 2; // Show every 2nd label
-    } else if (chartData.length <= 30) {
-      return (chartData.length / 5).ceil().toDouble(); // Show roughly 5 labels
-    } else {
-      return (chartData.length / 4).ceil().toDouble(); // Show roughly 4 labels for large datasets
-    }
+    if (chartData.length <= 6) return 1.0;
+    return (chartData.length / 6).ceilToDouble();
   }
 }
