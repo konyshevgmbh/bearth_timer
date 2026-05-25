@@ -159,22 +159,6 @@ class BreathingExercise extends HiveObject {
     };
   }
 
-  Map<String, dynamic> toSupabase() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
-      'deleted_at': deletedAt?.toIso8601String(),
-      'min_cycles': minCycles,
-      'max_cycles': maxCycles,
-      'cycle_duration_step': cycleDurationStep,
-      'cycles': cycles,
-      'cycle_duration': cycleDuration,
-    };
-  }
-
   factory BreathingExercise.fromJson(Map<String, dynamic> json) {
     final phasesData = json['phases'] as List;
     final phases = phasesData.map((phaseJson) => BreathPhase.fromJson(phaseJson)).toList();

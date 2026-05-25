@@ -74,21 +74,6 @@ class BreathPhase extends HiveObject {
     };
   }
 
-  Map<String, dynamic> toSupabase({String? exerciseId, String? exerciseUserId, int? phaseOrder}) {
-    return {
-      'exercise_id': exerciseId,
-      'exercise_user_id': exerciseUserId,
-      'name': name,
-      'duration': duration,
-      'min_duration': minDuration,
-      'max_duration': maxDuration,
-      'color_value': colorValue,
-      'claps': claps,
-      'phase_order': phaseOrder,
-      'deleted_at': deletedAt?.toIso8601String(),
-    };
-  }
-
   factory BreathPhase.fromJson(Map<String, dynamic> json) {
     return BreathPhase(
       name: json['name'],

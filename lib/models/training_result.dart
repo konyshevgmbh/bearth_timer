@@ -81,17 +81,6 @@ class TrainingResult extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toSupabase() {
-    return {
-      'date': date.toIso8601String(),
-      'duration': duration,
-      'cycles': cycles,
-      'exercise_id': exerciseId,
-      'score': score,
-      'deleted_at': deletedAt?.toIso8601String(),
-    };
-  }
-
   @override
   String toString() => 'TrainingResult(date: $date, cycles: $cycles, duration: ${duration}s, exerciseId: $exerciseId)';
 

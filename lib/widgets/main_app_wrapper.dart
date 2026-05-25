@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../i18n/strings.g.dart';
@@ -254,9 +253,6 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
   }
 
   Widget _buildNavigationDrawer() {
-    final user = Supabase.instance.client.auth.currentUser;
-    final isLoggedIn = user != null;
-
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       child: Column(
@@ -287,18 +283,6 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
                   ),
                 ),
 
-                if (isLoggedIn) ...[
-                  SizedBox(height: 8),
-                  Text(
-                    user.email ?? t.unknown,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: AppLayout.fontSizeSmall,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ],
               ],
             ),
           ),

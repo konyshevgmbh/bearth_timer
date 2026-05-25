@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Import page components and business logic
-import 'pages/auth_page.dart';
 import 'pages/settings_page.dart';
 import 'pages/exercises_page.dart';
-import 'services/sync_service.dart';
 import 'core/constants.dart';
 import 'widgets/main_app_wrapper.dart';
 import 'models/training_result.dart';
@@ -38,9 +34,6 @@ void main() async {
       
       WidgetsFlutterBinding.ensureInitialized();
 
-      // Load environment variables
-      await dotenv.load();
-
       // Initialize locale to match device locale
       LocaleSettings.useDeviceLocale();
   
@@ -68,14 +61,6 @@ void main() async {
         // Continue app startup even if sound initialization fails
       }
   
-      // Initialize Supabase for cloud sync
-      try {
-        await SyncService.initialize();
-      } catch (e, stack) {
-        AppErrorHandler.handleError(e, stack);
-        // Continue app startup even if sync fails
-      }
-      
       runApp(const BreathHoldApp());
     },
     (error, stack) {
@@ -131,7 +116,6 @@ class _BreathHoldAppState extends State<BreathHoldApp> {
         locale: LocaleSettings.currentLocale.flutterLocale,
         // Define named routes for better navigation
         routes: {
-          '/auth': (context) => AuthPage(),
           '/settings': (context) => SettingsPage(),
           '/exercises': (context) => ExercisesPage(),
         },
@@ -250,24 +234,15 @@ class AuthWrapper extends StatefulWidget {
 
 class _AuthWrapperState extends State<AuthWrapper> {
   bool _isInitialized = false;
-  StreamSubscription? _authSubscription;
 
   @override
   void initState() {
     super.initState();
     _initializeApp();
-    
-    // Listen to auth state changes
-    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   @override
   void dispose() {
-    _authSubscription?.cancel();
     super.dispose();
   }
 

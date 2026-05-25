@@ -1,19 +1,14 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 // Import business logic modules
 import '../core/constants.dart';
 import '../main.dart'; // For AppState access
 import '../models/user_settings.dart';
-import '../services/sync_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../services/export_import_service.dart';
 import '../i18n/strings.g.dart';
-import 'auth_page.dart';
-import 'delete_account_page.dart';
 
 // =============================================================================
 // SETTINGS PAGE
@@ -29,8 +24,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _isLoading = false;
-  late Stream<SyncStatus> _syncStatusStream;
-  StreamSubscription<SyncStatus>? _syncStatusSubscription;
   bool _soundEnabled = true;
   bool _limitHistoryDays = true;
   String _version = '';
@@ -38,12 +31,6 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    _syncStatusStream = SyncService().syncStatusStream;
-    _syncStatusSubscription = _syncStatusStream.listen((status) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
     _loadSoundSetting();
     _loadSettings();
     _loadAppVersion();
@@ -94,21 +81,17 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void dispose() {
-    _syncStatusSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
-    final isLoggedIn = user != null;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(t.settings),
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
- 
+
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
@@ -116,71 +99,6 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: EdgeInsets.all(AppLayout.maxScreenPadding),
           child: Column(
             children: [
-              // Account Section
-              _buildSection(
-                title: t.account,
-                icon: Icons.account_circle,
-                children: [
-                  if (isLoggedIn) ...[
-                    _buildInfoTile(
-                      icon: Icons.email,
-                      title: t.signedInAs,
-                      subtitle: user.email ?? t.unknownEmail,
-                    ),
-                    SizedBox(height: AppLayout.sectionSpacingSmall),
-                    _buildActionTile(
-                      icon: Icons.logout,
-                      title: t.signOut,
-                      subtitle: t.signOutDescription,
-                      color: Theme.of(context).colorScheme.error,
-                      onTap: _handleSignOut,
-                    ),
-                    SizedBox(height: AppLayout.sectionSpacingSmall),
-                    _buildActionTile(
-                      icon: Icons.delete_forever,
-                      title: t.deleteAccount,
-                      subtitle: t.deleteAccountDescription,
-                      color: Theme.of(context).colorScheme.error,
-                      onTap: _handleDeleteAccount,
-                    ),
-                  ] else ...[
-                    _buildInfoTile(
-                      icon: Icons.cloud_off,
-                      title: t.workingOffline,
-                      subtitle: t.signInToSync,
-                    ),
-                    SizedBox(height: AppLayout.sectionSpacingSmall),
-                    _buildActionTile(
-                      icon: Icons.login,
-                      title: t.signIn,
-                      subtitle: t.accessDataAnywhereButton,
-                      color: Theme.of(context).colorScheme.primary,
-                      onTap: _handleSignIn,
-                    ),
-                  ],
-                ],
-              ),
-
-              SizedBox(height: AppLayout.sectionSpacingLarge),
-
-
-              // Sync Section
-              if (isLoggedIn) ...[
-                _buildSection(
-                  title: t.sync,
-                  icon: Icons.sync,
-                  children: [
-                    _buildActionTile(
-                      icon: Icons.refresh,
-                      title: t.retrySync,
-                      subtitle: t.syncWithCloud,
-                      onTap: _handleRetrySync,
-                    ),
-                  ],
-                ),
-                SizedBox(height: AppLayout.sectionSpacingLarge),
-              ],
-
               // Sound Settings Section
               _buildSection(
                 title: t.sound,
@@ -410,91 +328,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildInfoTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-        size: AppLayout.iconSizeMedium,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontSize: AppLayout.fontSizeSmall,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: AppLayout.fontSizeSmall,
-        ),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-      ),
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: AppLayout.spacingSmall,
-        vertical: 4,
-      ),
-    );
-  }
-
-  Future<void> _handleSignOut() async {
-    final confirmed = await _showConfirmDialog(
-      title: t.signOutConfirmTitle,
-      message: t.signOutConfirmMessage,
-      confirmText: t.signOut,
-      isDestructive: false,
-    );
-
-    if (confirmed) {
-      if (mounted) setState(() => _isLoading = true);
-      try {
-        await SyncService().signOut();
-        // Force rebuild to update UI
-        if (mounted) setState(() {});
-      } catch (e) {
-        // Failed to sign out
-      } finally {
-        if (mounted) setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _handleSignIn() async {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => AuthPage()),
-    );
-  }
-
-  Future<void> _handleDeleteAccount() async {
-    // Navigate to delete account page with OTP verification
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => DeleteAccountPage(),
-      ),
-    );
-  }
-
-
-
-  Future<void> _handleRetrySync() async {
-    if (mounted) setState(() => _isLoading = true);
-    try {
-      await SyncService().retrySync();
-      // Sync completed
-    } catch (e) {
-      // Sync failed
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
   Future<void> _handleExportData() async {
     if (mounted) setState(() => _isLoading = true);
     try {
@@ -534,7 +367,7 @@ class _SettingsPageState extends State<SettingsPage> {
     if (confirmed) {
       if (mounted) setState(() => _isLoading = true);
       try {
-        await SyncService().clearAllData();
+        await StorageService().resetAllAppData();
         // All data cleared
       } catch (e) {
         // Failed to clear data
@@ -614,7 +447,7 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       if (mounted) setState(() => _limitHistoryDays = value);
       final current = await StorageService().loadUserSettings();
-      await SyncService().saveUserSettings(current.copyWith(limitHistoryDays: value));
+      await StorageService().saveUserSettings(current.copyWith(limitHistoryDays: value));
     } catch (e) {
       debugPrint('Error updating limitHistoryDays: $e');
     }

@@ -80,16 +80,6 @@ class UserSettings extends HiveObject {
     );
   }
 
-  Map<String, dynamic> toSupabase() {
-    return {
-      'total_cycles': totalCycles,
-      'cycle_duration': cycleDuration,
-      'sound_enabled': soundEnabled,
-      'volume': 1.0, // Default volume since this model doesn't have it
-      'updated_at': DateTime.now().toIso8601String(),
-    };
-  }
-
   @override
   String toString() => 'UserSettings(cycles: $totalCycles, duration: ${cycleDuration}s, sound: $soundEnabled, vibration: $vibrationEnabled, defaultDuration: $defaultDuration, language: $languageCode, limitHistoryDays: $limitHistoryDays)';
 

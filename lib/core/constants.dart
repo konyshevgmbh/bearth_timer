@@ -1,5 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 // =============================================================================
 // APP CONSTANTS
 // =============================================================================
@@ -28,21 +26,6 @@ class ChartConstants {
   static const int tooltipFontSize = 12;
 }
 
-
-class SupabaseConstants {
-  // Environment variables
-  static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
-  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-
-  // Check if properly configured
-  static bool get isConfigured => supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
-
-  // Table names
-  static const String trainingResultsTable = 'training_results';
-  static const String userSettingsTable = 'user_settings';
-  static const String breathingExercisesTable = 'breathing_exercises';
-  static const String breathPhasesTable = 'breath_phases';
-}
 
 /// Layout and UI constants
 class AppLayout {

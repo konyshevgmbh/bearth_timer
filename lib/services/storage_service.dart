@@ -8,7 +8,6 @@ import '../models/user_settings.dart';
 import '../core/constants.dart';
 import 'exercise_service.dart';
 import '../i18n/strings.g.dart';
-import 'sync_service.dart';
 
 /// Service for local data storage and persistence
 class StorageService {
@@ -258,8 +257,6 @@ class StorageService {
       
       await _resultsBox.put(key, result);
       await _cleanupOldResults();
-      // Auto-sync when training result is added
-      _triggerAutoSync();
     } catch (e) {
       debugPrint('Error saving result: $e');
     }
@@ -665,16 +662,4 @@ class StorageService {
     return await getAllResults();
   }
 
-  /// Triggers auto-sync when data is changed
-  void _triggerAutoSync() {
-    try {
-      final syncService = SyncService();
-      if (syncService.isLoggedIn) {
-        // Trigger sync in background without awaiting
-        syncService.retrySync();
-      }
-    } catch (e) {
-      debugPrint('Auto-sync trigger error: $e');
-    }
-  }
 }

@@ -5,7 +5,6 @@ import '../models/breath_phase.dart';
 import '../models/training_result.dart';
 import '../models/user_settings.dart';
 import '../core/constants.dart';
-import 'sync_service.dart';
 import 'storage_service.dart';
 import 'exercise_service.dart';
 import 'sound_service.dart';
@@ -586,7 +585,7 @@ class SessionService extends ChangeNotifier {
       final partialResult = createPartialResult();
       if (partialResult != null) {
         try {
-          await SyncService().saveTrainingResult(partialResult);
+          await StorageService().saveResult(partialResult);
           debugPrint('Saved partial result: ${partialResult.cycles} cycles completed');
         } catch (e) {
           debugPrint('Error saving partial result: $e');
@@ -600,7 +599,7 @@ class SessionService extends ChangeNotifier {
     final result = createResult();
     if (result != null) {
       try {
-        await SyncService().saveTrainingResult(result);
+        await StorageService().saveResult(result);
         await stop(); // Stop the session after saving result
         return result;
       } catch (e) {
@@ -620,7 +619,7 @@ class SessionService extends ChangeNotifier {
       final syncedExercise = _exerciseService.updateCycleDuration(updatedExercise, updatedExercise.cycleDuration) ?? updatedExercise;
       setExercise(syncedExercise);
       await saveCurrentSettings();
-      await SyncService().saveUserSettings(
+      await StorageService().saveUserSettings(
         UserSettings(
           totalCycles: syncedExercise.cycles,
           cycleDuration: syncedExercise.cycleDuration,
