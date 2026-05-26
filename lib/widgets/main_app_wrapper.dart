@@ -9,6 +9,8 @@ import '../pages/timer_page.dart';
 import '../pages/history_page.dart';
 import '../pages/settings_page.dart';
 import '../models/breathing_exercise.dart';
+import '../services/discovery_service.dart';
+import '../services/local_sync_service.dart';
 import '../services/session_service.dart';
 
 class MainAppWrapper extends StatefulWidget {
@@ -58,7 +60,8 @@ class ResponsiveHomePage extends StatefulWidget {
   State<ResponsiveHomePage> createState() => _ResponsiveHomePageState();
 }
 
-class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
+class _ResponsiveHomePageState extends State<ResponsiveHomePage>
+    with WidgetsBindingObserver {
   int _currentIndex = 0;
   late PageController _pageController;
   String _version = '';
@@ -68,6 +71,41 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
     super.initState();
     _pageController = PageController();
     _loadAppVersion();
+    WidgetsBinding.instance.addObserver(this);
+    _startSync();
+  }
+
+  Future<void> _startSync() async {
+    await LocalSyncService().start();
+    await DiscoveryService().start();
+    LocalSyncService().addListener(_onSyncStateChanged);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Stop discovery when backgrounded (required on iOS; good practice everywhere).
+    // SyncServer stays alive to finish any in-flight sync.
+    if (state == AppLifecycleState.paused) {
+      DiscoveryService().stop();
+    } else if (state == AppLifecycleState.resumed) {
+      DiscoveryService().start();
+    }
+  }
+
+  void _onSyncStateChanged() {
+    final svc = LocalSyncService();
+    if (svc.state == SyncState.done && svc.lastResult != null && mounted) {
+      final r = svc.lastResult!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Synced with ${r.peerDisplayName} '
+            '(+${r.sessionsReceived} received)',
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   Future<void> _loadAppVersion() async {
@@ -96,6 +134,10 @@ class _ResponsiveHomePageState extends State<ResponsiveHomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    LocalSyncService().removeListener(_onSyncStateChanged);
+    LocalSyncService().stop();
+    DiscoveryService().stop();
     _pageController.dispose();
     super.dispose();
   }

@@ -26,6 +26,9 @@ class UserSettings extends HiveObject {
   @HiveField(6)
   final bool limitHistoryDays;
 
+  @HiveField(7)
+  final String? deviceId;
+
   UserSettings({
     required this.totalCycles,
     required this.cycleDuration,
@@ -34,6 +37,7 @@ class UserSettings extends HiveObject {
     this.defaultDuration = 30,
     this.languageCode = 'en',
     this.limitHistoryDays = true,
+    this.deviceId,
   });
 
   UserSettings copyWith({
@@ -44,6 +48,7 @@ class UserSettings extends HiveObject {
     int? defaultDuration,
     String? languageCode,
     bool? limitHistoryDays,
+    String? deviceId,
   }) {
     return UserSettings(
       totalCycles: totalCycles ?? this.totalCycles,
@@ -53,6 +58,7 @@ class UserSettings extends HiveObject {
       defaultDuration: defaultDuration ?? this.defaultDuration,
       languageCode: languageCode ?? this.languageCode,
       limitHistoryDays: limitHistoryDays ?? this.limitHistoryDays,
+      deviceId: deviceId ?? this.deviceId,
     );
   }
 
@@ -65,23 +71,25 @@ class UserSettings extends HiveObject {
       'default_duration': defaultDuration,
       'language_code': languageCode,
       'limit_history_days': limitHistoryDays,
+      'device_id': deviceId,
     };
   }
 
   factory UserSettings.fromJson(Map<String, dynamic> json) {
     return UserSettings(
-      totalCycles: json['total_cycles']?? 0,
-      cycleDuration: json['cycle_duration']??0,
+      totalCycles: json['total_cycles'] ?? 0,
+      cycleDuration: json['cycle_duration'] ?? 0,
       soundEnabled: json['sound_enabled'] ?? true,
       vibrationEnabled: json['vibration_enabled'] ?? true,
       defaultDuration: json['default_duration'] ?? 30,
       languageCode: json['language_code'] ?? 'en',
       limitHistoryDays: json['limit_history_days'] ?? true,
+      deviceId: json['device_id'] as String?,
     );
   }
 
   @override
-  String toString() => 'UserSettings(cycles: $totalCycles, duration: ${cycleDuration}s, sound: $soundEnabled, vibration: $vibrationEnabled, defaultDuration: $defaultDuration, language: $languageCode, limitHistoryDays: $limitHistoryDays)';
+  String toString() => 'UserSettings(cycles: $totalCycles, duration: ${cycleDuration}s, sound: $soundEnabled, vibration: $vibrationEnabled, defaultDuration: $defaultDuration, language: $languageCode, limitHistoryDays: $limitHistoryDays, deviceId: $deviceId)';
 
   @override
   bool operator ==(Object other) =>
@@ -94,8 +102,9 @@ class UserSettings extends HiveObject {
           vibrationEnabled == other.vibrationEnabled &&
           defaultDuration == other.defaultDuration &&
           languageCode == other.languageCode &&
-          limitHistoryDays == other.limitHistoryDays;
+          limitHistoryDays == other.limitHistoryDays &&
+          deviceId == other.deviceId;
 
   @override
-  int get hashCode => totalCycles.hashCode ^ cycleDuration.hashCode ^ soundEnabled.hashCode ^ vibrationEnabled.hashCode ^ defaultDuration.hashCode ^ languageCode.hashCode ^ limitHistoryDays.hashCode;
+  int get hashCode => totalCycles.hashCode ^ cycleDuration.hashCode ^ soundEnabled.hashCode ^ vibrationEnabled.hashCode ^ defaultDuration.hashCode ^ languageCode.hashCode ^ limitHistoryDays.hashCode ^ deviceId.hashCode;
 }

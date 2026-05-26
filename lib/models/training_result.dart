@@ -20,12 +20,20 @@ class TrainingResult extends HiveObject {
   @HiveField(4)
   final DateTime? deletedAt;
 
+  @HiveField(5)
+  final String? id;
+
+  @HiveField(6)
+  final DateTime? createdAt;
+
   TrainingResult({
     required this.date,
     required this.duration,
     required this.cycles,
     required this.exerciseId,
     this.deletedAt,
+    this.id,
+    this.createdAt,
   });
 
   bool isBetterThan(TrainingResult other) {
@@ -61,19 +69,43 @@ class TrainingResult extends HiveObject {
 
   double get score => duration*cycles.toDouble();
 
+  TrainingResult copyWith({
+    DateTime? date,
+    int? duration,
+    int? cycles,
+    String? exerciseId,
+    DateTime? deletedAt,
+    String? id,
+    DateTime? createdAt,
+  }) {
+    return TrainingResult(
+      date: date ?? this.date,
+      duration: duration ?? this.duration,
+      cycles: cycles ?? this.cycles,
+      exerciseId: exerciseId ?? this.exerciseId,
+      deletedAt: deletedAt ?? this.deletedAt,
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'date': date.toIso8601String(),
+      'created_at': (createdAt ?? date).toUtc().toIso8601String(),
       'duration': duration,
       'cycles': cycles,
       'exerciseId': exerciseId,
-      'deleted_at': deletedAt?.toIso8601String(),
+      'deleted_at': deletedAt?.toUtc().toIso8601String(),
     };
   }
 
   factory TrainingResult.fromJson(Map<String, dynamic> json) {
     return TrainingResult(
+      id: json['id'] as String?,
       date: DateTime.parse(json['date']),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : null,
       duration: json['duration'],
       cycles: json['cycles'],
       exerciseId: json['exerciseId'] ?? json['exercise_id'] ?? '',
@@ -82,7 +114,7 @@ class TrainingResult extends HiveObject {
   }
 
   @override
-  String toString() => 'TrainingResult(date: $date, cycles: $cycles, duration: ${duration}s, exerciseId: $exerciseId)';
+  String toString() => 'TrainingResult(id: $id, date: $date, cycles: $cycles, duration: ${duration}s, exerciseId: $exerciseId)';
 
   @override
   bool operator ==(Object other) =>

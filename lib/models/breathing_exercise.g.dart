@@ -22,13 +22,13 @@ class BreathingExerciseAdapter extends TypeAdapter<BreathingExercise> {
       description: fields[2] as String,
       createdAt: fields[3] as DateTime,
       updatedAt: fields[4] as DateTime?,
+      deletedAt: fields[11] as DateTime?,
       minCycles: fields[5] as int,
       maxCycles: fields[6] as int,
       cycleDurationStep: fields[7] as int,
       cycles: fields[8] as int,
       cycleDuration: fields[9] as int,
       phases: (fields[10] as List).cast<BreathPhase>(),
-      deletedAt: fields[11] as DateTime?,
     );
   }
 
@@ -46,8 +46,6 @@ class BreathingExerciseAdapter extends TypeAdapter<BreathingExercise> {
       ..write(obj.createdAt)
       ..writeByte(4)
       ..write(obj.updatedAt)
-      ..writeByte(11)
-      ..write(obj.deletedAt)
       ..writeByte(5)
       ..write(obj.minCycles)
       ..writeByte(6)
@@ -59,7 +57,9 @@ class BreathingExerciseAdapter extends TypeAdapter<BreathingExercise> {
       ..writeByte(9)
       ..write(obj.cycleDuration)
       ..writeByte(10)
-      ..write(obj.phases);
+      ..write(obj.phases)
+      ..writeByte(11)
+      ..write(obj.deletedAt);
   }
 
   @override

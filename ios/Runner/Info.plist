@@ -52,5 +52,9 @@
 	<true/>
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>This app needs access to your documents to import and export training data.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Bearth Timer uses the camera to scan QR codes for pairing with nearby devices.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Bearth Timer uses the local network to sync sessions with nearby devices.</string>
 </dict>
 </plist>

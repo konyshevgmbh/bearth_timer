@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../models/breathing_exercise.dart';
 import '../models/training_result.dart';
@@ -249,17 +250,59 @@ class StorageService {
   }
 
   // Training results storage methods
+
+  /// One-time migration: assign UUIDs to legacy records that have none.
+  /// Safe to call multiple times — guarded by SharedPreferences flag.
+  Future<void> migrateResultUuids() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('uuid_migration_done') == true) return;
+
+    final all = _resultsBox.toMap(); // key → value
+    if (all.isNotEmpty) {
+      final migrated = <String, TrainingResult>{};
+      for (final entry in all.entries) {
+        final r = entry.value;
+        final id = r.id ?? _uuid.v4();
+        migrated[id] = r.id != null ? r : r.copyWith(id: id);
+      }
+      await _resultsBox.clear();
+      await _resultsBox.putAll(migrated);
+    }
+    await prefs.setBool('uuid_migration_done', true);
+    debugPrint('UUID migration done: ${all.length} records');
+  }
+
   Future<void> saveTrainingResult(TrainingResult result) async {
     try {
-      // Use unique timestamp-based key to save all results
-      final timestamp = result.date.millisecondsSinceEpoch;
-      final key = '${timestamp}_${result.exerciseId}';
-      
-      await _resultsBox.put(key, result);
+      final id = result.id ?? _uuid.v4();
+      var keyed = result;
+      if (result.id == null) keyed = keyed.copyWith(id: id);
+      if (result.createdAt == null) keyed = keyed.copyWith(createdAt: DateTime.now().toUtc());
+      await _resultsBox.put(id, keyed);
       await _cleanupOldResults();
     } catch (e) {
       debugPrint('Error saving result: $e');
     }
+  }
+
+  /// Merge incoming sessions from a peer. Returns count of newly added records.
+  /// INSERT-OR-IGNORE by UUID; propagates soft-deletes.
+  Future<int> mergeSessions(List<TrainingResult> incoming) async {
+    int merged = 0;
+    for (final r in incoming) {
+      final id = r.id;
+      if (id == null) continue;
+      final local = _resultsBox.get(id);
+      if (local == null) {
+        await _resultsBox.put(id, r);
+        merged++;
+      } else if (local.deletedAt == null && r.deletedAt != null) {
+        // propagate soft-delete from peer
+        await _resultsBox.put(id, r);
+        merged++;
+      }
+    }
+    return merged;
   }
 
   Future<List<TrainingResult>> getAllResults() async {
@@ -647,6 +690,23 @@ class StorageService {
     } catch (e) {
       debugPrint('Error saving user settings: $e');
     }
+  }
+
+  // Device identity
+
+  /// Returns a stable device UUID, generating and persisting one if it doesn't exist yet.
+  Future<String> getDeviceId() async {
+    final box = _settingsBox;
+    final existing = box.get('user_settings');
+    if (existing?.deviceId != null) return existing!.deviceId!;
+
+    final newId = _uuid.v4();
+    final updated = (existing ?? UserSettings(
+      totalCycles: TrainingConstants.defaultTotalCycles,
+      cycleDuration: TrainingConstants.defaultCycleDuration,
+    )).copyWith(deviceId: newId);
+    await box.put('user_settings', updated);
+    return newId;
   }
 
   // Compatibility methods for existing codebase

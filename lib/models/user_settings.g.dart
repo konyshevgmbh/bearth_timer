@@ -24,13 +24,14 @@ class UserSettingsAdapter extends TypeAdapter<UserSettings> {
       defaultDuration: fields[4] as int,
       languageCode: fields[5] as String,
       limitHistoryDays: fields[6] as bool? ?? true,
+      deviceId: fields[7] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserSettings obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.totalCycles)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class UserSettingsAdapter extends TypeAdapter<UserSettings> {
       ..writeByte(5)
       ..write(obj.languageCode)
       ..writeByte(6)
-      ..write(obj.limitHistoryDays);
+      ..write(obj.limitHistoryDays)
+      ..writeByte(7)
+      ..write(obj.deviceId);
   }
 
   @override

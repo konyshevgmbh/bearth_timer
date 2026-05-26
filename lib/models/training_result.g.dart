@@ -22,13 +22,15 @@ class TrainingResultAdapter extends TypeAdapter<TrainingResult> {
       cycles: fields[2] as int,
       exerciseId: fields[3] as String,
       deletedAt: fields[4] as DateTime?,
+      id: fields[5] as String?,
+      createdAt: fields[6] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, TrainingResult obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.date)
       ..writeByte(1)
@@ -38,7 +40,11 @@ class TrainingResultAdapter extends TypeAdapter<TrainingResult> {
       ..writeByte(3)
       ..write(obj.exerciseId)
       ..writeByte(4)
-      ..write(obj.deletedAt);
+      ..write(obj.deletedAt)
+      ..writeByte(5)
+      ..write(obj.id)
+      ..writeByte(6)
+      ..write(obj.createdAt);
   }
 
   @override

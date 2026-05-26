@@ -8,6 +8,7 @@ import '../models/user_settings.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../services/export_import_service.dart';
+import '../pages/trusted_devices_page.dart';
 import '../i18n/strings.g.dart';
 
 // =============================================================================
@@ -159,6 +160,27 @@ class _SettingsPageState extends State<SettingsPage> {
                     subtitle: t.deleteAllDataPermanently,
                     color: Theme.of(context).colorScheme.error,
                     onTap: _handleClearAllData,
+                  ),
+                ],
+              ),
+
+              SizedBox(height: AppLayout.sectionSpacingLarge),
+
+              // Nearby Sync Section
+              _buildSection(
+                title: 'Nearby Sync',
+                icon: Icons.sync,
+                children: [
+                  _buildActionTile(
+                    icon: Icons.devices,
+                    title: 'Trusted Devices',
+                    subtitle: 'Pair and sync with nearby devices over Wi-Fi',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TrustedDevicesPage(),
+                      ),
+                    ),
                   ),
                 ],
               ),

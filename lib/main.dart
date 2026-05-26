@@ -13,10 +13,12 @@ import 'models/user_settings.dart';
 import 'models/breathing_exercise.dart';
 import 'models/breath_phase.dart';
 import 'models/sound_settings.dart';
+import 'models/trusted_device.dart';
 import 'services/storage_service.dart';
 import 'services/exercise_service.dart';
 import 'services/sound_service.dart';
 import 'services/session_service.dart';
+import 'services/device_info_service.dart';
 import 'i18n/strings.g.dart';
 
 // =============================================================================
@@ -46,12 +48,19 @@ void main() async {
       Hive.registerAdapter(BreathingExerciseAdapter());
       Hive.registerAdapter(BreathPhaseAdapter());
       Hive.registerAdapter(SoundSettingsAdapter());
+      Hive.registerAdapter(TrustedDeviceAdapter());
       
       // Open Hive boxes with error handling for data corruption
       await _initializeHiveBoxes();
       
       // Verify all boxes are properly opened before continuing
       await _verifyHiveBoxes();
+
+      // One-time UUID migration for existing TrainingResult records
+      await StorageService().migrateResultUuids();
+
+      // Initialize device identity (must be after Hive boxes are open)
+      await DeviceInfoService().initialize();
 
       // Initialize sound service
       try {
@@ -344,7 +353,8 @@ Future<void> _initializeHiveBoxes() async {
     await Hive.openBox<UserSettings>('settings');
     await Hive.openBox<BreathingExercise>('exercises');
     await Hive.openBox<SoundSettings>('sound_settings');
-    
+    await Hive.openBox<TrustedDevice>('trusted_devices');
+
     // Test if we can read from the exercises box to detect schema incompatibilities
     final exercisesBox = Hive.box<BreathingExercise>('exercises');
     try {
@@ -421,12 +431,16 @@ Future<void> _recoverFromHiveError() async {
     if (!Hive.isAdapterRegistered(4)) {
       Hive.registerAdapter(SoundSettingsAdapter());
     }
-    
+    if (!Hive.isAdapterRegistered(5)) {
+      Hive.registerAdapter(TrustedDeviceAdapter());
+    }
+
     // Open fresh boxes
     await Hive.openBox<TrainingResult>('results');
     await Hive.openBox<UserSettings>('settings');
     await Hive.openBox<BreathingExercise>('exercises');
     await Hive.openBox<SoundSettings>('sound_settings');
+    await Hive.openBox<TrustedDevice>('trusted_devices');
     
     // Initialize with default data
     await _initializeDefaultData();
