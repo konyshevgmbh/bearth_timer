@@ -361,16 +361,12 @@ class StorageService {
       final cutoffDate = DateTime.now().subtract(
         Duration(days: StorageConstants.maxDataRetentionDays),
       );
-      final cutoffDateKey = DateFormat('yyyy-MM-dd').format(cutoffDate);
-      
+      final cutoffDateKey = cutoffDate.millisecondsSinceEpoch ;
       final keysToDelete = <String>[];
       for (final key in _resultsBox.keys) {
-        if (key is String && key.contains('_')) {
-          // Extract date part from key (format: yyyy-MM-dd_exerciseId)
-          final dateKey = key.split('_')[0];
-          if (dateKey.compareTo(cutoffDateKey) < 0) {
-            keysToDelete.add(key);
-          }
+        final result = _resultsBox.get(key);
+        if (result != null && result.date.millisecondsSinceEpoch < cutoffDateKey) {
+          keysToDelete.add(key);
         }
       }
       
