@@ -476,7 +476,7 @@ class StorageService {
           duration: result.duration,
           cycles: result.cycles,
           exerciseId: result.exerciseId,
-          deletedAt: DateTime.now(),
+          deletedAt: DateTime.now().toUtc(),
         );
         await _resultsBox.put(resultKey, deletedResult);
         return true;
@@ -536,9 +536,9 @@ class StorageService {
             duration: result.duration,
             cycles: result.cycles,
             exerciseId: result.exerciseId,
-            deletedAt: DateTime.now(),
+            deletedAt: DateTime.now().toUtc(),
           );
-          
+
           keysToUpdate.add(key);
           resultsToUpdate.add(deletedResult);
           anyDeleted = true;

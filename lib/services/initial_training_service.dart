@@ -143,7 +143,7 @@ class InitialTrainingService {
       id: _uuid.v4(),
       name: name ?? t.services.initialTraining.molchanovMethodName,
       description: description ?? t.services.initialTraining.molchanovDescription,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       minCycles: TrainingConstants.minCycles,
       maxCycles: TrainingConstants.maxCycles,
       cycleDurationStep: TrainingConstants.cycleDurationStep,
@@ -165,7 +165,7 @@ class InitialTrainingService {
       cycles: 8,
       cycleDuration: 19,
       phases: create478BreathingPhases(),
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
     );
   }
 
@@ -181,7 +181,7 @@ class InitialTrainingService {
       cycles: 8,
       cycleDuration: 16, // 4 seconds each phase
       phases: createBoxBreathingPhases(duration: 4),
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
     );
   }
 

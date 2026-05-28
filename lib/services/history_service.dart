@@ -281,21 +281,6 @@ class HistoryService extends ChangeNotifier {
     );
   }
 
-  /// Get the next timestamp that's guaranteed to be after the existing result timestamp
-  DateTime _getNextTimestamp(TrainingResult result) {
-    final now = DateTime.now().toUtc();
-    final maxExisting = [result.date, result.deletedAt]
-        .where((date) => date != null)
-        .cast<DateTime>()
-        .fold<DateTime?>(null, (max, date) => max == null || date.isAfter(max) ? date : max);
-    
-    if (maxExisting == null) return now;
-    
-    // Return either now or maxExisting + 1 millisecond, whichever is later
-    final nextTimestamp = maxExisting.add(Duration(milliseconds: 1));
-    return nextTimestamp.isAfter(now) ? nextTimestamp : now;
-  }
-
   /// Remove all training results for the same day and exercise as the given result
   Future<bool> removeResult(TrainingResult result) async {
     try {

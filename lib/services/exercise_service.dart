@@ -49,7 +49,7 @@ class ExerciseService extends ChangeNotifier {
     
     final updated = exercise.copyWith(
       cycles: newCycles,
-      updatedAt: DateTime.now(),
+      updatedAt: DateTime.now().toUtc(),
     );
     notifyListeners();
     return updated;
@@ -72,7 +72,7 @@ class ExerciseService extends ChangeNotifier {
     final updated = exercise.copyWith(
       cycleDuration: newDuration,
       phases: recalculatedPhases,
-      updatedAt: DateTime.now(),
+      updatedAt: DateTime.now().toUtc(),
     );
     notifyListeners();
     return updated;
@@ -100,7 +100,7 @@ class ExerciseService extends ChangeNotifier {
       id: _uuid.v4(),
       name: 'New Exercise',
       description: 'Custom breathing exercise',
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       minCycles: 1,
       maxCycles: 9,
       cycleDurationStep: 5,
@@ -325,7 +325,7 @@ class ExerciseService extends ChangeNotifier {
     _currentExercise = _currentExercise!.copyWith(
       phases: newPhases,
       cycleDuration: newTotalDuration,
-      updatedAt: DateTime.now(),
+      updatedAt: DateTime.now().toUtc(),
     );
   }
 

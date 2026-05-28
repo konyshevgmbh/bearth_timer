@@ -146,6 +146,7 @@ class BreathingExercise extends HiveObject {
       'description': description,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
+      'deleted_at': deletedAt?.toIso8601String(),
       'can_edit_cycles_count': canEditCyclesCountCalculated,
       'can_edit_cycle_duration': canEditCycleDurationCalculated,
       'min_cycles': minCycles,

@@ -23,7 +23,7 @@ class ExportImportService {
 
     return {
       'version': '1.0',
-      'exported_at': DateTime.now().toIso8601String(),
+      'exported_at': DateTime.now().toUtc().toIso8601String(),
       'exercises': exercises.map((e) => e.toJson()).toList(),
       'training_results': results.map((r) => r.toJson()).toList(),
       'user_settings': settings.toJson(),
@@ -151,24 +151,33 @@ class ExportImportService {
     try {
       // Merge exercises - add only exercises with new IDs
       if (importResult.exercises.isNotEmpty) {
-        final existingExercises = await _storage.loadExercises();
+        final existingExercises = await _storage.loadAllExercises(); // include deleted
         final existingIds = existingExercises.map((e) => e.id).toSet();
-        
+
         final newExercises = importResult.exercises
             .where((exercise) => !existingIds.contains(exercise.id))
             .toList();
-        
+
         if (newExercises.isNotEmpty) {
           final mergedExercises = [...existingExercises, ...newExercises];
-          await _storage.saveExercises(mergedExercises);
+          await _storage.saveAllExercises(mergedExercises);
         }
       }
 
-      // Merge training results - add all new results (including deleted ones)
+      // Merge training results - import wins for same key, local-only results preserved
       if (importResult.trainingResults.isNotEmpty) {
         final existingResults = await _storage.getAllResultsIncludingDeleted();
-        final mergedResults = [...existingResults, ...importResult.trainingResults];
-        await _storage.saveResultsDirectly(mergedResults);
+        // Build a map keyed by {timestamp}_{exerciseId}; existing first so import overwrites
+        final resultMap = <String, TrainingResult>{};
+        for (final result in existingResults) {
+          final key = '${result.date.millisecondsSinceEpoch}_${result.exerciseId}';
+          resultMap[key] = result;
+        }
+        for (final result in importResult.trainingResults) {
+          final key = '${result.date.millisecondsSinceEpoch}_${result.exerciseId}';
+          resultMap[key] = result;
+        }
+        await _storage.saveResultsDirectly(resultMap.values.toList());
       }
 
       // Apply user settings (overwrite existing settings)
@@ -195,7 +204,7 @@ class ExportImportService {
     return {
       'version': '1.0',
       'type': 'single_exercise',
-      'exported_at': DateTime.now().toIso8601String(),
+      'exported_at': DateTime.now().toUtc().toIso8601String(),
       'exercise': exercise.toJson(),
     };
   }
@@ -318,8 +327,8 @@ class ExportImportService {
       // Generate new ID to avoid conflicts
       final newExercise = exercise.copyWith(
         id: _uuid.v4(),
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
+        updatedAt: DateTime.now().toUtc(),
       );
 
       // Load existing exercises
